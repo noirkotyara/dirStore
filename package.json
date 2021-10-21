@@ -1,0 +1,33 @@
+{
+  "name": "dirstore",
+  "version": "1.0.0",
+  "description": "poynt internship",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noirkotyara/dirStore.git"
+  },
+  "keywords": [
+    "poynt",
+    "internship",
+    "dir",
+    "store"
+  ],
+  "author": "noirkotyara",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noirkotyara/dirStore/issues"
+  },
+  "homepage": "https://github.com/noirkotyara/dirStore#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "nodemon": "^2.0.14",
+    "prettier": "2.4.1"
+  }
+}
