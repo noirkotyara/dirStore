@@ -20,14 +20,13 @@ var createItem = function (req, res) {
    * createData
    * **/
 
-  if (!newProduct)
-    // return responseCotroller.sendResponse(
-    //   responseCotroller.RESPONSE_CODE.PROCESS_ERROR,
-    //   "Product is empty",
-    //   res,
-    //   400
-    // );
-    return res.status(400);
+  if (!newProduct) return res.status(400);
+  // return responseCotroller.sendResponse(
+  //   responseCotroller.RESPONSE_CODE.PROCESS_ERROR,
+  //   "Product is empty",
+  //   res,
+  //   400
+  // );
 
   var data = fs.readFileSync(productsFilePath, "utf8");
 

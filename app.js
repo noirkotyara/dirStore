@@ -1,3 +1,4 @@
+require("dotenv").config();
 var express = require("express");
 var app = express();
 var userRoutes = require("./routes/user.routes");
@@ -15,8 +16,10 @@ app.get("/", function (request, response) {
 
 function start() {
   try {
-    console.log("Connection is established successfully on port 3000");
-    app.listen(3000);
+    console.log(
+      "Connection is established successfully on port " + process.env.PORT
+    );
+    app.listen(process.env.PORT);
   } catch (error) {
     console.log("Oops it is a server Error:" + error.message);
     process.exit(1);
