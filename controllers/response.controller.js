@@ -5,6 +5,7 @@ var RESPONSE_CODE = {
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
   BASIC_SUCCESS: "BASIC_SUCCESS",
   SUCCESS: "SUCCESS",
+  REQ_VALID_ERROR: "REQ_VALID_ERROR",
 };
 
 function response(responseCode, data, res, status) {
@@ -34,6 +35,20 @@ function response(responseCode, data, res, status) {
         message: data.message,
         errorCode: null,
         data: data.data,
+      });
+      break;
+    }
+    case RESPONSE_CODE.REQ_VALID_ERROR: {
+      var createdMessage = data.details.body
+        .map(function (bodyData) {
+          return bodyData.message;
+        })
+        .join("/n");
+
+      lodash.merge(dataToSent, {
+        message: createdMessage,
+        errorCode: RESPONSE_CODE.REQ_VALID_ERROR,
+        data: null,
       });
       break;
     }

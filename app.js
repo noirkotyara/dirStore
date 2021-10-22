@@ -5,6 +5,7 @@ var userRoutes = require("./routes/user.routes");
 var productRoutes = require("./routes/product.routes");
 var adminRoutes = require("./routes/admin.routes");
 var loggerMiddleware = require("./middlewares/logger.middleware");
+var requestValidation = require("./middlewares/requestValidation.middleware");
 
 app.use(express.json());
 app.use(loggerMiddleware);
@@ -16,6 +17,8 @@ app.use("/product", productRoutes);
 app.get("/", function (request, response) {
   response.send("<h2>Welcome to the dirStore</h2>");
 });
+
+app.use(requestValidation);
 
 function start() {
   try {
