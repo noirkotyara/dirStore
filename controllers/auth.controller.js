@@ -1,21 +1,9 @@
-var bcrypt = require("bcrypt");
-var ff = require("ff");
-
-var registerController = function() {
-  var userCredentials = req.body;
-
-  var hashedPassword = ff(function() {
-    bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
-      // Store hash in your password DB.
-    });
-  }).onComplete(nextFn);
-
-
+var registerController = function () {
   return "register";
 };
 
-var loginController = function(req, res) {
-  return "login";
+var loginController = function (req, res) {
+  return res.status(200).send("Requester with the type: " + req.body.type);
 };
 
 module.exports = {

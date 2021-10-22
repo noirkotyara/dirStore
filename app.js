@@ -3,26 +3,14 @@ var express = require("express");
 var app = express();
 var userRoutes = require("./routes/user.routes");
 var productRoutes = require("./routes/product.routes");
-var bodyParser = require("body-parser");
+var adminRoutes = require("./routes/admin.routes");
+var loggerMiddleware = require("./middlewares/logger.middleware");
 
 app.use(express.json());
-
-app.use(function (req, res, next) {
-  var fullUrl = req.protocol + "://" + req.get("host") + req.originalUrl;
-  var logger = {
-    request: req.method + ": " + fullUrl,
-    headers: req.headers,
-    body: req.body,
-    params: req.params,
-    query: req.query,
-  };
-  console.log("\n---------Logger----------");
-  console.log(logger);
-
-  next();
-});
+app.use(loggerMiddleware);
 
 app.use("/user", userRoutes);
+app.use("/admin", adminRoutes);
 app.use("/product", productRoutes);
 
 app.get("/", function (request, response) {
