@@ -22,10 +22,14 @@ app.use(requestValidation);
 
 function start() {
   try {
+    var selectedPort =
+      process.env.NODE_ENV === "dev"
+        ? process.env.PORT
+        : process.env.DEBUG_PORT;
     console.log(
-      "Connection is established successfully on port " + process.env.PORT
+      "Connection is established successfully on port " + selectedPort
     );
-    app.listen(process.env.PORT);
+    app.listen(selectedPort);
   } catch (error) {
     console.log("Oops it is a server Error:" + error.message);
     process.exit(1);

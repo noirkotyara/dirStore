@@ -3,8 +3,10 @@ var fs = require("fs");
 function readAndWriteFileSync(path, functionToDo) {
   var data = fs.readFileSync(path, "utf8");
   var parsedData = JSON.parse(data);
-  
-  var changedData = functionToDo.call(this, parsedData);
+
+  var changedData = (function () {
+    return functionToDo(parsedData);
+  })();
 
   var stringifiedData = JSON.stringify(changedData);
 

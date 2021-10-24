@@ -3,6 +3,8 @@ var lodash = require("lodash");
 var path = require("path");
 var uuid = require("uuid");
 var responseController = require("./response.controller");
+var service = require("./../services/services");
+var isEmptyHandlerError = require("./../helpers/isEmptyHandlerError");
 
 var productsFilePath = path.resolve(__dirname, "./../mock/Products.json");
 
@@ -17,20 +19,16 @@ var createItem = function (req, res) {
    * **/
   var newProduct = req.body;
 
-  lodash.set(newProduct, "createDate", createDate);
+  var createProduct = function (productList) {
+    var updatedProductList = lodash.cloneDeep(productList);
+    var id = uuid.v4();
+    lodash.set(newProduct, "createDate", createDate);
+    lodash.set(newProduct, "productId", id);
+    updatedProductList.push(newProduct);
+    return updatedProductList;
+  };
 
-  var data = fs.readFileSync(productsFilePath, "utf8");
-
-  var productsList = JSON.parse(data);
-  var id = uuid.v4();
-
-  lodash.set(newProduct, "productId", id);
-
-  productsList.push(newProduct);
-
-  data = JSON.stringify(productsList);
-
-  fs.writeFileSync(productsFilePath, data);
+  service.readAndWriteFileSync(productsFilePath, createProduct);
 
   return responseController.sendResponse(
     responseController.RESPONSE_CODE.SUCCESS,
@@ -82,6 +80,8 @@ var getItem = function (req, res) {
     return item.productId === productId;
   });
 
+  isEmptyHandlerError(foundedProduct, res);
+
   return responseController.sendResponse(
     responseController.RESPONSE_CODE.SUCCESS,
     { data: foundedProduct, message: "Product info with id: " + productId },
@@ -93,24 +93,22 @@ var getItem = function (req, res) {
 var updateItem = function (req, res) {
   var productId = req.params.id;
   var productFields = req.body;
-
-  var data = fs.readFileSync(productsFilePath, "utf8");
-
-  var productsList = JSON.parse(data);
-
   var updatedProduct = {};
 
-  var updatedProducts = productsList.map(function (item) {
-    if (item.productId === productId) {
-      lodash.merge(updatedProduct, item, productFields);
-      return updatedProduct;
-    }
-    return item;
-  });
+  var updateProduct = function (productsList) {
+    var updatedProducts = productsList.map(function (item) {
+      if (item.productId === productId) {
+        lodash.merge(updatedProduct, item, productFields);
+        return updatedProduct;
+      }
+      return item;
+    });
+    return updatedProducts;
+  };
 
-  data = JSON.stringify(updatedProducts);
+  service.readAndWriteFileSync(productsFilePath, updateProduct);
 
-  fs.writeFileSync(productsFilePath, data);
+  isEmptyHandlerError(updatedProduct, res);
 
   return responseController.sendResponse(
     responseController.RESPONSE_CODE.SUCCESS,
@@ -123,23 +121,22 @@ var updateItem = function (req, res) {
 var deleteItem = function (req, res) {
   var productId = req.params.id;
 
-  var data = fs.readFileSync(productsFilePath, "utf8");
-
-  var productsList = JSON.parse(data);
-
   var deletedItem = {};
 
-  var deletedItems = productsList.filter(function (item) {
-    var isDeletedProduct = item.productId === productId;
-    if (isDeletedProduct) {
-      deletedItem = item;
-    }
-    return !isDeletedProduct;
-  });
+  var deleteProduct = function (productList) {
+    var restItems = productList.filter(function (item) {
+      var isDeletedProduct = item.productId === productId;
+      if (isDeletedProduct) {
+        deletedItem = item;
+      }
+      return !isDeletedProduct;
+    });
+    return restItems;
+  };
 
-  data = JSON.stringify(deletedItems);
+  service.readAndWriteFileSync(productsFilePath, deleteProduct);
 
-  fs.writeFileSync(productsFilePath, data);
+  isEmptyHandlerError(deletedItem, res);
 
   return responseController.sendResponse(
     responseController.RESPONSE_CODE.SUCCESS,

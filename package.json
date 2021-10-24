@@ -4,7 +4,8 @@
   "description": "poynt internship",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "debug": "NODE_ENV=debug nodemon --inspect app.js"
   },
   "repository": {
     "type": "git",
