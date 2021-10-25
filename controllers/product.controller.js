@@ -2,7 +2,7 @@ var fs = require("fs");
 var lodash = require("lodash");
 var path = require("path");
 var uuid = require("uuid");
-var responseController = require("./response.controller");
+var responseController = require("response-controller");
 var service = require("./../services/services");
 var isEmptyHandlerError = require("./../helpers/isEmptyHandlerError");
 
@@ -31,7 +31,7 @@ var createItem = function (req, res) {
   service.readAndWriteFileSync(productsFilePath, createProduct);
 
   return responseController.sendResponse(
-    responseController.RESPONSE_CODE.SUCCESS,
+    responseController.RESPONSE_CODES.SUCCESS,
     { data: newProduct, message: "Product is created successfully!" },
     res,
     201
@@ -44,7 +44,7 @@ var getList = function (req, res) {
   stream.on("data", function (data) {
     var productsList = JSON.parse(data);
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.SUCCESS,
+      responseController.RESPONSE_CODES.SUCCESS,
       { data: productsList, message: "List of products" },
       res,
       200
@@ -53,7 +53,7 @@ var getList = function (req, res) {
 
   stream.on("error", function (err) {
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.PROCESS_ERROR,
+      responseController.RESPONSE_CODES.PROCESS_ERROR,
       "Cannot read the file with the list of products",
       res,
       500
@@ -66,7 +66,7 @@ var getItem = function (req, res) {
 
   if (!productId)
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.PROCESS_ERROR,
+      responseController.RESPONSE_CODES.PROCESS_ERROR,
       "Product id is missing",
       res,
       404
@@ -83,7 +83,7 @@ var getItem = function (req, res) {
   isEmptyHandlerError(foundedProduct, res);
 
   return responseController.sendResponse(
-    responseController.RESPONSE_CODE.SUCCESS,
+    responseController.RESPONSE_CODES.SUCCESS,
     { data: foundedProduct, message: "Product info with id: " + productId },
     res,
     200
@@ -111,7 +111,7 @@ var updateItem = function (req, res) {
   isEmptyHandlerError(updatedProduct, res);
 
   return responseController.sendResponse(
-    responseController.RESPONSE_CODE.SUCCESS,
+    responseController.RESPONSE_CODES.SUCCESS,
     { data: updatedProduct, message: "Product is successfully updated" },
     res,
     200
@@ -139,7 +139,7 @@ var deleteItem = function (req, res) {
   isEmptyHandlerError(deletedItem, res);
 
   return responseController.sendResponse(
-    responseController.RESPONSE_CODE.SUCCESS,
+    responseController.RESPONSE_CODES.SUCCESS,
     { data: deletedItem, message: "Product is successfully deleted" },
     res,
     200

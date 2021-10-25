@@ -1,10 +1,10 @@
 var lodash = require("lodash");
-var responseController = require("./../controllers/response.controller");
+var responseController = require("response-controller");
 
 function isEmptyHandlerError(itemToCheck, res) {
   if (lodash.isEmpty(itemToCheck))
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.PROCESS_ERROR,
+      responseController.RESPONSE_CODES.PROCESS_ERROR,
       "Id is not existed",
       res,
       404

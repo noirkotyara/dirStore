@@ -1,11 +1,11 @@
 var expressValidation = require("express-validation");
-var responseController = require("./../controllers/response.controller");
+var responseController = require("response-controller");
 
 function requestValidation(err, req, res, next) {
   try {
     if (err instanceof expressValidation.ValidationError) {
       return responseController.sendResponse(
-        responseController.RESPONSE_CODE.REQ_VALID_ERROR,
+        responseController.RESPONSE_CODES.REQ_VALID_ERROR,
         err,
         res,
         400

@@ -1,5 +1,5 @@
 var expressValidation = require("express-validation");
-var responseController = require("./../controllers/response.controller");
+var responseController = require("response-controller");
 var jwt = require("jsonwebtoken");
 
 function verifyToken(req, res, next) {
@@ -11,7 +11,7 @@ function verifyToken(req, res, next) {
 
     if (!token)
       return responseController.sendResponse(
-        responseController.RESPONSE_CODE.PROCESS_ERROR,
+        responseController.RESPONSE_CODES.PROCESS_ERROR,
         "A token is required for authentication",
         res,
         403
@@ -21,7 +21,7 @@ function verifyToken(req, res, next) {
     return next();
   } catch (error) {
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.PROCESS_ERROR,
+      responseController.RESPONSE_CODES.PROCESS_ERROR,
       error.message,
       res,
       401

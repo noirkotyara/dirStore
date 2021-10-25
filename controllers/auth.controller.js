@@ -1,11 +1,11 @@
 var ff = require("ff");
 var fs = require("fs");
 var bcrypt = require("bcrypt");
-var responseController = require("./response.controller");
 var path = require("path");
 var uuid = require("uuid");
 var lodash = require("lodash");
 var jwt = require("jsonwebtoken");
+var responseController = require("response-controller");
 
 var usersFilePath = path.resolve(__dirname, "./../mock/Users.json");
 
@@ -37,14 +37,14 @@ var registerController = function (req, res) {
   function onCompleteHandler(err, userId) {
     if (err) {
       return responseController.sendResponse(
-        responseController.RESPONSE_CODE.PROCESS_ERROR,
+        responseController.RESPONSE_CODES.PROCESS_ERROR,
         err.message,
         res,
         404
       );
     }
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.SUCCESS,
+      responseController.RESPONSE_CODES.SUCCESS,
       {
         data: userId,
         message: "User is registered " + userCredentials.email,
@@ -104,14 +104,14 @@ var loginController = function (req, res) {
   function onCompleteHandler(err, user) {
     if (err) {
       return responseController.sendResponse(
-        responseController.RESPONSE_CODE.PROCESS_ERROR,
+        responseController.RESPONSE_CODES.PROCESS_ERROR,
         err,
         res,
         404
       );
     }
     return responseController.sendResponse(
-      responseController.RESPONSE_CODE.SUCCESS,
+      responseController.RESPONSE_CODES.SUCCESS,
       {
         data: lodash.omit(user, "password"),
         message: "Login is successful for " + user.email,
@@ -130,46 +130,7 @@ var loginController = function (req, res) {
   ).onComplete(onCompleteHandler);
 };
 
-function getProfile(req, res) {
-  var userId = req.user.userId;
-
-  function getUsers() {
-    fs.readFile(usersFilePath, "utf8", f.slot());
-  }
-
-  function findUser(data) {
-    var usersList = JSON.parse(data);
-    var foundedUser = usersList.find(function (currentUser) {
-      return currentUser.userId === userId;
-    });
-    f.pass(foundedUser);
-  }
-
-  function onCompleteHandler(error, foundedUser) {
-    if (error) {
-      return responseController.sendResponse(
-        responseController.RESPONSE_CODE.PROCESS_ERROR,
-        error.message,
-        res,
-        404
-      );
-    }
-    return responseController.sendResponse(
-      responseController.RESPONSE_CODE.SUCCESS,
-      {
-        data: lodash.omit(foundedUser, "password"),
-        message: "User info",
-      },
-      res,
-      201
-    );
-  }
-
-  var f = ff(this, getUsers, findUser).onComplete(onCompleteHandler);
-}
-
 module.exports = {
   register: registerController,
   login: loginController,
-  getProfileInfo: getProfile,
 };
