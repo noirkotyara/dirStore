@@ -1,22 +1,15 @@
 [
   {
-    "userId": "57230073-5b9a-4c2d-8b7e-7f6a8c99f776",
-    "email": "noirkotyara",
-    "password": "$2b$06$3bgQJl2bviE/5OOtBttK8.sGdobBQ/iYYRxexuttsWnQSmJ65cbT."
+    "userId": "6d256bab-6ea5-4e3b-a05a-893364aa56a4",
+    "email": "d.maliukh@gmail.com",
+    "password": "$2b$06$5NGSkORnM4SIeJpL5aiLB.7GAV60wV2Cy6J3k1IomPIOQHYeiO9Zm"
   },
   {
-    "userId": "0ccc787a-d30f-485e-b9d3-fa4eb786352e",
-    "email": "patrick",
-    "password": "$2b$06$OwMezZmPzzjC4Q78.kqAIevxvOWRT9NUeVXiUQouLrwDli1P2q34q"
-  },
-  {
-    "userId": "ddb5e3e8-3d18-476f-b6d0-47a4a4579271",
-    "email": "user1",
-    "password": "$2b$06$c/eJRbXA7DGVnQiTNVO.qe0EoDGk3uNynZaPJzBrw5NnQDexkGbt6"
-  },
-  {
-    "userId": "b1493dac-d56d-4357-bdad-16237d63cd09",
-    "email": "user3",
-    "password": "$2b$06$4Mbde3qCjDXw6s9c7GkBeOQTQsPdMYfrqGY155TXl8maiEvyPpbXK"
+    "firstName": "Andrii",
+    "lastName": "Oriehov",
+    "email": "a.oriehov@gmail.com",
+    "password": "$2b$06$RR/KdOqrCJMKsZG4zs9hSe50XfqFpsvhIyqSqyeP7jVzNpKiR8Pwa",
+    "type": "USER",
+    "userId": "8630b9f3-0a4c-487e-bc5f-3844cf1db374"
   }
 ]
