@@ -1,9 +1,22 @@
-{
-  "type": "USER",
-  "username": "maliukh",
-  "email": "maliukh@gmail.com",
-  "firstName": "Diana",
-  "lastName": "Maliukh",
-  "phone": "063-79-15-664",
-  "password": ""
-}
+[
+  {
+    "userId": "57230073-5b9a-4c2d-8b7e-7f6a8c99f776",
+    "email": "noirkotyara",
+    "password": "$2b$06$3bgQJl2bviE/5OOtBttK8.sGdobBQ/iYYRxexuttsWnQSmJ65cbT."
+  },
+  {
+    "userId": "0ccc787a-d30f-485e-b9d3-fa4eb786352e",
+    "email": "patrick",
+    "password": "$2b$06$OwMezZmPzzjC4Q78.kqAIevxvOWRT9NUeVXiUQouLrwDli1P2q34q"
+  },
+  {
+    "userId": "ddb5e3e8-3d18-476f-b6d0-47a4a4579271",
+    "email": "user1",
+    "password": "$2b$06$c/eJRbXA7DGVnQiTNVO.qe0EoDGk3uNynZaPJzBrw5NnQDexkGbt6"
+  },
+  {
+    "userId": "b1493dac-d56d-4357-bdad-16237d63cd09",
+    "email": "user3",
+    "password": "$2b$06$4Mbde3qCjDXw6s9c7GkBeOQTQsPdMYfrqGY155TXl8maiEvyPpbXK"
+  }
+]
