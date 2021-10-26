@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var productController = require("./../controllers/product.controller");
+var productController = require("../controllers/product.controller");
 var productMiddleware = require("./../middlewares/product.middleware");
 
 router.get("/list", productController.getList);

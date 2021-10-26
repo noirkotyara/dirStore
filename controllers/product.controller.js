@@ -1,41 +1,37 @@
 var fs = require("fs");
+//  TODO: remove lodash
 var lodash = require("lodash");
 var path = require("path");
 var uuid = require("uuid");
 var responseController = require("./response.controller");
-var service = require("./../services/services");
-var isEmptyHandlerError = require("./../helpers/isEmptyHandlerError");
+var service = require("../services/services");
+var isEmptyHandlerError = require("../helpers/isEmptyHandlerError");
 
 var productsFilePath = path.resolve(__dirname, "./../mock/Products.json");
 
 var createItem = function (req, res) {
-  var createDate = new Date();
-  /**
-   * name
-   * price
-   * count
-   * description
-   * createData
-   * **/
-  var newProduct = req.body;
+  try {
+    var createDate = new Date();
+    var newProduct = req.body;
 
-  var createProduct = function (productList) {
-    var updatedProductList = lodash.cloneDeep(productList);
-    var id = uuid.v4();
-    lodash.set(newProduct, "createDate", createDate);
-    lodash.set(newProduct, "productId", id);
-    updatedProductList.push(newProduct);
-    return updatedProductList;
-  };
+    var createProduct = function (productList) {
+      var updatedProductList = lodash.cloneDeep(productList);
+      var id = uuid.v4();
+      lodash.set(newProduct, "createDate", createDate);
+      lodash.set(newProduct, "productId", id);
+      updatedProductList.push(newProduct);
+      return updatedProductList;
+    };
 
-  service.readAndWriteFileSync(productsFilePath, createProduct);
-
-  return responseController.sendResponse(
-    responseController.RESPONSE_CODE.SUCCESS,
-    { data: newProduct, message: "Product is created successfully!" },
-    res,
-    201
-  );
+    service.readAndWriteFileSync(productsFilePath, createProduct);
+    // REFACTOR: response needs to be on the higher level
+    return responseController.sendResponse(
+      responseController.RESPONSE_CODE.SUCCESS,
+      { data: newProduct, message: "Product is created successfully!" },
+      res,
+      201
+    );
+  } catch (e) {}
 };
 
 var getList = function (req, res) {
