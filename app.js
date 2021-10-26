@@ -6,6 +6,13 @@ var productRoutes = require("./routes/product.routes");
 var adminRoutes = require("./routes/admin.routes");
 var loggerMiddleware = require("./middlewares/logger.middleware");
 var requestValidation = require("./middlewares/requestValidation.middleware");
+var connectedDatabase = require("./services/connectDB");
+
+connectedDatabase.mysqlConnection.connect(function (error) {
+  if (error)
+    console.log("Connection Failed!" + JSON.stringify(error, undefined, 2));
+  else console.log("Connection Established Successfully");
+});
 
 app.use(express.json());
 app.use(loggerMiddleware);

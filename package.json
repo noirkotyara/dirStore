@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
-    "debug": "NODE_ENV=debug nodemon --inspect app.js"
+    "debug": "NODE_ENV=debug nodemon --inspect app.js",
+    "test": "jest *.test.js --forceExit"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "ff": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mysql2": "^2.3.2",
     "response-controller": "github:noirkotyara/response-controller",
     "uuid": "^8.3.2"
   },
@@ -38,6 +40,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.3.1",
     "nodemon": "^2.0.14",
     "prettier": "2.4.1"
   }
