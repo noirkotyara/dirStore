@@ -1,5 +1,3 @@
-var lodash = require("lodash");
-
 var RESPONSE_CODE = {
   PROCESS_ERROR: "PROCESS_ERROR",
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
@@ -15,7 +13,7 @@ function response(responseCode, data, res, status) {
   };
   switch (responseCode) {
     case RESPONSE_CODE.PROCESS_ERROR: {
-      lodash.merge(dataToSent, {
+      Object.assign(dataToSent, {
         message: data,
         errorCode: RESPONSE_CODE.PROCESS_ERROR,
         data: null,
@@ -23,7 +21,7 @@ function response(responseCode, data, res, status) {
       break;
     }
     case RESPONSE_CODE.BASIC_SUCCESS: {
-      lodash.merge(dataToSent, {
+      Object.assign(dataToSent, {
         message: data,
         errorCode: null,
         data: null,
@@ -31,7 +29,7 @@ function response(responseCode, data, res, status) {
       break;
     }
     case RESPONSE_CODE.SUCCESS: {
-      lodash.merge(dataToSent, {
+      Object.assign(dataToSent, {
         message: data.message,
         errorCode: null,
         data: data.data,
@@ -45,7 +43,7 @@ function response(responseCode, data, res, status) {
         })
         .join("/n");
 
-      lodash.merge(dataToSent, {
+      Object.assign(dataToSent, {
         message: createdMessage,
         errorCode: RESPONSE_CODE.REQ_VALID_ERROR,
         data: null,

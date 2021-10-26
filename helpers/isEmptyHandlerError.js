@@ -1,8 +1,10 @@
-var lodash = require("lodash");
+// TODO: remove isEmptyHandlerError
+var objHelpers = require("./objectHelpers");
+
 var responseController = require("./../controllers/response.controller");
 
 function isEmptyHandlerError(itemToCheck, res) {
-  if (lodash.isEmpty(itemToCheck))
+  if (objHelpers.isEmpty(itemToCheck))
     return responseController.sendResponse(
       responseController.RESPONSE_CODE.PROCESS_ERROR,
       "Id is not existed",

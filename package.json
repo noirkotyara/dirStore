@@ -30,7 +30,6 @@
     "express": "^4.17.1",
     "express-validation": "^3.0.8",
     "ff": "^0.2.2",
-    "lodash": "^4.17.21",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

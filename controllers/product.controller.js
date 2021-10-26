@@ -1,10 +1,12 @@
 var fs = require("fs");
-//  TODO: remove lodash
-var lodash = require("lodash");
 var path = require("path");
+
 var uuid = require("uuid");
-var responseController = require("./response.controller");
+
 var service = require("../services/services");
+
+var responseController = require("./response.controller");
+
 var isEmptyHandlerError = require("../helpers/isEmptyHandlerError");
 
 var productsFilePath = path.resolve(__dirname, "./../mock/Products.json");
@@ -15,10 +17,12 @@ var createItem = function (req, res) {
     var newProduct = req.body;
 
     var createProduct = function (productList) {
-      var updatedProductList = lodash.cloneDeep(productList);
+      var updatedProductList = productList.slice(0);
+
       var id = uuid.v4();
-      lodash.set(newProduct, "createDate", createDate);
-      lodash.set(newProduct, "productId", id);
+      newProduct["productId"] = id;
+      newProduct["createDate"] = createDate;
+
       updatedProductList.push(newProduct);
       return updatedProductList;
     };
@@ -94,7 +98,7 @@ var updateItem = function (req, res) {
   var updateProduct = function (productsList) {
     var updatedProducts = productsList.map(function (item) {
       if (item.productId === productId) {
-        lodash.merge(updatedProduct, item, productFields);
+        Object.assign(updatedProduct, item, productFields);
         return updatedProduct;
       }
       return item;
