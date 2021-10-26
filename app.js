@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: ".env.local" });
 var express = require("express");
 var app = express();
 var userRoutes = require("./routes/user.routes");
