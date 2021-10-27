@@ -4,6 +4,7 @@ var path = require("path");
 var uuid = require("uuid");
 
 var helpers = require("./helpers/readAndWriteFileSync");
+var createProduct = require("./helpers/createProduct");
 
 var objHelpers = require("./../../helpers/objectHelpers");
 var isEmptySendError = require("./helpers/isEmptyProductResponse");
@@ -14,21 +15,10 @@ var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
 var createItem = function (productInfo, next) {
   try {
-    var createDate = new Date();
     var newProduct = productInfo;
 
-    var createProduct = function (productList) {
-      var updatedProductList = productList.slice(0);
+    helpers.readAndWriteFileSync(productsFilePath, createProduct, productInfo);
 
-      var id = uuid.v4();
-      newProduct["productId"] = id;
-      newProduct["createDate"] = createDate;
-
-      updatedProductList.push(newProduct);
-      return updatedProductList;
-    };
-
-    helpers.readAndWriteFileSync(productsFilePath, createProduct);
     next({
       responseCode: RESPONSE_CODE.SUCCESS,
       data: { data: newProduct, message: "Product is created successfully!" },
