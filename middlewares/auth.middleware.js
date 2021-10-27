@@ -12,9 +12,8 @@ function verifyToken(req, res, next) {
 
     if (!token)
       return next({
-        responseCode: RESPONSE_CODE.PROCESS_ERROR,
+        responseCode: RESPONSE_CODE.P_ERROR_UNAUTHORIZED,
         data: "A token is required for authentication",
-        status: 403,
       });
 
     req.user = jwt.verify(token, process.env.JWT_S);
@@ -22,9 +21,8 @@ function verifyToken(req, res, next) {
     next();
   } catch (error) {
     next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      responseCode: RESPONSE_CODE.P_ERROR_FORBIDDEN,
       data: error.message,
-      status: 402,
     });
   }
 }

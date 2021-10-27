@@ -1,32 +1,30 @@
 var fs = require("fs");
 var path = require("path");
 
-var helpers = require("./helpers/readAndWriteFileSync");
-var createProduct = require("./helpers/createProduct");
-
-var isEmptySendError = require("./helpers/isEmptyProductResponse");
-
 var RESPONSE_CODE = require("./../../enums/responseCodes");
+
+var helpers = require("./helpers/readAndWriteFileSync");
+var saveProduct = require("./helpers/saveProduct");
+var objHelpers = require("./../../helpers/objectHelpers");
 
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
-var createItem = function (productInfo, next) {
+var createProduct = function (productInfo, next) {
   try {
     var newProduct = productInfo;
 
-    helpers.readAndWriteFileSync(productsFilePath, createProduct, productInfo);
+    helpers.readAndWriteFileSync(productsFilePath, saveProduct, productInfo);
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: RESPONSE_CODE.SUCCESS__CREATED,
       data: { data: newProduct, message: "Product is created successfully!" },
-      status: 201,
     });
   } catch (e) {
     next(e);
   }
 };
 
-var getList = function (next) {
+var getProductsList = function (next) {
   var stream = fs.createReadStream(productsFilePath, "utf8");
 
   stream.on("data", function (data) {
@@ -40,19 +38,17 @@ var getList = function (next) {
 
   stream.on("error", function () {
     next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      responseCode: RESPONSE_CODE.S_ERROR_INTERNAL,
       data: "Cannot read the file with the list of products",
-      status: 500,
     });
   });
 };
 
-var getItem = function (productId, next) {
+var getProductById = function (productId, next) {
   if (!productId)
     return next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
       data: "Product id is missing",
-      status: 404,
     });
 
   var data = fs.readFileSync(productsFilePath, "utf8");
@@ -63,7 +59,11 @@ var getItem = function (productId, next) {
     return item.productId === productId;
   });
 
-  isEmptySendError(productId, foundedProduct, next);
+  if (objHelpers.isEmpty(foundedProduct))
+    return next({
+      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      data: "Product with id: " + productId + " is not existed",
+    });
 
   next({
     responseCode: RESPONSE_CODE.SUCCESS,
@@ -75,7 +75,7 @@ var getItem = function (productId, next) {
   });
 };
 
-var updateItem = function (productId, productFields, next) {
+var updateProduct = function (productId, productFields, next) {
   var preparedProduct = {};
 
   var updateProduct = function (productsList) {
@@ -91,7 +91,11 @@ var updateItem = function (productId, productFields, next) {
 
   helpers.readAndWriteFileSync(productsFilePath, updateProduct);
 
-  isEmptySendError(productId, preparedProduct, next);
+  if (objHelpers.isEmpty(preparedProduct))
+    return next({
+      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      data: "Product with id: " + productId + " is not existed",
+    });
 
   next({
     responseCode: RESPONSE_CODE.SUCCESS,
@@ -99,18 +103,17 @@ var updateItem = function (productId, productFields, next) {
       data: preparedProduct,
       message: "Product is successfully updated",
     },
-    status: 200,
   });
 };
 
-var deleteItem = function (productId, next) {
-  var deletedItem = {};
+var deleteProduct = function (productId, next) {
+  var deletedProduct = {};
 
   var deleteProduct = function (productList) {
-    var restItems = productList.filter(function (item) {
-      var isDeletedProduct = item.productId === productId;
+    var restItems = productList.filter(function (currentProduct) {
+      var isDeletedProduct = currentProduct.productId === productId;
       if (isDeletedProduct) {
-        deletedItem = item;
+        deletedProduct = currentProduct;
       }
       return !isDeletedProduct;
     });
@@ -119,22 +122,25 @@ var deleteItem = function (productId, next) {
 
   helpers.readAndWriteFileSync(productsFilePath, deleteProduct);
 
-  isEmptySendError(productId, deletedItem, next);
+  if (objHelpers.isEmpty(deletedProduct))
+    return next({
+      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      data: "Product with id: " + productId + " is not existed",
+    });
 
   next({
     responseCode: RESPONSE_CODE.SUCCESS,
     data: {
-      data: deletedItem,
+      data: deletedProduct,
       message: "Product is successfully deleted",
     },
-    status: 200,
   });
 };
 
 module.exports = {
-  getList: getList,
-  getItem: getItem,
-  updateItem: updateItem,
-  createItem: createItem,
-  deleteItem: deleteItem,
+  getProductsList: getProductsList,
+  getProductById: getProductById,
+  updateProduct: updateProduct,
+  createProduct: createProduct,
+  deleteProduct: deleteProduct,
 };
