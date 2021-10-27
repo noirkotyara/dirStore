@@ -1,4 +1,5 @@
 var RESPONSE_CODE = require("./../../enums/responseCodes");
+
 var registerController = function (requester, next) {
   next({
     responseCode: RESPONSE_CODE.BASIC_SUCCESS,
