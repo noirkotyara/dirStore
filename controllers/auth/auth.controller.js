@@ -104,7 +104,7 @@ function login(userCredentials, next) {
       },
       process.env.JWT_S,
       {
-        expiresIn: "60000ms",
+        expiresIn: "1h",
       }
     );
     Object.assign(userWithToken, user, { token: token });

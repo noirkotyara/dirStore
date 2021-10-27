@@ -12,7 +12,7 @@ function verifyToken(req, res, next) {
 
     if (!token)
       return next({
-        responseCode: RESPONSE_CODE.P_ERROR_UNAUTHORIZED,
+        responseCode: RESPONSE_CODE.P_ERROR__UNAUTHORIZED,
         data: "A token is required for authentication",
       });
 
@@ -21,7 +21,7 @@ function verifyToken(req, res, next) {
     next();
   } catch (error) {
     next({
-      responseCode: RESPONSE_CODE.P_ERROR_FORBIDDEN,
+      responseCode: RESPONSE_CODE.P_ERROR__FORBIDDEN,
       data: error.message,
     });
   }

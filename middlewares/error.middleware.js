@@ -6,6 +6,7 @@ function responseHandler(error, req, res, next) {
   try {
     var dataToSent = {
       timestamp: Date.now(),
+      status: 500,
     };
 
     if (error instanceof expressValidation.ValidationError) {
@@ -100,6 +101,7 @@ function responseHandler(error, req, res, next) {
     return res.status(dataToSent.status).json(dataToSent);
   } catch (e) {
     console.log("RESPONSE_HANDLER_CATCH", e);
+    res.status(500).json(e.message);
   }
 }
 

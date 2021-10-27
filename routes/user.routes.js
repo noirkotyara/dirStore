@@ -6,6 +6,7 @@ var authMiddleware = require("./../middlewares/auth.middleware");
 
 var authController = require("./../controllers/auth/auth.controller");
 var userController = require("./../controllers/user/user.controller");
+var checkoutController = require("./../controllers/checkout/checkout.controller");
 
 router.post(
   "/register",
@@ -25,5 +26,13 @@ router.post(
 router.get("/profile", authMiddleware.verifyToken, function (req, res, next) {
   userController.getUserProfile(req.user.userId, next);
 });
+
+router.post(
+  "/makecheckout",
+  authMiddleware.verifyToken,
+  function (req, res, next) {
+    checkoutController.makeCheckoutByRandom(req.user.userId, next);
+  }
+);
 
 module.exports = router;
