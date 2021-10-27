@@ -1,53 +1,85 @@
 var fs = require("fs");
 var path = require("path");
 
-var helpers = require("./helpers/readAndWriteFileSync");
-var createProduct = require("./helpers/createProduct");
-
-var isEmptySendError = require("./helpers/isEmptyProductResponse");
+var ff = require("ff");
 
 var responseMiddleware = require("message-catcher");
 
+var helpers = require("./helpers/readAndWriteFileSync");
+
+var isEmptySendError = require("./helpers/isEmptyProductResponse");
+
+var productService = require("../../services/product.service");
+
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
-var createItem = function (productInfo, next) {
+var createItem = function(productInfo, next) {
   try {
     var newProduct = productInfo;
 
-    helpers.readAndWriteFileSync(productsFilePath, createProduct, productInfo);
+    var f = ff(
+      this,
+      function() {
+        productService.createTable(f);
+      },
+      function() {
+        productService.saveItem(newProduct, f);
+      },
+      function() {
+        productService.getItemById(arguments[0], f);
+      }
+    ).onComplete(onCompleteHandler);
 
-    next({
-      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
-      data: { data: newProduct, message: "Product is created successfully!" },
-      status: 201,
-    });
+    function onCompleteHandler(err, createdProduct) {
+      if (err) {
+        return next({
+          responseCode: responseMiddleware.RESPONSE_CODES.DB_ERROR,
+          data: err.message,
+          status: 404,
+        });
+      }
+
+      next({
+        responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+        data: {
+          data: createdProduct[0],
+          message: "Product is created successfully",
+        },
+        status: 201,
+      });
+    }
   } catch (e) {
     next(e);
   }
 };
 
-var getList = function (next) {
-  var stream = fs.createReadStream(productsFilePath, "utf8");
+var getList = function(next) {
 
-  stream.on("data", function (data) {
-    var productsList = JSON.parse(data);
-    return next({
+  var f = ff(this, function() {
+    productService.getList(f)
+  }).onComplete(onCompleteHandler)
+
+  function onCompleteHandler(err, productList) {
+    if (err) {
+      return next({
+        responseCode: responseMiddleware.RESPONSE_CODES.DB_ERROR,
+        data: err.message,
+        status: 404,
+      });
+    }
+
+    next({
       responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
-      data: { data: productsList, message: "List of products" },
+      data: {
+        data: productList,
+        message: "Products list",
+      },
       status: 200,
     });
-  });
-
-  stream.on("error", function () {
-    next({
-      responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
-      data: "Cannot read the file with the list of products",
-      status: 500,
-    });
-  });
+  }
 };
 
-var getItem = function (productId, next) {
+var getItem = function(productId, next) {
   if (!productId)
     return next({
       responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
@@ -59,7 +91,7 @@ var getItem = function (productId, next) {
 
   var productsList = JSON.parse(data);
 
-  var foundedProduct = productsList.find(function (item) {
+  var foundedProduct = productsList.find(function(item) {
     return item.productId === productId;
   });
 
@@ -75,11 +107,11 @@ var getItem = function (productId, next) {
   });
 };
 
-var updateItem = function (productId, productFields, next) {
+var updateItem = function(productId, productFields, next) {
   var preparedProduct = {};
 
-  var updateProduct = function (productsList) {
-    var updatedProducts = productsList.map(function (item) {
+  var updateProduct = function(productsList) {
+    var updatedProducts = productsList.map(function(item) {
       if (item.productId === productId) {
         Object.assign(preparedProduct, item, productFields);
         return preparedProduct;
@@ -103,11 +135,11 @@ var updateItem = function (productId, productFields, next) {
   });
 };
 
-var deleteItem = function (productId, next) {
+var deleteItem = function(productId, next) {
   var deletedItem = {};
 
-  var deleteProduct = function (productList) {
-    var restItems = productList.filter(function (item) {
+  var deleteProduct = function(productList) {
+    var restItems = productList.filter(function(item) {
       var isDeletedProduct = item.productId === productId;
       if (isDeletedProduct) {
         deletedItem = item;

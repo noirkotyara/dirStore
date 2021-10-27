@@ -1,4 +1,4 @@
-require("dotenv").config({ path: ".env.local" });
+require("dotenv").config();
 var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
@@ -9,10 +9,11 @@ var userRoutes = require("./routes/user.routes");
 var productRoutes = require("./routes/product.routes");
 var adminRoutes = require("./routes/admin.routes");
 
-var connectedDatabase = require("./services/connectDB");
 var app = express();
 
-connectedDatabase.mysqlConnection.connect(function (error) {
+var pool = require("./services/connectDB");
+
+pool.mysqlConnection.connect(function (error) {
   if (error)
     console.log("Connection Failed!" + JSON.stringify(error, undefined, 2));
   else console.log("Connection Established Successfully");
