@@ -5,6 +5,23 @@
   "plugins": [
     "prettier"
   ],
+  "rules": {
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": true,
+        "memberSyntaxSortOrder": [
+          "none",
+          "all",
+          "multiple",
+          "single"
+        ],
+        "allowSeparatedGroups": true
+      }
+    ]
+  },
   "parserOptions": {
     "ecmaVersion": 5
   }
