@@ -1,12 +1,9 @@
 var fs = require("fs");
 var path = require("path");
 
-var uuid = require("uuid");
-
 var helpers = require("./helpers/readAndWriteFileSync");
 var createProduct = require("./helpers/createProduct");
 
-var objHelpers = require("./../../helpers/objectHelpers");
 var isEmptySendError = require("./helpers/isEmptyProductResponse");
 
 var RESPONSE_CODE = require("./../../enums/responseCodes");
@@ -41,7 +38,7 @@ var getList = function (next) {
     });
   });
 
-  stream.on("error", function (err) {
+  stream.on("error", function () {
     next({
       responseCode: RESPONSE_CODE.PROCESS_ERROR,
       data: "Cannot read the file with the list of products",

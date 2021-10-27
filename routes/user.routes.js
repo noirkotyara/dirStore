@@ -4,7 +4,7 @@ var router = express.Router();
 var requesterTypeMiddleware = require("./../middlewares/requesterType.middleware");
 var authMiddleware = require("./../middlewares/auth.middleware");
 
-var authController = require("../controllers/auth/auth.controller");
+var authController = require("./../controllers/auth/auth.controller");
 
 router.post(
   "/register",
@@ -21,10 +21,8 @@ router.post(
   }
 );
 
-router.get(
-  "/profile",
-  authMiddleware.verifyToken,
-  authController.getProfileInfo
-);
+router.get("/profile", authMiddleware.verifyToken, function (req, res, next) {
+  authController.getProfileInfo(req.user.userId, next);
+});
 
 module.exports = router;

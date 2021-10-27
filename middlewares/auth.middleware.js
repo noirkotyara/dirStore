@@ -1,6 +1,7 @@
 var expressValidation = require("express-validation");
-var responseController = require("./../controllers/response.controller");
 var jwt = require("jsonwebtoken");
+
+var RESPONSE_CODE = require("./../enums/responseCodes");
 
 function verifyToken(req, res, next) {
   if (req.method === "OPTIONS") {
@@ -10,22 +11,21 @@ function verifyToken(req, res, next) {
     var token = req.headers["x-access-token"];
 
     if (!token)
-      return responseController.sendResponse(
-        responseController.RESPONSE_CODE.PROCESS_ERROR,
-        "A token is required for authentication",
-        res,
-        403
-      );
+      return next({
+        responseCode: RESPONSE_CODE.PROCESS_ERROR,
+        data: "A token is required for authentication",
+        status: 403,
+      });
 
     req.user = jwt.verify(token, process.env.JWT_S);
-    return next();
+
+    next();
   } catch (error) {
-    return responseController.sendResponse(
-      responseController.RESPONSE_CODE.PROCESS_ERROR,
-      error.message,
-      res,
-      401
-    );
+    next({
+      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      data: error.message,
+      status: 402,
+    });
   }
 }
 
