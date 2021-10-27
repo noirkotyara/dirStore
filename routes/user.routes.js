@@ -1,25 +1,28 @@
 var express = require("express");
 var router = express.Router();
-var authController = require("./../controllers/auth.controller");
+
 var requesterTypeMiddleware = require("./../middlewares/requesterType.middleware");
 var authMiddleware = require("./../middlewares/auth.middleware");
-var userController = require("./../controllers/user.controller");
+
+var authController = require("./../controllers/auth/auth.controller");
 
 router.post(
   "/register",
   [requesterTypeMiddleware, authMiddleware.registerUserValidation],
-  authController.register
+  function (req, res, next) {
+    authController.register(req.body, next);
+  }
 );
 router.post(
   "/login",
   [requesterTypeMiddleware, authMiddleware.loginUserValidation],
-  authController.login
+  function (req, res, next) {
+    authController.login(req.body, next);
+  }
 );
 
-router.get(
-  "/profile",
-  authMiddleware.verifyToken,
-  userController.getProfileInfo
-);
+router.get("/profile", authMiddleware.verifyToken, function (req, res, next) {
+  authController.getProfileInfo(req.user.userId, next);
+});
 
 module.exports = router;
