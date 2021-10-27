@@ -3,7 +3,7 @@ var path = require("path");
 
 var RESPONSE_CODE = require("./../../enums/responseCodes");
 
-var helpers = require("./helpers/readAndWriteFileSync");
+var helpers = require("../../helpers/readAndWriteFileSync");
 var saveProduct = require("./helpers/saveProduct");
 var objHelpers = require("./../../helpers/objectHelpers");
 
@@ -32,7 +32,6 @@ var getProductsList = function (next) {
     return next({
       responseCode: RESPONSE_CODE.SUCCESS,
       data: { data: productsList, message: "List of products" },
-      status: 200,
     });
   });
 
@@ -71,7 +70,6 @@ var getProductById = function (productId, next) {
       data: foundedProduct,
       message: "Product info with id: " + productId,
     },
-    status: 200,
   });
 };
 
