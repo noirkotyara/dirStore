@@ -1,11 +1,13 @@
 // TODO: need to move additional methods here
-// const lodash = require("lodash");
-// const uuid = require("uuid");
-// var createProduct = function (productList) {
-//   var updatedProductList = lodash.cloneDeep(productList);
+// var uuid = require("uuid");
+//
+// function createProduct(productList, newProduct) {
+//   var updatedProductList = productList.slice(0);
+//
 //   var id = uuid.v4();
-//   lodash.set(newProduct, "createDate", createDate);
-//   lodash.set(newProduct, "productId", id);
+//   newProduct["productId"] = id;
+//   newProduct["createDate"] = createDate;
+//
 //   updatedProductList.push(newProduct);
 //   return updatedProductList;
 // };

@@ -3,7 +3,7 @@ require("dotenv").config();
 var express = require("express");
 
 var loggerMiddleware = require("./middlewares/logger.middleware");
-var requestValidation = require("./middlewares/requestValidation.middleware");
+var responseMiddleware = require("./middlewares/error.middleware");
 
 var userRoutes = require("./routes/user.routes");
 var productRoutes = require("./routes/product.routes");
@@ -22,7 +22,7 @@ app.get("/", function (request, response) {
   response.send("<h2>Welcome to the dirStore</h2>");
 });
 
-app.use(requestValidation);
+app.use(responseMiddleware.sendResponse);
 
 function start() {
   try {
