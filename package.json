@@ -4,8 +4,8 @@
   "description": "poynt internship",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "debug": "NODE_ENV=debug nodemon --inspect app.js"
+    "start": "env-cmd -f .env nodemon app.js",
+    "debug": "env-cmd -f .env.local nodemon --inspect app.js"
   },
   "repository": {
     "type": "git",
@@ -26,11 +26,12 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
+    "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "express-validation": "^3.0.8",
     "ff": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.21",
+    "method-override": "^3.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
