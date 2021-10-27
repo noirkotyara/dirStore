@@ -1,7 +1,6 @@
 var expressValidation = require("express-validation");
 var jwt = require("jsonwebtoken");
-
-var RESPONSE_CODE = require("./../enums/responseCodes");
+var responseMiddleware = require("message-catcher");
 
 function verifyToken(req, res, next) {
   if (req.method === "OPTIONS") {
@@ -12,7 +11,7 @@ function verifyToken(req, res, next) {
 
     if (!token)
       return next({
-        responseCode: RESPONSE_CODE.PROCESS_ERROR,
+        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
         data: "A token is required for authentication",
         status: 403,
       });
@@ -22,7 +21,7 @@ function verifyToken(req, res, next) {
     next();
   } catch (error) {
     next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
       data: error.message,
       status: 402,
     });

@@ -6,7 +6,7 @@ var createProduct = require("./helpers/createProduct");
 
 var isEmptySendError = require("./helpers/isEmptyProductResponse");
 
-var RESPONSE_CODE = require("./../../enums/responseCodes");
+var responseMiddleware = require("message-catcher");
 
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
@@ -17,7 +17,7 @@ var createItem = function (productInfo, next) {
     helpers.readAndWriteFileSync(productsFilePath, createProduct, productInfo);
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
       data: { data: newProduct, message: "Product is created successfully!" },
       status: 201,
     });
@@ -32,7 +32,7 @@ var getList = function (next) {
   stream.on("data", function (data) {
     var productsList = JSON.parse(data);
     return next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
       data: { data: productsList, message: "List of products" },
       status: 200,
     });
@@ -40,7 +40,7 @@ var getList = function (next) {
 
   stream.on("error", function () {
     next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
       data: "Cannot read the file with the list of products",
       status: 500,
     });
@@ -50,7 +50,7 @@ var getList = function (next) {
 var getItem = function (productId, next) {
   if (!productId)
     return next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
+      responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
       data: "Product id is missing",
       status: 404,
     });
@@ -66,7 +66,7 @@ var getItem = function (productId, next) {
   isEmptySendError(productId, foundedProduct, next);
 
   next({
-    responseCode: RESPONSE_CODE.SUCCESS,
+    responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
     data: {
       data: foundedProduct,
       message: "Product info with id: " + productId,
@@ -94,7 +94,7 @@ var updateItem = function (productId, productFields, next) {
   isEmptySendError(productId, preparedProduct, next);
 
   next({
-    responseCode: RESPONSE_CODE.SUCCESS,
+    responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
     data: {
       data: preparedProduct,
       message: "Product is successfully updated",
@@ -122,7 +122,7 @@ var deleteItem = function (productId, next) {
   isEmptySendError(productId, deletedItem, next);
 
   next({
-    responseCode: RESPONSE_CODE.SUCCESS,
+    responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
     data: {
       data: deletedItem,
       message: "Product is successfully deleted",

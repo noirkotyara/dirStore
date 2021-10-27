@@ -6,7 +6,7 @@ var uuid = require("uuid");
 var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
-var RESPONSE_CODE = require("./../../enums/responseCodes");
+var responseMiddleware = require("message-catcher");
 var deepClone = require("./../../helpers/deepClone");
 var objHelpers = require("../../helpers/objectHelpers");
 
@@ -45,14 +45,14 @@ function registerController(userCredentials, next) {
   function onCompleteHandler(err, userId) {
     if (err) {
       return next({
-        responseCode: RESPONSE_CODE.PROCESS_ERROR,
+        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
         data: err.message,
         status: 404,
       });
     }
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
       data: {
         data: userId,
         message: "User is registered " + userCredentials.email,
@@ -117,14 +117,14 @@ function loginController(userCredentials, next) {
   function onCompleteHandler(error, userInSystem) {
     if (error) {
       return next({
-        responseCode: RESPONSE_CODE.PROCESS_ERROR,
+        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
         data: error.message,
         status: 404,
       });
     }
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
       data: {
         data: userInSystem,
         message: "Login is successful for " + userCredentials.email,
@@ -154,7 +154,7 @@ function getProfileController(userId, next) {
 
     if (error) {
       return next({
-        responseCode: RESPONSE_CODE.PROCESS_ERROR,
+        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
         data: error.message,
         status: 404,
       });
@@ -163,7 +163,7 @@ function getProfileController(userId, next) {
     delete userInfo.password;
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
       data: {
         data: userInfo,
         message: "User info",
