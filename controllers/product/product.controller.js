@@ -1,12 +1,12 @@
 var fs = require("fs");
 var path = require("path");
 
-var helpers = require("./helpers/readAndWriteFileSync");
+var helpers = require("./../../helpers/readAndWriteFileSync");
 var saveProduct = require("./helpers/saveProduct");
 
 var myLodash = require("../../helpers/lodash");
 
-var responseMiddleware = require("message-catcher");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
@@ -17,7 +17,7 @@ var createProduct = function (productInfo, next) {
     helpers.readAndWriteFileSync(productsFilePath, saveProduct, productInfo);
 
     next({
-      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS__CREATED,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: { data: newProduct, message: "Product is created successfully!" },
     });
   } catch (e) {
@@ -31,14 +31,14 @@ var getProductsList = function (next) {
   stream.on("data", function (data) {
     var productsList = JSON.parse(data);
     return next({
-      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+      responseCode: RESPONSE_CODES.SUCCESS,
       data: { data: productsList, message: "List of products" },
     });
   });
 
   stream.on("error", function () {
     next({
-      responseCode: responseMiddleware.RESPONSE_CODES.S_ERROR_INTERNAL,
+      responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
       data: "Cannot read the file with the list of products",
     });
   });
@@ -47,7 +47,7 @@ var getProductsList = function (next) {
 var getProductById = function (productId, next) {
   if (!productId)
     return next({
-      responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Product id is missing",
     });
 
@@ -61,12 +61,12 @@ var getProductById = function (productId, next) {
 
   if (myLodash.isEmpty(foundedProduct))
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Product with id: " + productId + " is not existed",
     });
 
   next({
-    responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+    responseCode: RESPONSE_CODES.SUCCESS,
     data: {
       data: foundedProduct,
       message: "Product info with id: " + productId,
@@ -92,12 +92,12 @@ var updateProduct = function (productId, productFields, next) {
 
   if (myLodash.isEmpty(preparedProduct))
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Product with id: " + productId + " is not existed",
     });
 
   next({
-    responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+    responseCode: RESPONSE_CODES.SUCCESS,
     data: {
       data: preparedProduct,
       message: "Product is successfully updated",
@@ -123,12 +123,12 @@ var deleteProduct = function (productId, next) {
 
   if (myLodash.isEmpty(deletedProduct))
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Product with id: " + productId + " is not existed",
     });
 
   next({
-    responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+    responseCode: RESPONSE_CODES.SUCCESS,
     data: {
       data: deletedProduct,
       message: "Product is successfully deleted",

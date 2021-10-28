@@ -1,12 +1,12 @@
 var fs = require("fs");
 var path = require("path");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var bcrypt = require("bcrypt");
 var uuid = require("uuid");
 var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
-var responseMiddleware = require("message-catcher");
 var myLodash = require("../../helpers/lodash");
 
 var usersFilePath = path.resolve(__dirname, "./../../mock/Users.json");
@@ -29,7 +29,7 @@ function register(userCredentials, next) {
 
   function saveUser(password, usersList) {
     var preparedUser = {};
-    var updatedUsersList = myLodash.deepClone(JSON.parse(usersList));
+    var updatedUsersList = JSON.parse(usersList);
     var userId = uuid.v4();
 
     Object.assign(preparedUser, userCredentials, {
@@ -44,13 +44,13 @@ function register(userCredentials, next) {
   function onCompleteHandler(err, userId) {
     if (err) {
       return next({
-        responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: err.message,
       });
     }
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS__CREATED,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: userId,
         message: "User is registered " + userCredentials.email,
@@ -83,7 +83,7 @@ function login(userCredentials, next) {
 
   function comparePassword(user) {
     f.pass(user);
-    if (objHelpers.isEmpty(user))
+    if (myLodash.isEmpty(user))
       return f.fail("Email or Password are incorrect");
 
     bcrypt.compare(userCredentials.password, user.password, f.slot());
@@ -114,21 +114,20 @@ function login(userCredentials, next) {
   function onCompleteHandler(error, userInSystem) {
     if (error) {
       return next({
-        responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: error.message,
       });
     }
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS__CREATED,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: userInSystem,
         message: "Login is successful for " + userCredentials.email,
-      }
+      },
     });
   }
 }
-
 
 module.exports = {
   register: register,

@@ -19,5 +19,13 @@
     "password": "$2b$06$pn24EM5bW3p9m3ogfd.JxejZqaO3tTiH8rRhYCLn7NcluEhCp/gFq",
     "type": "USER",
     "userId": "00df6150-c28e-4e27-b86b-92d8f4572580"
+  },
+  {
+    "firstName": "Jack",
+    "lastName": "Doue",
+    "email": "j.doue@gmail.com",
+    "password": "$2b$06$QA/G17zWbmzAiVNgATcI7ejb8A82pg0LuzfPT17GCjpvwiaKhgNJ6",
+    "type": "USER",
+    "userId": "d4b1d1fb-183d-43c7-a0e8-6b28a9df8b52"
   }
 ]
