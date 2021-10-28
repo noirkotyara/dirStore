@@ -19,6 +19,9 @@ function caseReformator(value, caseFormat, f) {
       return reformatorByCase(item);
     });
   }
+  if (!f) {
+    return reformatedValue;
+  }
   f.pass(reformatedValue);
 }
 

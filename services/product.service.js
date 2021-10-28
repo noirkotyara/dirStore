@@ -3,6 +3,7 @@ var uuid = require("uuid");
 var pool = require("./connectDB");
 
 var myLodash = require("./../helpers/lodash");
+var caseReformator = require("./../helpers/caseReformator");
 
 function createTable(f) {
   var createTableQuery =
@@ -38,7 +39,7 @@ function getProductById(id, f) {
     id,
   ]);
 
-  pool.mysqlConnection.query(queryFormat, f.slot());
+  pool.mysqlConnection.query(queryFormat, f.slotPlain(2));
 }
 
 function getProductsList(f) {
@@ -48,9 +49,36 @@ function getProductsList(f) {
   pool.mysqlConnection.query(queryFormat, f.slot());
 }
 
+function updateProductById(id, fields, f) {
+  var reformatedFields = caseReformator(fields);
+
+  var fieldsToSet = Object.keys(reformatedFields)
+    .map(function (key) {
+      return key + " = ?";
+    })
+    .join(", ");
+  var valuesToSet = Object.values(reformatedFields);
+
+  var updateQuery = "UPDATE Product SET " + fieldsToSet + " WHERE id = ?";
+
+  var queryFormat = pool.mysqlConnection.format(updateQuery, [valuesToSet, id]);
+
+  pool.mysqlConnection.query(queryFormat, f.slotPlain(2));
+}
+
+function deleteProductById(id, f) {
+  var deleteQuery = "DELETE FROM Product WHERE id = ?";
+
+  var queryFormat = pool.mysqlConnection.format(deleteQuery, [id]);
+
+  pool.mysqlConnection.query(queryFormat, f.slotPlain(2));
+}
+
 module.exports = {
   createTable: createTable,
   saveProduct: saveProduct,
   getProductById: getProductById,
   getProductsList: getProductsList,
+  updateProductById: updateProductById,
+  deleteProductById: deleteProductById,
 };

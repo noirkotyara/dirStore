@@ -1,5 +1,6 @@
 function isEmpty(value) {
   if (!value) return true;
+
   if (isObject(value)) {
     return Object.keys(value).length === 0;
   }

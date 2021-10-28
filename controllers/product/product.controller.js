@@ -5,12 +5,9 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 var CASE_FORMATS = require("./../../enums/formatCase");
 
 var myLodash = require("../../helpers/lodash");
-var readAndWriteFileSync = require("./../../helpers/readAndWriteFileSync");
 var caseReformator = require("./../../helpers/caseReformator");
 
 var productService = require("../../services/product.service");
-
-var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
 var createProduct = function(productInfo, next) {
   try {
@@ -28,15 +25,20 @@ var createProduct = function(productInfo, next) {
         productService.getProductById(arguments[0], f);
       },
       function() {
-        caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
+        var error = arguments[0];
+        var results = arguments[1];
+        if (error) {
+          return f.fail(error);
+        }
+        caseReformator(results, CASE_FORMATS.SNAKE, f);
       }
     ).onComplete(onCompleteHandler);
 
-    function onCompleteHandler(err, createdProduct) {
-      if (err) {
+    function onCompleteHandler(error, createdProduct) {
+      if (error) {
         return next({
-          responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-          data: err.message,
+          responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+          data: error,
         });
       }
 
@@ -64,11 +66,11 @@ var getProductsList = function(next) {
     }
   ).onComplete(onCompleteHandler);
 
-  function onCompleteHandler(err, productList) {
-    if (err) {
+  function onCompleteHandler(error, productList) {
+    if (error) {
       return next({
-        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: err.message,
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
       });
     }
 
@@ -83,31 +85,38 @@ var getProductsList = function(next) {
 };
 
 var getProductById = function(productId, next) {
-  //TODO: fix
   var f = ff(
     this,
     function() {
-      getProductById(productId, f);
+      productService.getProductById(productId, f);
     },
-    function() {
-      caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
-    }
+    checkAndPrepareProduct
   ).onComplete(onCompleteHandler);
 
-  function onCompleteHandler(error, foundedProduct) {
+  function checkAndPrepareProduct() {
+    var error = arguments[0];
+    var results = arguments[1];
+
     if (error) {
-      return next({
-        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error.message,
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
       });
     }
 
-    console.log(foundedProduct);
-    if (myLodash.isEmpty(foundedProduct)) {
-      next({
+    if (myLodash.isEmpty(results)) {
+      return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: "Product with id: " + productId + " is not existed",
       });
+    }
+
+    caseReformator(results, CASE_FORMATS.SNAKE, f);
+  }
+
+  function onCompleteHandler(error, foundedProduct) {
+    if (error) {
+      return next(error);
     }
 
     next({
@@ -121,65 +130,107 @@ var getProductById = function(productId, next) {
 };
 
 var updateProduct = function(productId, productFields, next) {
-  var preparedProduct = {};
-
-  var updateProduct = function(productsList) {
-    var updatedProducts = productsList.map(function(item) {
-      if (item.productId === productId) {
-        Object.assign(preparedProduct, item, productFields);
-        return preparedProduct;
-      }
-      return item;
-    });
-    return updatedProducts;
-  };
-
-  readAndWriteFileSync(productsFilePath, updateProduct);
-
-  if (myLodash.isEmpty(preparedProduct))
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Product with id: " + productId + " is not existed",
-    });
-
-  next({
-    responseCode: RESPONSE_CODES.SUCCESS,
-    data: {
-      data: preparedProduct,
-      message: "Product is successfully updated",
+  var f = ff(
+    this,
+    function() {
+      productService.updateProductById(productId, productFields, f);
     },
-  });
+    checkAndGetProduct,
+    checkAndPrepareProduct
+  ).onComplete(onCompleteHandler);
+
+  function checkAndGetProduct() {
+    var error = arguments[0];
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+
+    productService.getProductById(productId, f);
+  }
+
+  function checkAndPrepareProduct() {
+    var error = arguments[0];
+    var results = arguments[1];
+
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(results)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Product with id: " + productId + " is not existed",
+      });
+    }
+
+    caseReformator(results, CASE_FORMATS.SNAKE, f);
+  }
+
+  function onCompleteHandler(error, updatedProduct) {
+    if (error) {
+      return next(error);
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: updatedProduct[0],
+        message: "Product updated with id: " + productId,
+      },
+    });
+  }
 };
 
 var deleteProduct = function(productId, next) {
-  var deletedProduct = {};
-
-  var deleteProduct = function(productList) {
-    var restItems = productList.filter(function(currentProduct) {
-      var isDeletedProduct = currentProduct.productId === productId;
-      if (isDeletedProduct) {
-        deletedProduct = currentProduct;
-      }
-      return !isDeletedProduct;
-    });
-    return restItems;
-  };
-
-  readAndWriteFileSync(productsFilePath, deleteProduct);
-
-  if (myLodash.isEmpty(deletedProduct))
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Product with id: " + productId + " is not existed",
-    });
-
-  next({
-    responseCode: RESPONSE_CODES.SUCCESS,
-    data: {
-      data: deletedProduct,
-      message: "Product is successfully deleted",
+  var f = ff(
+    this,
+    function() {
+      productService.getProductById(productId, f);
     },
-  });
+    checkAndDeleteProduct
+  ).onComplete(onCompleteHandler);
+
+  function checkAndDeleteProduct() {
+    var error = arguments[0];
+    var result = arguments[1];
+    caseReformator(result, CASE_FORMATS.SNAKE, f);
+
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(result)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Product with id: " + productId + " is not existed",
+      });
+    }
+
+    productService.deleteProductById(productId, f);
+  }
+
+  function onCompleteHandler(error, deletedProduct) {
+    if (error) {
+      return next(error);
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: deletedProduct[0],
+        message: "Product deleted successfully!",
+      },
+    });
+  }
 };
 
 module.exports = {
