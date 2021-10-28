@@ -1,5 +1,6 @@
 var expressValidation = require("express-validation");
 var jwt = require("jsonwebtoken");
+
 var responseMiddleware = require("message-catcher");
 
 function verifyToken(req, res, next) {
@@ -11,9 +12,8 @@ function verifyToken(req, res, next) {
 
     if (!token)
       return next({
-        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
+        responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__UNAUTHORIZED,
         data: "A token is required for authentication",
-        status: 403,
       });
 
     req.user = jwt.verify(token, process.env.JWT_S);
@@ -21,9 +21,8 @@ function verifyToken(req, res, next) {
     next();
   } catch (error) {
     next({
-      responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
+      responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__FORBIDDEN,
       data: error.message,
-      status: 402,
     });
   }
 }
