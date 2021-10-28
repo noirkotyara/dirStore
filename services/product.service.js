@@ -2,7 +2,7 @@ var uuid = require("uuid");
 
 var pool = require("./connectDB");
 
-var deepClone = require("./../helpers/deepClone");
+var myLodash = require("./../helpers/lodash");
 
 function createTable(f) {
   var createTableQuery =
@@ -19,7 +19,7 @@ function createTable(f) {
 }
 
 function saveProduct(product, f) {
-  var productClone = deepClone(product);
+  var productClone = myLodash.deepClone(product);
   var productId = uuid.v4();
   productClone.id = productId;
 
@@ -50,7 +50,7 @@ function getProductsList(f) {
 
 module.exports = {
   createTable: createTable,
-  saveItem: saveProduct,
-  getItemById: getProductById,
-  getList: getProductsList,
+  saveProduct: saveProduct,
+  getProductById: getProductById,
+  getProductsList: getProductsList,
 };

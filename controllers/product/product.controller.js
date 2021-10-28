@@ -11,20 +11,20 @@ var productService = require("../../services/product.service");
 
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
-var createProduct = function(productInfo, next) {
+var createProduct = function (productInfo, next) {
   try {
     var newProduct = productInfo;
 
     var f = ff(
       this,
-      function() {
+      function () {
         productService.createTable(f);
       },
-      function() {
-        productService.saveItem(newProduct, f);
+      function () {
+        productService.saveProduct(newProduct, f);
       },
-      function() {
-        productService.getItemById(arguments[0], f);
+      function () {
+        productService.getProductById(arguments[0], f);
       }
     ).onComplete(onCompleteHandler);
 
@@ -33,7 +33,7 @@ var createProduct = function(productInfo, next) {
         return next({
           //db error
           responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-          data: err.message
+          data: err.message,
         });
       }
 
@@ -43,7 +43,6 @@ var createProduct = function(productInfo, next) {
           data: createdProduct[0],
           message: "Product is created successfully",
         },
-
       });
     }
   } catch (e) {
@@ -52,9 +51,9 @@ var createProduct = function(productInfo, next) {
 };
 
 var getProductsList = function (next) {
-  var f = ff(this, function() {
-    productService.getList(f)
-  }).onComplete(onCompleteHandler)
+  var f = ff(this, function () {
+    productService.getProductsList(f);
+  }).onComplete(onCompleteHandler);
 
   function onCompleteHandler(err, productList) {
     if (err) {
@@ -75,7 +74,7 @@ var getProductsList = function (next) {
   }
 };
 
-var getProductById = function(productId, next) {
+var getProductById = function (productId, next) {
   if (!productId)
     return next({
       responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
@@ -86,7 +85,7 @@ var getProductById = function(productId, next) {
 
   var productsList = JSON.parse(data);
 
-  var foundedProduct = productsList.find(function(item) {
+  var foundedProduct = productsList.find(function (item) {
     return item.productId === productId;
   });
 
@@ -105,7 +104,7 @@ var getProductById = function(productId, next) {
   });
 };
 
-var updateProduct = function(productId, productFields, next) {
+var updateProduct = function (productId, productFields, next) {
   var preparedProduct = {};
 
   var updateProduct = function (productsList) {
@@ -136,11 +135,11 @@ var updateProduct = function(productId, productFields, next) {
   });
 };
 
-var deleteProduct = function(productId, next) {
+var deleteProduct = function (productId, next) {
   var deletedProduct = {};
 
-  var deleteProduct = function(productList) {
-    var restItems = productList.filter(function(currentProduct) {
+  var deleteProduct = function (productList) {
+    var restItems = productList.filter(function (currentProduct) {
       var isDeletedProduct = currentProduct.productId === productId;
       if (isDeletedProduct) {
         deletedProduct = currentProduct;
