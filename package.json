@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/noirkotyara/dirStore#readme",
   "dependencies": {
+    "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",

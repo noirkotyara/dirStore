@@ -7,6 +7,7 @@ var loggerMiddleware = require("./middlewares/logger.middleware");
 
 var userRoutes = require("./routes/user.routes");
 var productRoutes = require("./routes/product.routes");
+var delivererRoutes = require("./routes/deliverer.routes");
 var adminRoutes = require("./routes/admin.routes");
 
 var app = express();
@@ -25,6 +26,7 @@ app.use(loggerMiddleware);
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
 app.use("/product", productRoutes);
+app.use("/deliverer", delivererRoutes);
 
 app.get("/", function (request, response) {
   response.send("<h2>Welcome to the dirStore</h2>");

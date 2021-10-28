@@ -1,6 +1,6 @@
 var uuid = require("uuid");
 
-var createProduct = function (productList, newProduct) {
+var saveProduct = function (productList, newProduct) {
   var updatedProductList = productList.slice(0);
 
   newProduct["productId"] = uuid.v4();
@@ -10,4 +10,4 @@ var createProduct = function (productList, newProduct) {
   return updatedProductList;
 };
 
-module.exports = createProduct;
+module.exports = saveProduct;

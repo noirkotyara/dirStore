@@ -1,18 +1,17 @@
 var fs = require("fs");
 var path = require("path");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var bcrypt = require("bcrypt");
 var uuid = require("uuid");
 var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
-var responseMiddleware = require("message-catcher");
-var deepClone = require("./../../helpers/deepClone");
-var objHelpers = require("../../helpers/objectHelpers");
+var myLodash = require("../../helpers/lodash");
 
 var usersFilePath = path.resolve(__dirname, "./../../mock/Users.json");
 
-function registerController(userCredentials, next) {
+function register(userCredentials, next) {
   var saltRounds = 6;
 
   var f = ff(this, hashPassword, getUsersList, saveUser).onComplete(
@@ -30,7 +29,7 @@ function registerController(userCredentials, next) {
 
   function saveUser(password, usersList) {
     var preparedUser = {};
-    var updatedUsersList = deepClone(JSON.parse(usersList));
+    var updatedUsersList = JSON.parse(usersList);
     var userId = uuid.v4();
 
     Object.assign(preparedUser, userCredentials, {
@@ -45,24 +44,22 @@ function registerController(userCredentials, next) {
   function onCompleteHandler(err, userId) {
     if (err) {
       return next({
-        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: err.message,
-        status: 404,
       });
     }
 
     next({
-      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: userId,
         message: "User is registered " + userCredentials.email,
       },
-      status: 201,
     });
   }
 }
 
-function loginController(userCredentials, next) {
+function login(userCredentials, next) {
   var f = ff(
     this,
     getUserByEmail,
@@ -86,7 +83,7 @@ function loginController(userCredentials, next) {
 
   function comparePassword(user) {
     f.pass(user);
-    if (objHelpers.isEmpty(user))
+    if (myLodash.isEmpty(user))
       return f.fail("Email or Password are incorrect");
 
     bcrypt.compare(userCredentials.password, user.password, f.slot());
@@ -106,7 +103,7 @@ function loginController(userCredentials, next) {
       },
       process.env.JWT_S,
       {
-        expiresIn: "60000ms",
+        expiresIn: "1h",
       }
     );
     Object.assign(userWithToken, user, { token: token });
@@ -117,64 +114,22 @@ function loginController(userCredentials, next) {
   function onCompleteHandler(error, userInSystem) {
     if (error) {
       return next({
-        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: error.message,
-        status: 404,
       });
     }
 
     next({
-      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: userInSystem,
         message: "Login is successful for " + userCredentials.email,
       },
-      status: 201,
-    });
-  }
-}
-
-function getProfileController(userId, next) {
-  var f = ff(this, getUsers, findUser).onComplete(onCompleteHandler);
-
-  function getUsers() {
-    fs.readFile(usersFilePath, "utf8", f.slot());
-  }
-
-  function findUser(data) {
-    var usersList = JSON.parse(data);
-    var foundedUser = usersList.find(function (currentUser) {
-      return currentUser.userId === userId;
-    });
-    f.pass(foundedUser);
-  }
-
-  function onCompleteHandler(error, foundedUser) {
-    var userInfo = deepClone(foundedUser);
-
-    if (error) {
-      return next({
-        responseCode: responseMiddleware.RESPONSE_CODES.PROCESS_ERROR,
-        data: error.message,
-        status: 404,
-      });
-    }
-
-    delete userInfo.password;
-
-    next({
-      responseCode: responseMiddleware.RESPONSE_CODES.SUCCESS,
-      data: {
-        data: userInfo,
-        message: "User info",
-      },
-      status: 201,
     });
   }
 }
 
 module.exports = {
-  register: registerController,
-  login: loginController,
-  getProfileInfo: getProfileController,
+  register: register,
+  login: login,
 };
