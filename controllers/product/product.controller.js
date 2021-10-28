@@ -1,8 +1,8 @@
-var fs = require("fs");
 var path = require("path");
 
 var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
+var CASE_FORMATS = require("./../../enums/formatCase");
 
 var myLodash = require("../../helpers/lodash");
 var readAndWriteFileSync = require("./../../helpers/readAndWriteFileSync");
@@ -28,7 +28,7 @@ var createProduct = function(productInfo, next) {
         productService.getProductById(arguments[0], f);
       },
       function() {
-        caseReformator(arguments[0], f);
+        caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
       }
     ).onComplete(onCompleteHandler);
 
@@ -60,7 +60,7 @@ var getProductsList = function(next) {
       productService.getProductsList(f);
     },
     function() {
-      caseReformator(arguments[0], f);
+      caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
     }
   ).onComplete(onCompleteHandler);
 
@@ -90,7 +90,7 @@ var getProductById = function(productId, next) {
       getProductById(productId, f);
     },
     function() {
-      caseReformator(arguments[0], f);
+      caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
     }
   ).onComplete(onCompleteHandler);
 
@@ -101,9 +101,10 @@ var getProductById = function(productId, next) {
         data: error.message,
       });
     }
+
     console.log(foundedProduct);
     if (myLodash.isEmpty(foundedProduct)) {
-      return next({
+      next({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: "Product with id: " + productId + " is not existed",
       });
