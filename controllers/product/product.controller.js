@@ -6,32 +6,35 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
 var readAndWriteFileSync = require("./../../helpers/readAndWriteFileSync");
+var caseReformator = require("./../../helpers/caseReformator");
 
 var productService = require("../../services/product.service");
 
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 
-var createProduct = function (productInfo, next) {
+var createProduct = function(productInfo, next) {
   try {
     var newProduct = productInfo;
 
     var f = ff(
       this,
-      function () {
+      function() {
         productService.createTable(f);
       },
-      function () {
+      function() {
         productService.saveProduct(newProduct, f);
       },
-      function () {
+      function() {
         productService.getProductById(arguments[0], f);
+      },
+      function() {
+        caseReformator(arguments[0], f);
       }
     ).onComplete(onCompleteHandler);
 
     function onCompleteHandler(err, createdProduct) {
       if (err) {
         return next({
-          //db error
           responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
           data: err.message,
         });
@@ -50,15 +53,20 @@ var createProduct = function (productInfo, next) {
   }
 };
 
-var getProductsList = function (next) {
-  var f = ff(this, function () {
-    productService.getProductsList(f);
-  }).onComplete(onCompleteHandler);
+var getProductsList = function(next) {
+  var f = ff(
+    this,
+    function() {
+      productService.getProductsList(f);
+    },
+    function() {
+      caseReformator(arguments[0], f);
+    }
+  ).onComplete(onCompleteHandler);
 
   function onCompleteHandler(err, productList) {
     if (err) {
       return next({
-        //db error
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
         data: err.message,
       });
@@ -74,41 +82,48 @@ var getProductsList = function (next) {
   }
 };
 
-var getProductById = function (productId, next) {
-  if (!productId)
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Product id is missing",
-    });
-
-  var data = fs.readFileSync(productsFilePath, "utf8");
-
-  var productsList = JSON.parse(data);
-
-  var foundedProduct = productsList.find(function (item) {
-    return item.productId === productId;
-  });
-
-  if (myLodash.isEmpty(foundedProduct))
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Product with id: " + productId + " is not existed",
-    });
-
-  next({
-    responseCode: RESPONSE_CODES.SUCCESS,
-    data: {
-      data: foundedProduct,
-      message: "Product info with id: " + productId,
+var getProductById = function(productId, next) {
+  //TODO: fix
+  var f = ff(
+    this,
+    function() {
+      getProductById(productId, f);
     },
-  });
+    function() {
+      caseReformator(arguments[0], f);
+    }
+  ).onComplete(onCompleteHandler);
+
+  function onCompleteHandler(error, foundedProduct) {
+    if (error) {
+      return next({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error.message,
+      });
+    }
+    console.log(foundedProduct);
+    if (myLodash.isEmpty(foundedProduct)) {
+      return next({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Product with id: " + productId + " is not existed",
+      });
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: foundedProduct[0],
+        message: "Product info with id: " + productId,
+      },
+    });
+  }
 };
 
-var updateProduct = function (productId, productFields, next) {
+var updateProduct = function(productId, productFields, next) {
   var preparedProduct = {};
 
-  var updateProduct = function (productsList) {
-    var updatedProducts = productsList.map(function (item) {
+  var updateProduct = function(productsList) {
+    var updatedProducts = productsList.map(function(item) {
       if (item.productId === productId) {
         Object.assign(preparedProduct, item, productFields);
         return preparedProduct;
@@ -118,7 +133,7 @@ var updateProduct = function (productId, productFields, next) {
     return updatedProducts;
   };
 
-  helpers.readAndWriteFileSync(productsFilePath, updateProduct);
+  readAndWriteFileSync(productsFilePath, updateProduct);
 
   if (myLodash.isEmpty(preparedProduct))
     return next({
@@ -135,11 +150,11 @@ var updateProduct = function (productId, productFields, next) {
   });
 };
 
-var deleteProduct = function (productId, next) {
+var deleteProduct = function(productId, next) {
   var deletedProduct = {};
 
-  var deleteProduct = function (productList) {
-    var restItems = productList.filter(function (currentProduct) {
+  var deleteProduct = function(productList) {
+    var restItems = productList.filter(function(currentProduct) {
       var isDeletedProduct = currentProduct.productId === productId;
       if (isDeletedProduct) {
         deletedProduct = currentProduct;
