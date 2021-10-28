@@ -1,11 +1,11 @@
 var fs = require("fs");
 var path = require("path");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
-var RESPONSE_CODE = require("./../../enums/responseCodes");
+var helpers = require("./../../helpers/readAndWriteFileSync");
+var myLodash = require("../../helpers/lodash");
 
-var helpers = require("../../helpers/readAndWriteFileSync");
 var saveDeliverer = require("./helpers/saveDeliverer");
-var objHelpers = require("../../helpers/lodash");
 
 var deliverersFilePath = path.resolve(
   __dirname,
@@ -23,7 +23,7 @@ var createDeliverer = function (delivererInfo, next) {
     );
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS__CREATED,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: newDeliverer,
         message: "Deliverer is created successfully!",
@@ -31,7 +31,7 @@ var createDeliverer = function (delivererInfo, next) {
     });
   } catch (error) {
     next({
-      responseCode: RESPONSE_CODE.S_ERROR_INTERNAL,
+      responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
       data: error.message,
     });
   }
@@ -43,14 +43,14 @@ var getDelivererList = function (next) {
   stream.on("data", function (data) {
     var deliverersList = JSON.parse(data);
     return next({
-      responseCode: RESPONSE_CODE.SUCCESS,
+      responseCode: RESPONSE_CODES.SUCCESS,
       data: { data: deliverersList, message: "List of deliverers" },
     });
   });
 
   stream.on("error", function () {
     next({
-      responseCode: RESPONSE_CODE.S_ERROR_INTERNAL,
+      responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
       data: "Cannot read the file with the list of deliverers",
     });
   });
@@ -59,7 +59,7 @@ var getDelivererList = function (next) {
 var getDelivererById = function (delivererId, next) {
   if (!delivererId)
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Deliverer id is missing",
     });
 
@@ -71,14 +71,14 @@ var getDelivererById = function (delivererId, next) {
     return item.delivererId === delivererId;
   });
 
-  if (objHelpers.isEmpty(foundedDeliverer))
+  if (myLodash.isEmpty(foundedDeliverer))
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Deliverer with id: " + delivererId + " is not existed",
     });
 
   next({
-    responseCode: RESPONSE_CODE.SUCCESS,
+    responseCode: RESPONSE_CODES.SUCCESS,
     data: {
       data: foundedDeliverer,
       message: "Deliverer info with id: " + delivererId,
@@ -101,14 +101,14 @@ var updateDeliverer = function (delivererId, delivererFields, next) {
 
   helpers.readAndWriteFileSync(deliverersFilePath, updateDeliverer);
 
-  if (objHelpers.isEmpty(preparedDeliverer))
+  if (myLodash.isEmpty(preparedDeliverer))
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Deliverer with id: " + delivererId + " is not existed",
     });
 
   next({
-    responseCode: RESPONSE_CODE.SUCCESS,
+    responseCode: RESPONSE_CODES.SUCCESS,
     data: {
       data: preparedDeliverer,
       message: "Deliverer is successfully updated",
@@ -119,26 +119,26 @@ var updateDeliverer = function (delivererId, delivererFields, next) {
 var deleteDeliverer = function (delivererId, next) {
   var deletedDeliverer = {};
 
-  var deleteDeliverer = function (productList) {
-    return productList.filter(function (currentDeliverer) {
-      var isDeletedProduct = currentDeliverer.productId === delivererId;
-      if (isDeletedProduct) {
+  var deleteDeliverer = function (delivererList) {
+    return delivererList.filter(function (currentDeliverer) {
+      var isDeletedDeliverer = currentDeliverer.delivererId === delivererId;
+      if (isDeletedDeliverer) {
         deletedDeliverer = currentDeliverer;
       }
-      return !isDeletedProduct;
+      return !isDeletedDeliverer;
     });
   };
 
   helpers.readAndWriteFileSync(deliverersFilePath, deleteDeliverer);
 
-  if (objHelpers.isEmpty(deletedDeliverer))
+  if (myLodash.isEmpty(deletedDeliverer))
     return next({
-      responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
       data: "Deliverer with id: " + delivererId + " is not existed",
     });
 
   next({
-    responseCode: RESPONSE_CODE.SUCCESS,
+    responseCode: RESPONSE_CODES.SUCCESS,
     data: {
       data: deletedDeliverer,
       message: "Deliverer is successfully deleted",

@@ -2,7 +2,7 @@ var ff = require("ff");
 var fs = require("fs");
 var path = require("path");
 
-var RESPONSE_CODE = require("./../../enums/responseCodes");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
 
@@ -45,7 +45,7 @@ function getUserProfile(userId, next) {
   function onCompleteHandler(error, foundedUser) {
     if (error) {
       return next({
-        responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: error.message,
       });
     }
@@ -55,7 +55,7 @@ function getUserProfile(userId, next) {
     delete userInfo.password;
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS__CREATED,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: userInfo,
         message: "User info",

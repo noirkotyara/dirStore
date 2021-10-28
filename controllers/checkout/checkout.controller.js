@@ -3,8 +3,7 @@ var path = require("path");
 
 var uuid = require("uuid");
 var ff = require("ff");
-
-var RESPONSE_CODE = require("./../../enums/responseCodes");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
 var getRandomItem = require("./helpers/getRandomItem");
@@ -121,13 +120,13 @@ var makeCheckoutByRandom = function (userId, next) {
   function onCompleteHandler(error, savedCheckout) {
     if (error) {
       return next({
-        responseCode: RESPONSE_CODE.P_ERROR__NOT_FOUND,
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: error.message,
       });
     }
 
     next({
-      responseCode: RESPONSE_CODE.SUCCESS__CREATED,
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: savedCheckout,
         message: "Your random checkout is generated",

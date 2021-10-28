@@ -1,9 +1,9 @@
 require("dotenv").config();
+var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
 
 var loggerMiddleware = require("./middlewares/logger.middleware");
-var responseMiddleware = require("./middlewares/error.middleware");
 
 var userRoutes = require("./routes/user.routes");
 var productRoutes = require("./routes/product.routes");

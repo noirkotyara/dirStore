@@ -1,7 +1,7 @@
 var expressValidation = require("express-validation");
 var jwt = require("jsonwebtoken");
 
-var RESPONSE_CODE = require("./../enums/responseCodes");
+var responseMiddleware = require("message-catcher");
 
 function verifyToken(req, res, next) {
   if (req.method === "OPTIONS") {
@@ -12,7 +12,7 @@ function verifyToken(req, res, next) {
 
     if (!token)
       return next({
-        responseCode: RESPONSE_CODE.P_ERROR__UNAUTHORIZED,
+        responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__UNAUTHORIZED,
         data: "A token is required for authentication",
       });
 
@@ -21,7 +21,7 @@ function verifyToken(req, res, next) {
     next();
   } catch (error) {
     next({
-      responseCode: RESPONSE_CODE.P_ERROR__FORBIDDEN,
+      responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__FORBIDDEN,
       data: error.message,
     });
   }

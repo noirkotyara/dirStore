@@ -32,7 +32,8 @@
     "express-validation": "^3.0.8",
     "ff": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
-    "method-override": "^3.0.0",
+    "lodash": "^4.17.21",
+    "message-catcher": "github:noirkotyara/message-catcher",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
