@@ -7,8 +7,7 @@ var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
 var RESPONSE_CODE = require("./../../enums/responseCodes");
-var deepClone = require("./../../helpers/deepClone");
-var objHelpers = require("../../helpers/objectHelpers");
+var objHelpers = require("../../helpers/lodash");
 
 var usersFilePath = path.resolve(__dirname, "./../../mock/Users.json");
 
@@ -30,7 +29,7 @@ function register(userCredentials, next) {
 
   function saveUser(password, usersList) {
     var preparedUser = {};
-    var updatedUsersList = deepClone(JSON.parse(usersList));
+    var updatedUsersList = objHelpers.deepClone(JSON.parse(usersList));
     var userId = uuid.v4();
 
     Object.assign(preparedUser, userCredentials, {

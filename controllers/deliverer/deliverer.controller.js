@@ -5,7 +5,7 @@ var RESPONSE_CODE = require("./../../enums/responseCodes");
 
 var helpers = require("../../helpers/readAndWriteFileSync");
 var saveDeliverer = require("./helpers/saveDeliverer");
-var objHelpers = require("./../../helpers/objectHelpers");
+var objHelpers = require("../../helpers/lodash");
 
 var deliverersFilePath = path.resolve(
   __dirname,

@@ -5,7 +5,7 @@ var RESPONSE_CODE = require("./../../enums/responseCodes");
 
 var helpers = require("../../helpers/readAndWriteFileSync");
 var saveProduct = require("./helpers/saveProduct");
-var objHelpers = require("./../../helpers/objectHelpers");
+var objHelpers = require("../../helpers/lodash");
 
 var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
 

@@ -4,8 +4,7 @@ var path = require("path");
 
 var RESPONSE_CODE = require("./../../enums/responseCodes");
 
-var deepClone = require("./../../helpers/deepClone");
-var objectHelpers = require("../../helpers/objectHelpers");
+var myLodash = require("../../helpers/lodash");
 
 var brokenUsersFilePath = path.resolve(
   __dirname,
@@ -37,7 +36,7 @@ function getUserProfile(userId, next) {
       return currentUser.userId === userId;
     });
 
-    if (objectHelpers.isEmpty(foundedUser)) {
+    if (myLodash.isEmpty(foundedUser)) {
       f.fail({ message: "User is not founded" });
     }
     f.pass(foundedUser);
@@ -51,7 +50,7 @@ function getUserProfile(userId, next) {
       });
     }
 
-    var userInfo = deepClone(foundedUser);
+    var userInfo = myLodash.deepClone(foundedUser);
 
     delete userInfo.password;
 
