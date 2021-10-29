@@ -1,11 +1,13 @@
 var uuid = require("uuid");
-
+var ff = require("ff");
 var pool = require("./connectDB");
 
 var myLodash = require("./../helpers/lodash");
 var caseReformator = require("./../helpers/caseReformator");
 
-function createTable(f) {
+function createTable() {
+  var f = ff(this);
+
   var createTableQuery =
     "CREATE TABLE IF NOT EXISTS Product\n" +
     "(\n" +
@@ -19,19 +21,23 @@ function createTable(f) {
   pool.mysqlConnection.query(createTableQuery, f.wait());
 }
 
-function saveProduct(product, f) {
+function saveProduct(product, callback) {
   var productClone = myLodash.deepClone(product);
-  var productId = uuid.v4();
-  productClone.id = productId;
+  productClone.id = uuid.v4();
 
   var insertQuery = "INSERT INTO Product SET ?";
   var queryFormat = pool.mysqlConnection.format(insertQuery, productClone);
-  pool.mysqlConnection.query(queryFormat, f.wait());
-
-  f.pass(productId);
+  pool.mysqlConnection.query(queryFormat, callback);
 }
 
-function getProductById(id, f) {
+function getLastCreatedProduct(callback) {
+  var selectLastInsertedQuery =
+    "SELECT * FROM Product WHERE id= LAST_INSERT_ID()";
+
+  pool.mysqlConnection.query(selectLastInsertedQuery, callback);
+}
+
+function getProductById(id, callback) {
   var selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
   var queryFormat = pool.mysqlConnection.format(selectQuery, [
     "Product",
@@ -39,17 +45,17 @@ function getProductById(id, f) {
     id,
   ]);
 
-  pool.mysqlConnection.query(queryFormat, f.slotPlain(2));
+  pool.mysqlConnection.query(queryFormat, callback);
 }
 
-function getProductsList(f) {
+function getProductsList(callback) {
   var selectQuery = "SELECT * FROM ??";
   var queryFormat = pool.mysqlConnection.format(selectQuery, ["Product"]);
 
-  pool.mysqlConnection.query(queryFormat, f.slot());
+  pool.mysqlConnection.query(queryFormat, callback);
 }
 
-function updateProductById(id, fields, f) {
+function updateProductById(id, fields, callback) {
   var reformatedFields = caseReformator(fields);
 
   var fieldsToSet = Object.keys(reformatedFields)
@@ -63,15 +69,15 @@ function updateProductById(id, fields, f) {
 
   var queryFormat = pool.mysqlConnection.format(updateQuery, [valuesToSet, id]);
 
-  pool.mysqlConnection.query(queryFormat, f.slotPlain(2));
+  pool.mysqlConnection.query(queryFormat, callback);
 }
 
-function deleteProductById(id, f) {
+function deleteProductById(id, callback) {
   var deleteQuery = "DELETE FROM Product WHERE id = ?";
 
   var queryFormat = pool.mysqlConnection.format(deleteQuery, [id]);
 
-  pool.mysqlConnection.query(queryFormat, f.slotPlain(2));
+  pool.mysqlConnection.query(queryFormat, callback);
 }
 
 module.exports = {
@@ -81,4 +87,5 @@ module.exports = {
   getProductsList: getProductsList,
   updateProductById: updateProductById,
   deleteProductById: deleteProductById,
+  getLastCreatedProduct: getLastCreatedProduct,
 };

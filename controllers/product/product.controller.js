@@ -1,7 +1,6 @@
-var path = require("path");
-
 var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
+
 var CASE_FORMATS = require("./../../enums/formatCase");
 
 var myLodash = require("../../helpers/lodash");
@@ -9,28 +8,24 @@ var caseReformator = require("./../../helpers/caseReformator");
 
 var productService = require("../../services/product.service");
 
-var createProduct = function(productInfo, next) {
+var createProduct = function (productInfo, next) {
   try {
     var newProduct = productInfo;
 
     var f = ff(
       this,
-      function() {
-        productService.createTable(f);
+      productService.createTable,
+      function () {
+        productService.saveProduct(newProduct, f.wait());
       },
-      function() {
-        productService.saveProduct(newProduct, f);
+      function () {
+        productService.getLastCreatedProduct(f.slotPlain(2));
       },
-      function() {
-        productService.getProductById(arguments[0], f);
-      },
-      function() {
-        var error = arguments[0];
-        var results = arguments[1];
+      function (error, results) {
         if (error) {
           return f.fail(error);
         }
-        caseReformator(results, CASE_FORMATS.SNAKE, f);
+        f.pass(caseReformator(results, CASE_FORMATS.SNAKE));
       }
     ).onComplete(onCompleteHandler);
 
@@ -55,14 +50,14 @@ var createProduct = function(productInfo, next) {
   }
 };
 
-var getProductsList = function(next) {
+var getProductsList = function (next) {
   var f = ff(
     this,
-    function() {
-      productService.getProductsList(f);
+    function () {
+      productService.getProductsList(f.slot());
     },
-    function() {
-      caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
+    function (productsList) {
+      f.pass(caseReformator(productsList, CASE_FORMATS.SNAKE));
     }
   ).onComplete(onCompleteHandler);
 
@@ -84,19 +79,16 @@ var getProductsList = function(next) {
   }
 };
 
-var getProductById = function(productId, next) {
+var getProductById = function (productId, next) {
   var f = ff(
     this,
-    function() {
-      productService.getProductById(productId, f);
+    function () {
+      productService.getProductById(productId, f.slotPlain(2));
     },
     checkAndPrepareProduct
   ).onComplete(onCompleteHandler);
 
-  function checkAndPrepareProduct() {
-    var error = arguments[0];
-    var results = arguments[1];
-
+  function checkAndPrepareProduct(error, results) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
@@ -111,7 +103,7 @@ var getProductById = function(productId, next) {
       });
     }
 
-    caseReformator(results, CASE_FORMATS.SNAKE, f);
+    f.pass(caseReformator(results, CASE_FORMATS.SNAKE));
   }
 
   function onCompleteHandler(error, foundedProduct) {
@@ -129,18 +121,21 @@ var getProductById = function(productId, next) {
   }
 };
 
-var updateProduct = function(productId, productFields, next) {
+var updateProduct = function (productId, productFields, next) {
   var f = ff(
     this,
-    function() {
-      productService.updateProductById(productId, productFields, f);
+    function () {
+      productService.updateProductById(
+        productId,
+        productFields,
+        f.slotPlain(2)
+      );
     },
     checkAndGetProduct,
     checkAndPrepareProduct
   ).onComplete(onCompleteHandler);
 
-  function checkAndGetProduct() {
-    var error = arguments[0];
+  function checkAndGetProduct(error) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
@@ -148,13 +143,10 @@ var updateProduct = function(productId, productFields, next) {
       });
     }
 
-    productService.getProductById(productId, f);
+    productService.getProductById(productId, f.slotPlain(2));
   }
 
-  function checkAndPrepareProduct() {
-    var error = arguments[0];
-    var results = arguments[1];
-
+  function checkAndPrepareProduct(error, results) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
@@ -169,7 +161,7 @@ var updateProduct = function(productId, productFields, next) {
       });
     }
 
-    caseReformator(results, CASE_FORMATS.SNAKE, f);
+    f.pass(caseReformator(results, CASE_FORMATS.SNAKE));
   }
 
   function onCompleteHandler(error, updatedProduct) {
@@ -187,19 +179,17 @@ var updateProduct = function(productId, productFields, next) {
   }
 };
 
-var deleteProduct = function(productId, next) {
+var deleteProduct = function (productId, next) {
   var f = ff(
     this,
-    function() {
-      productService.getProductById(productId, f);
+    function () {
+      productService.getProductById(productId, f.slotPlain(2));
     },
     checkAndDeleteProduct
   ).onComplete(onCompleteHandler);
 
-  function checkAndDeleteProduct() {
-    var error = arguments[0];
-    var result = arguments[1];
-    caseReformator(result, CASE_FORMATS.SNAKE, f);
+  function checkAndDeleteProduct(error, result) {
+    f.pass(caseReformator(result, CASE_FORMATS.SNAKE));
 
     if (error) {
       return f.fail({
@@ -215,7 +205,7 @@ var deleteProduct = function(productId, next) {
       });
     }
 
-    productService.deleteProductById(productId, f);
+    productService.deleteProductById(productId, f.slotPlain(2));
   }
 
   function onCompleteHandler(error, deletedProduct) {

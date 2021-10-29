@@ -1,3 +1,5 @@
+var ff = require("ff");
+
 var myLodash = require("./lodash");
 
 var CASE_FORMATS = require("./../enums/formatCase");
@@ -5,7 +7,7 @@ var CASE_FORMATS = require("./../enums/formatCase");
 /** helps reformat snake_case in lowerCamelCase
  * arg[1]: caseFormat: SNAKE | LOWER_CAMEL**/
 
-function caseReformator(value, caseFormat, f) {
+function caseReformator(value, caseFormat) {
   var reformatedValue;
 
   var reformatorByCase =
@@ -19,10 +21,8 @@ function caseReformator(value, caseFormat, f) {
       return reformatorByCase(item);
     });
   }
-  if (!f) {
-    return reformatedValue;
-  }
-  f.pass(reformatedValue);
+
+  return reformatedValue;
 }
 
 function camelToSnakeCase(obj) {
