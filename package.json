@@ -6,7 +6,7 @@
   "scripts": {
     "start": "env-cmd -f .env nodemon app.js",
     "debug": "env-cmd -f .env.local nodemon --inspect app.js",
-    "test": "jest *.test.js --forceExit"
+    "test": "env-cmd -f .env.local jest *.test.js --forceExit"
   },
   "repository": {
     "type": "git",
