@@ -11,13 +11,9 @@ var checkoutController = require("./../controllers/checkout/checkout.controller"
 router.post("/register", [requesterTypeMiddleware], function (req, res, next) {
   authController.register(req.body, next);
 });
-router.post(
-  "/login",
-  [requesterTypeMiddleware, authMiddleware.loginUserValidation],
-  function (req, res, next) {
-    authController.login(req.body, next);
-  }
-);
+router.post("/login", [requesterTypeMiddleware], function (req, res, next) {
+  authController.login(req.body, next);
+});
 
 router.get("/profile", authMiddleware.verifyToken, function (req, res, next) {
   userController.getUserProfile(req.user.userId, next);

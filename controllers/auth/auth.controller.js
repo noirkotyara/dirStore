@@ -15,7 +15,7 @@ var usersFilePath = path.resolve(__dirname, "./../../mock/Users.json");
 function register(userCredentials, next) {
   var saltRounds = 6;
 
-  var f = ff(this, hashPassword, checkAndSaveUser).onComplete(
+  var f = ff(this, hashPassword, checkAndSaveUser, checkUserSaving).onComplete(
     onCompleteHandler
   );
 
@@ -34,15 +34,22 @@ function register(userCredentials, next) {
 
     preparedUserCredentials["password"] = hashedPassword;
 
-    authService.registerUser(preparedUserCredentials, f.slot());
+    authService.registerUser(preparedUserCredentials, f.slotPlain(2));
   }
 
-  function onCompleteHandler(err, savedUser) {
-    if (err) {
-      return next({
+  function checkUserSaving(error, savedUser) {
+    if (error) {
+      return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: err,
+        data: error,
       });
+    }
+    f.pass(savedUser);
+  }
+
+  function onCompleteHandler(error, savedUser) {
+    if (error) {
+      return next(error);
     }
 
     next({
@@ -58,62 +65,63 @@ function register(userCredentials, next) {
 function login(userCredentials, next) {
   var f = ff(
     this,
-    getUserByEmail,
+    function () {
+      authService.findUserByEmail(userCredentials.email, f.slotPlain(2));
+    },
     comparePassword,
     checkIsValid,
     createToken
   ).onComplete(onCompleteHandler);
 
-  function getUserByEmail() {
-    try {
-      var data = fs.readFileSync(usersFilePath, "utf8");
-      var usersList = JSON.parse(data);
-      var foundedUser = usersList.find(function (currentUser) {
-        return currentUser.email === userCredentials.email;
+  function comparePassword(error, user) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
       });
-      f.pass(foundedUser);
-    } catch (e) {
-      return f.fail(e.message);
     }
-  }
-
-  function comparePassword(user) {
     f.pass(user);
-    if (myLodash.isEmpty(user))
-      return f.fail("Email or Password are incorrect");
-
     bcrypt.compare(userCredentials.password, user.password, f.slot());
   }
 
   function checkIsValid(user, isValid) {
-    return isValid ? f.pass(user) : f.fail("Email or Password are incorrect");
+    if (!isValid) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
+        data: "Email or Password are incorrect",
+      });
+    }
+    f.pass(user);
   }
 
   function createToken(user) {
-    var userWithToken = {};
+    try {
+      var userWithToken = myLodash.omit(user, "password");
 
-    var token = jwt.sign(
-      {
-        userId: user.userId,
-        email: user.email,
-        type: user.type,
-      },
-      process.env.JWT_S,
-      {
-        expiresIn: "1h",
-      }
-    );
-    Object.assign(userWithToken, user, { token: token });
-    delete userWithToken.password;
-    f.pass(userWithToken);
+      userWithToken.token = jwt.sign(
+        {
+          userId: user.userId,
+          email: user.email,
+          type: user.type,
+        },
+        process.env.JWT_S,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      f.pass(userWithToken);
+    } catch (error) {
+      f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        message: "Cannot create token",
+      });
+    }
   }
 
   function onCompleteHandler(error, userInSystem) {
     if (error) {
-      return next({
-        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: error.message,
-      });
+      return next(error);
     }
 
     next({

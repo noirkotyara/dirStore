@@ -43,6 +43,19 @@ var userModel = seqConnection.define(
     timestamps: true,
     createdAt: "created_date",
     updatedAt: "updated_date",
+    //TODO: fix with method save
+    // setterMethods: {
+    //   username: function (value) {
+    //     console.log(value);
+    //     console.log(this.getDataValue("email").split("@")[0]);
+    //     if (!this.getDataValue("username")) {
+    //       this.setDataValue(
+    //         "username",
+    //         this.getDataValue("email").split("@")[0]
+    //       );
+    //     }
+    //   },
+    // },
   }
 );
 
