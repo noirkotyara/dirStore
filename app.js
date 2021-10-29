@@ -16,13 +16,13 @@ var app = express();
 var pool = require("./services/connectDB");
 var seqConnection = require("./services/connectDBSequelize").seqConnection;
 
-pool.mysqlConnection.connect(function (error) {
-  if (error)
-    console.log(
-      "MYSQL2 adapter: Connection Failed!" + JSON.stringify(error, undefined, 2)
-    );
-  else console.log("MYSQL2 adapter: Connection Established Successfully ");
-});
+// pool.mysqlConnection.connect(function (error) {
+//   if (error)
+//     console.log(
+//       "MYSQL2 adapter: Connection Failed!" + JSON.stringify(error, undefined, 2)
+//     );
+//   else console.log("MYSQL2 adapter: Connection Established Successfully ");
+// });
 
 app.use(express.json());
 app.use(loggerMiddleware);

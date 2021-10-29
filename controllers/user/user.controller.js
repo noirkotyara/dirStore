@@ -19,7 +19,8 @@ function getUserProfile(userId, next) {
   );
 
   function getUsers() {
-    // f.slotPlain for throwing error and other result arguments in the chain of function
+    // f.slotPlain for throwing error and other result arguments
+    // in the chain of function
     fs.readFile(brokenUsersFilePath, "utf8", f.slotPlain(2));
   }
 
@@ -32,7 +33,7 @@ function getUserProfile(userId, next) {
 
   function findUser(data) {
     var usersList = JSON.parse(data);
-    var foundedUser = usersList.find(function (currentUser) {
+    var foundedUser = usersList.find(function(currentUser) {
       return currentUser.userId === userId;
     });
 

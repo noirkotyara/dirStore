@@ -8,13 +8,9 @@ var authController = require("./../controllers/auth/auth.controller");
 var userController = require("./../controllers/user/user.controller");
 var checkoutController = require("./../controllers/checkout/checkout.controller");
 
-router.post(
-  "/register",
-  [requesterTypeMiddleware, authMiddleware.registerUserValidation],
-  function (req, res, next) {
-    authController.register(req.body, next);
-  }
-);
+router.post("/register", [requesterTypeMiddleware], function (req, res, next) {
+  authController.register(req.body, next);
+});
 router.post(
   "/login",
   [requesterTypeMiddleware, authMiddleware.loginUserValidation],

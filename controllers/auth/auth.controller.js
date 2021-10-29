@@ -3,56 +3,52 @@ var path = require("path");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var bcrypt = require("bcrypt");
-var uuid = require("uuid");
 var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
 var myLodash = require("../../helpers/lodash");
+
+var authService = require("../../services/auth.service");
 
 var usersFilePath = path.resolve(__dirname, "./../../mock/Users.json");
 
 function register(userCredentials, next) {
   var saltRounds = 6;
 
-  var f = ff(this, hashPassword, getUsersList, saveUser).onComplete(
+  var f = ff(this, hashPassword, checkAndSaveUser).onComplete(
     onCompleteHandler
   );
 
   function hashPassword() {
-    return bcrypt.hash(userCredentials.password, saltRounds, f.slot());
+    return bcrypt.hash(userCredentials.password, saltRounds, f.slotPlain(2));
   }
 
-  function getUsersList(password) {
-    f.pass(password);
-    fs.readFile(usersFilePath, "utf8", f.slot());
+  function checkAndSaveUser(error, hashedPassword) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: "It is not possible to hash password",
+      });
+    }
+    var preparedUserCredentials = myLodash.deepClone(userCredentials);
+
+    preparedUserCredentials["password"] = hashedPassword;
+
+    authService.registerUser(preparedUserCredentials, f.slot());
   }
 
-  function saveUser(password, usersList) {
-    var preparedUser = {};
-    var updatedUsersList = JSON.parse(usersList);
-    var userId = uuid.v4();
-
-    Object.assign(preparedUser, userCredentials, {
-      userId: userId,
-      password: password,
-    });
-    updatedUsersList.push(preparedUser);
-    fs.writeFile(usersFilePath, JSON.stringify(updatedUsersList), f.wait());
-    f.pass(userId);
-  }
-
-  function onCompleteHandler(err, userId) {
+  function onCompleteHandler(err, savedUser) {
     if (err) {
       return next({
-        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: err.message,
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: err,
       });
     }
 
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
-        data: userId,
+        data: savedUser,
         message: "User is registered " + userCredentials.email,
       },
     });

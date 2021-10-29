@@ -13,8 +13,23 @@ function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+function omit(obj, values) {
+  return Object.keys(obj)
+    .filter(function (key) {
+      return !values.includes(key);
+    })
+    .reduce(function (acc, k) {
+      acc[k] = obj[k];
+      return acc;
+    }, {});
+}
+
 function isObject(obj) {
   return Object.prototype.toString.call(obj) === "[object Object]";
+}
+
+function isString(obj) {
+  return Object.prototype.toString.call(obj) === "[object String]";
 }
 
 function isArray(obj) {
@@ -26,4 +41,6 @@ module.exports = {
   deepClone: deepClone,
   isObject: isObject,
   isArray: isArray,
+  isString: isString,
+  omit: omit,
 };
