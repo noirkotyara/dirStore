@@ -1,5 +1,3 @@
-var ff = require("ff");
-
 var myLodash = require("./lodash");
 
 var CASE_FORMATS = require("./../enums/formatCase");

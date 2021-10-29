@@ -1,5 +1,3 @@
-var fs = require("fs");
-var path = require("path");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var bcrypt = require("bcrypt");
@@ -10,41 +8,24 @@ var myLodash = require("../../helpers/lodash");
 
 var authService = require("../../services/auth.service");
 
-var usersFilePath = path.resolve(__dirname, "./../../mock/Users.json");
-
 function register(userCredentials, next) {
-  var saltRounds = 6;
+  var f = ff(this, createUser, checkUserCreate).onComplete(onCompleteHandler);
 
-  var f = ff(this, hashPassword, checkAndSaveUser, checkUserSaving).onComplete(
-    onCompleteHandler
-  );
-
-  function hashPassword() {
-    return bcrypt.hash(userCredentials.password, saltRounds, f.slotPlain(2));
+  function createUser() {
+    authService.createUser(userCredentials, f.slotPlain(2));
   }
 
-  function checkAndSaveUser(error, hashedPassword) {
-    if (error) {
-      return f.fail({
-        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: "It is not possible to hash password",
-      });
-    }
-    var preparedUserCredentials = myLodash.deepClone(userCredentials);
-
-    preparedUserCredentials["password"] = hashedPassword;
-
-    authService.registerUser(preparedUserCredentials, f.slotPlain(2));
-  }
-
-  function checkUserSaving(error, savedUser) {
+  function checkUserCreate(error, savedUser) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
       });
     }
-    f.pass(savedUser);
+    var preparedUser = myLodash.omit(savedUser.dataValues, "password");
+    console.log("preparedUser", savedUser);
+
+    f.pass(preparedUser);
   }
 
   function onCompleteHandler(error, savedUser) {
@@ -80,7 +61,7 @@ function login(userCredentials, next) {
         data: error,
       });
     }
-    f.pass(user);
+    f.pass(user.dataValues);
     bcrypt.compare(userCredentials.password, user.password, f.slot());
   }
 

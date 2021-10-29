@@ -1,4 +1,6 @@
 var seq = require("sequelize");
+var bcrypt = require("bcrypt");
+
 var seqConnection = require("../services/connectDBSequelize").seqConnection;
 
 var userModel = seqConnection.define(
@@ -43,22 +45,16 @@ var userModel = seqConnection.define(
     timestamps: true,
     createdAt: "created_date",
     updatedAt: "updated_date",
-    //TODO: fix with method save
-    // setterMethods: {
-    //   username: function (value) {
-    //     console.log(value);
-    //     console.log(this.getDataValue("email").split("@")[0]);
-    //     if (!this.getDataValue("username")) {
-    //       this.setDataValue(
-    //         "username",
-    //         this.getDataValue("email").split("@")[0]
-    //       );
-    //     }
-    //   },
-    // },
+    hooks: {
+      beforeCreate: function (model) {
+        if (!model.username) {
+          model.username = model.email.split("@")[0];
+        }
+        var salt = bcrypt.genSaltSync();
+        model.password = bcrypt.hashSync(model.password, salt);
+      },
+    },
   }
 );
-
-console.log(userModel === seqConnection.models.User); // true
 
 module.exports = userModel;
