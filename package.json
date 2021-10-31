@@ -33,6 +33,7 @@
     "express-validation": "^3.0.8",
     "ff": "^0.2.2",
     "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.12",
     "lodash": "^4.17.21",
     "message-catcher": "github:noirkotyara/message-catcher",
     "mysql2": "^2.3.2",

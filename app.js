@@ -2,7 +2,8 @@ require("dotenv").config();
 var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
-var ff = require("ff");
+
+var testConnectionToDB = require("./helpers/connectDB");
 
 var loggerMiddleware = require("./middlewares/logger.middleware");
 
@@ -14,15 +15,14 @@ var adminRoutes = require("./routes/admin.routes");
 var app = express();
 
 var pool = require("./services/connectDB");
-var seqConnection = require("./services/connectDBSequelize").seqConnection;
 
-// pool.mysqlConnection.connect(function (error) {
-//   if (error)
-//     console.log(
-//       "MYSQL2 adapter: Connection Failed!" + JSON.stringify(error, undefined, 2)
-//     );
-//   else console.log("MYSQL2 adapter: Connection Established Successfully ");
-// });
+pool.mysqlConnection.connect(function (error) {
+  if (error)
+    console.log(
+      "MYSQL2 adapter: Connection Failed!" + JSON.stringify(error, undefined, 2)
+    );
+  else console.log("MYSQL2 adapter: Connection Established Successfully ");
+});
 
 app.use(express.json());
 app.use(loggerMiddleware);
@@ -38,27 +38,10 @@ app.get("/", function (request, response) {
 
 app.use(responseMiddleware.sendResponse);
 
-function testConnectionToDBbySequelize() {
-  console.log("SEQUELIZE: Checking database connection...");
-  var f = ff(this, tryToConnect).onComplete(onCompleteHandler);
-
-  function tryToConnect() {
-    seqConnection.authenticate().then(f.wait());
-  }
-
-  function onCompleteHandler(error) {
-    if (error) {
-      console.log("SEQUELIZE: Unable to connect to the database:", error);
-      console.log(error.message);
-      return process.exit(1);
-    }
-    console.log("SEQUELIZE: Database connection OK!");
-  }
-}
-
 function start() {
   try {
-    testConnectionToDBbySequelize();
+    testConnectionToDB.testConnectionToDBsequelize();
+    testConnectionToDB.testConnectionToDBknex();
     console.log(
       "SERVER: Connection is established successfully on port " +
         process.env.PORT
