@@ -2,7 +2,7 @@ var fs = require("fs");
 var path = require("path");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
-var helpers = require("./../../helpers/readAndWriteFileSync");
+var readAndWriteFileSync = require("./../../helpers/readAndWriteFileSync");
 var myLodash = require("../../helpers/lodash");
 
 var saveDeliverer = require("./helpers/saveDeliverer");
@@ -16,11 +16,7 @@ var createDeliverer = function (delivererInfo, next) {
   try {
     var newDeliverer = delivererInfo;
 
-    helpers.readAndWriteFileSync(
-      deliverersFilePath,
-      saveDeliverer,
-      delivererInfo
-    );
+    readAndWriteFileSync(deliverersFilePath, saveDeliverer, delivererInfo);
 
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
@@ -99,7 +95,7 @@ var updateDeliverer = function (delivererId, delivererFields, next) {
     });
   };
 
-  helpers.readAndWriteFileSync(deliverersFilePath, updateDeliverer);
+  readAndWriteFileSync(deliverersFilePath, updateDeliverer);
 
   if (myLodash.isEmpty(preparedDeliverer))
     return next({
@@ -129,7 +125,7 @@ var deleteDeliverer = function (delivererId, next) {
     });
   };
 
-  helpers.readAndWriteFileSync(deliverersFilePath, deleteDeliverer);
+  readAndWriteFileSync(deliverersFilePath, deleteDeliverer);
 
   if (myLodash.isEmpty(deletedDeliverer))
     return next({
