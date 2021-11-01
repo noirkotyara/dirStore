@@ -12,6 +12,16 @@ var adminRoutes = require("./routes/admin.routes");
 
 var app = express();
 
+var pool = require("./services/connectDB");
+
+pool.mysqlConnection.connect(function (error) {
+  if (error) {
+    console.log("Connection Failed!" + JSON.stringify(error, undefined, 2));
+    return;
+  }
+  console.log("Connection Established Successfully");
+});
+
 app.use(express.json());
 app.use(loggerMiddleware);
 

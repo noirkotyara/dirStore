@@ -100,6 +100,7 @@ function login(userCredentials, next) {
       {
         userId: user.userId,
         email: user.email,
+        type: user.type,
       },
       process.env.JWT_S,
       {
