@@ -39,6 +39,7 @@ var createProduct = function (productInfo, next) {
           data: "Product is not founded",
         });
       }
+
       var reformatedProduct = productReformator.inCamel(results[0]);
       f.pass(reformatedProduct);
     }

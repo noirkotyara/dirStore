@@ -1,5 +1,6 @@
-function inSnake(obj) {
+function inCamel(obj) {
   return {
+    id: obj.id,
     name: obj.name,
     description: obj.description,
     price: obj.price,
@@ -9,8 +10,9 @@ function inSnake(obj) {
   };
 }
 
-function inCamel(obj) {
+function inSnake(obj) {
   return {
+    id: obj.id,
     name: obj.name,
     description: obj.description,
     price: obj.price,
