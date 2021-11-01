@@ -6,6 +6,7 @@ var createDelivererValidation = {
     description: expressValidation.Joi.string().max(150).required(),
     phone: expressValidation.Joi.string().length(12),
     address: expressValidation.Joi.string().required(),
+    deliveryPrice: expressValidation.Joi.number().default(0),
   }),
 };
 
@@ -15,6 +16,7 @@ var updateDelivererValidation = {
     description: expressValidation.Joi.string().max(150),
     phone: expressValidation.Joi.string().length(12),
     address: expressValidation.Joi.string(),
+    deliveryPrice: expressValidation.Joi.number(),
   }),
 };
 

@@ -23,7 +23,6 @@ function register(userCredentials, next) {
       });
     }
     var preparedUser = myLodash.omit(savedUser.dataValues, "password");
-    console.log("preparedUser", savedUser);
 
     f.pass(preparedUser);
   }

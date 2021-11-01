@@ -1,145 +1,240 @@
 var fs = require("fs");
-var path = require("path");
+
+var uuid = require("uuid");
+var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
-var readAndWriteFileSync = require("./../../helpers/readAndWriteFileSync");
 var myLodash = require("../../helpers/lodash");
 
-var saveDeliverer = require("./helpers/saveDeliverer");
+var caseReformator = require("./../../helpers/caseReformator");
 
-var deliverersFilePath = path.resolve(
-  __dirname,
-  "./../../mock/Deliverers.json"
-);
+var delivererService = require("./../../services/deliverer.service");
 
 var createDeliverer = function (delivererInfo, next) {
-  try {
-    var newDeliverer = delivererInfo;
+  var delivererId = uuid.v4();
+  var preparedDelivererInfo = myLodash.deepClone(delivererInfo);
+  preparedDelivererInfo.id = delivererId;
 
-    readAndWriteFileSync(deliverersFilePath, saveDeliverer, delivererInfo);
+  var f = ff(
+    this,
+    function () {
+      delivererService.createDeliverer(preparedDelivererInfo, f.slotPlain(2));
+    },
+    checkAndGetDeliverer,
+    checkAndReformateCaseOfResult
+  ).onComplete(onCompleteHandler);
+
+  function checkAndGetDeliverer(error) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
+      });
+    }
+    delivererService.getDelivererById(delivererId, f.slotPlain(2));
+  }
+
+  function checkAndReformateCaseOfResult(error, deliverers) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
+      });
+    }
+    f.pass(caseReformator(deliverers[0], "SNAKE"));
+  }
+
+  function onCompleteHandler(error, createdDeliverer) {
+    if (error) {
+      next(error);
+    }
 
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
-        data: newDeliverer,
+        data: createdDeliverer,
         message: "Deliverer is created successfully!",
       },
-    });
-  } catch (error) {
-    next({
-      responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-      data: error.message,
     });
   }
 };
 
 var getDelivererList = function (next) {
-  var stream = fs.createReadStream(deliverersFilePath, "utf8");
+  var f = ff(
+    this,
+    function () {
+      delivererService.getDelivererList(f.slotPlain(2));
+    },
+    checkAndReformateCaseOfList
+  ).onComplete(onCompleteHandler);
 
-  stream.on("data", function (data) {
-    var deliverersList = JSON.parse(data);
-    return next({
-      responseCode: RESPONSE_CODES.SUCCESS,
-      data: { data: deliverersList, message: "List of deliverers" },
-    });
-  });
+  function checkAndReformateCaseOfList(error, res) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    f.pass(caseReformator(res, "SNAKE"));
+  }
 
-  stream.on("error", function () {
+  function onCompleteHandler(error, res) {
+    if (error) {
+      next(error);
+    }
+
     next({
-      responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-      data: "Cannot read the file with the list of deliverers",
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+      data: {
+        data: res,
+        message: "Deliverer is created successfully!",
+      },
     });
-  });
+  }
 };
 
 var getDelivererById = function (delivererId, next) {
-  if (!delivererId)
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Deliverer id is missing",
-    });
-
-  var data = fs.readFileSync(deliverersFilePath, "utf8");
-
-  var productsList = JSON.parse(data);
-
-  var foundedDeliverer = productsList.find(function (item) {
-    return item.delivererId === delivererId;
-  });
-
-  if (myLodash.isEmpty(foundedDeliverer))
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Deliverer with id: " + delivererId + " is not existed",
-    });
-
-  next({
-    responseCode: RESPONSE_CODES.SUCCESS,
-    data: {
-      data: foundedDeliverer,
-      message: "Deliverer info with id: " + delivererId,
+  var f = ff(
+    this,
+    function () {
+      delivererService.getDelivererById(delivererId, f.slotPlain(2));
     },
-  });
+    checkAndReformateCaseOfResult
+  ).onComplete(onCompleteHandler);
+
+  function checkAndReformateCaseOfResult(error, deliverers) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    if (myLodash.isEmpty(deliverers)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Deliverer with id: " + delivererId + " is not existed",
+      });
+    }
+    f.pass(caseReformator(deliverers[0], "SNAKE"));
+  }
+
+  function onCompleteHandler(error, foundedDeliverer) {
+    if (error) {
+      return next(error);
+    }
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: foundedDeliverer,
+        message: "Deliverer info with id: " + delivererId,
+      },
+    });
+  }
 };
 
 var updateDeliverer = function (delivererId, delivererFields, next) {
-  var preparedDeliverer = {};
-
-  var updateDeliverer = function (productsList) {
-    return productsList.map(function (item) {
-      if (item.delivererId === delivererId) {
-        Object.assign(preparedDeliverer, item, delivererFields);
-        return preparedDeliverer;
-      }
-      return item;
-    });
-  };
-
-  readAndWriteFileSync(deliverersFilePath, updateDeliverer);
-
-  if (myLodash.isEmpty(preparedDeliverer))
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Deliverer with id: " + delivererId + " is not existed",
-    });
-
-  next({
-    responseCode: RESPONSE_CODES.SUCCESS,
-    data: {
-      data: preparedDeliverer,
-      message: "Deliverer is successfully updated",
+  var f = ff(
+    this,
+    function () {
+      delivererService.updateDelivererById(
+        delivererId,
+        delivererFields,
+        f.slotPlain(2)
+      );
     },
-  });
+    checkAndGetUpdatedDeliverer,
+    checkAndReformateCaseOfResult
+  ).onComplete(onCompleteHandler);
+
+  function checkAndGetUpdatedDeliverer(error, deliverers) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    if (myLodash.isEmpty(deliverers)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Deliverer with id: " + delivererId + " is not existed",
+      });
+    }
+    delivererService.getDelivererById(delivererId, f.slotPlain(2));
+  }
+
+  function checkAndReformateCaseOfResult(error, deliverers) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    f.pass(caseReformator(deliverers[0], "SNAKE"));
+  }
+
+  function onCompleteHandler(error, updatedDeliverer) {
+    if (error) {
+      return next(error);
+    }
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: updatedDeliverer,
+        message: "Deliverer with id: " + delivererId + " successfully updated!",
+      },
+    });
+  }
 };
 
 var deleteDeliverer = function (delivererId, next) {
-  var deletedDeliverer = {};
-
-  var deleteDeliverer = function (delivererList) {
-    return delivererList.filter(function (currentDeliverer) {
-      var isDeletedDeliverer = currentDeliverer.delivererId === delivererId;
-      if (isDeletedDeliverer) {
-        deletedDeliverer = currentDeliverer;
-      }
-      return !isDeletedDeliverer;
-    });
-  };
-
-  readAndWriteFileSync(deliverersFilePath, deleteDeliverer);
-
-  if (myLodash.isEmpty(deletedDeliverer))
-    return next({
-      responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-      data: "Deliverer with id: " + delivererId + " is not existed",
-    });
-
-  next({
-    responseCode: RESPONSE_CODES.SUCCESS,
-    data: {
-      data: deletedDeliverer,
-      message: "Deliverer is successfully deleted",
+  var f = ff(
+    this,
+    function () {
+      delivererService.getDelivererById(delivererId, f.slotPlain(2));
     },
-  });
+    checkAnddeleteDeliverer,
+    checkAndReformateCaseOfResult
+  ).onComplete(onCompleteHandler);
+
+  function checkAnddeleteDeliverer(error, deliverers) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    if (myLodash.isEmpty(deliverers)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Deliverer with id: " + delivererId + " is not existed",
+      });
+    }
+    f.pass(deliverers[0]);
+    delivererService.deleteDelivererById(delivererId, f.wait());
+  }
+
+  function checkAndReformateCaseOfResult(deletedDeliverer, error) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    f.pass(caseReformator(deletedDeliverer, "SNAKE"));
+  }
+
+  function onCompleteHandler(error, deletedDeliverer) {
+    if (error) {
+      return next(error);
+    }
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: deletedDeliverer,
+        message: "Deliverer with id: " + delivererId + " successfully deleted!",
+      },
+    });
+  }
 };
 
 module.exports = {

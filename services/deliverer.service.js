@@ -1,0 +1,47 @@
+var caseReformator = require("./../helpers/caseReformator");
+const knex = require("knex");
+
+var knexConnection = require("./../services/connectDBKnex").knexConnection;
+
+function createDeliverer(delivererInfo, callback) {
+  var reformatedDelivererInfo = caseReformator(delivererInfo, "LOWER_CAMEL");
+
+  return knexConnection
+    .insert(reformatedDelivererInfo)
+    .into("Deliverer")
+    .asCallback(callback);
+}
+
+function getDelivererById(delivererId, callback) {
+  return knexConnection("Deliverer")
+    .where({ id: delivererId })
+    .asCallback(callback);
+}
+
+function getDelivererList(callback) {
+  return knexConnection.select().from("Deliverer").asCallback(callback);
+}
+
+function updateDelivererById(id, fields, callback) {
+  var preparedFields = caseReformator(fields, "LOWER_CAMEL");
+
+  return knexConnection("Deliverer")
+    .where({ id: id })
+    .update(preparedFields)
+    .asCallback(callback);
+}
+
+function deleteDelivererById(id, callback) {
+  return knexConnection("Deliverer")
+    .where({ id: id })
+    .del()
+    .asCallback(callback);
+}
+
+module.exports = {
+  createDeliverer: createDeliverer,
+  getDelivererById: getDelivererById,
+  getDelivererList: getDelivererList,
+  updateDelivererById: updateDelivererById,
+  deleteDelivererById: deleteDelivererById,
+};
