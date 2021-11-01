@@ -60,6 +60,12 @@ function login(userCredentials, next) {
         data: error,
       });
     }
+    if (!user) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "User is not registered",
+      });
+    }
     f.pass(user.dataValues);
     bcrypt.compare(userCredentials.password, user.password, f.slot());
   }

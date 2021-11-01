@@ -80,6 +80,19 @@ function deleteProductById(id, callback) {
   pool.mysqlConnection.query(queryFormat, callback);
 }
 
+function isProductExist(productId, callback) {
+  var isExistQuery =
+    "SELECT *\n" +
+    "FROM Product\n" +
+    "WHERE EXISTS (SELECT *\n" +
+    "              FROM Product\n" +
+    "              WHERE Product.id = ?);";
+
+  var queryFormat = pool.mysqlConnection.format(isExistQuery, [productId]);
+
+  pool.mysqlConnection.query(queryFormat, callback);
+}
+
 module.exports = {
   createTable: createTable,
   saveProduct: saveProduct,
@@ -88,4 +101,5 @@ module.exports = {
   updateProductById: updateProductById,
   deleteProductById: deleteProductById,
   getLastCreatedProduct: getLastCreatedProduct,
+  isProductExist: isProductExist,
 };

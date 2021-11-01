@@ -1,5 +1,4 @@
 var caseReformator = require("./../helpers/caseReformator");
-const knex = require("knex");
 
 var knexConnection = require("./../services/connectDBKnex").knexConnection;
 
@@ -38,10 +37,28 @@ function deleteDelivererById(id, callback) {
     .asCallback(callback);
 }
 
+function getProductDeliverers(productId, callback) {
+  return knexConnection("Deliverer")
+    .select(
+      "Deliverer.id",
+      "Deliverer.name",
+      "Deliverer.description",
+      "Deliverer.delivery_price",
+      "Deliverer.phone",
+      "Deliverer.address"
+    )
+    .join("Provider", "Deliverer.id", "=", "Provider.deliverer_id")
+
+    .where("Provider.product_id", "=", productId.toString())
+
+    .asCallback(callback);
+}
+
 module.exports = {
   createDeliverer: createDeliverer,
   getDelivererById: getDelivererById,
   getDelivererList: getDelivererList,
   updateDelivererById: updateDelivererById,
   deleteDelivererById: deleteDelivererById,
+  getProductDeliverers: getProductDeliverers,
 };
