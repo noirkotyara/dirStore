@@ -22,12 +22,18 @@ var providerModel = seqConnection.define(
       field: "deliverer_id",
       require: true,
     },
+    createdAt: {
+      field: "created_date",
+      type: seq.DataTypes.DATE,
+    },
+    updatedAt: {
+      field: "updated_date",
+      type: seq.DataTypes.DATE,
+    },
   },
   {
     tableName: "Provider",
     timestamps: true,
-    createdAt: "created_date",
-    updatedAt: "updated_date",
     hooks: {},
   }
 );

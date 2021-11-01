@@ -1,10 +1,9 @@
 var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
-var CASE_FORMATS = require("./../../enums/formatCase");
-
 var myLodash = require("./../../helpers/lodash");
-var caseReformator = require("./../../helpers/caseReformator");
+var providerReformator = require("./helpers/providerCaseReformator");
+var delivererReformator = require("./../deliverer/helpers/delivererCaseReformator");
 
 var providerService = require("../../services/provider.service");
 var delivererService = require("../../services/deliverer.service");
@@ -13,12 +12,12 @@ var productService = require("../../services/product.service");
 var createProvider = function (providerInfo, next) {
   var f = ff(
     this,
-    checkDelivererAndProductExistance,
+    checkDelivererAndProductExistence,
     checkAndCreateProvider,
     checkProviderCreate
   ).onComplete(onCompleteHandler);
 
-  function checkDelivererAndProductExistance() {
+  function checkDelivererAndProductExistence() {
     delivererService.getDelivererById(providerInfo.delivererId, f.slotPlain(2));
     productService.isProductExist(providerInfo.productId, f.slotPlain(2));
   }
@@ -48,59 +47,51 @@ var createProvider = function (providerInfo, next) {
         data: "Product with id: " + providerInfo.productId + " is not existed",
       });
     }
-    providerService.createProvider(providerInfo, f.slotPlain(2));
+    providerService.createProvider(providerInfo, f.slotPlain(1));
   }
 
-  function checkProviderCreate(error, providers) {
+  function checkProviderCreate(error) {
     if (error) {
-      console.log(error);
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
       });
     }
-    f.pass(caseReformator(providers[0], CASE_FORMATS.SNAKE));
   }
 
-  function onCompleteHandler(error, createdProvider) {
+  function onCompleteHandler(error) {
     if (error) {
       return next(error);
     }
 
     next({
-      responseCode: RESPONSE_CODES.SUCCESS,
-      data: {
-        data: createdProvider,
-        message: "Provider is created successfully",
-      },
+      responseCode: RESPONSE_CODES.BASIC_SUCCESS__CREATED,
+      data: "Provider is created successfully",
     });
   }
 };
 
 var getProvidersList = function (next) {
-  var f = ff(
-    this,
-    function () {
-      providerService.getProviderList(f.slotPlain(2));
-    },
-    checkProvidersList
-  ).onComplete(onCompleteHandler);
+  var f = ff(this, getProviders, checkProvidersList).onComplete(
+    onCompleteHandler
+  );
 
-  function checkProvidersList(error, productsList) {
+  function getProviders() {
+    providerService.getProviderList(f.slotPlain(2));
+  }
+
+  function checkProvidersList(error, providersList) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
       });
     }
-    f.pass(
-      productsList.map(function (product) {
-        return caseReformator(product.dataValues, CASE_FORMATS.SNAKE);
-      })
-    );
+
+    f.pass(providersList);
   }
 
-  function onCompleteHandler(error, productList) {
+  function onCompleteHandler(error, providersList) {
     if (error) {
       return next(error);
     }
@@ -108,7 +99,7 @@ var getProvidersList = function (next) {
     next({
       responseCode: RESPONSE_CODES.SUCCESS,
       data: {
-        data: productList,
+        data: providersList,
         message: "Providers list",
       },
     });
@@ -117,13 +108,13 @@ var getProvidersList = function (next) {
 
 var getDelivererProducts = function (delivererId, next) {
   //TODO: fix request
-  var f = ff(
-    this,
-    function () {
-      providerService.getDelivererProducts(delivererId, f.slotPlain(2));
-    },
-    checkProductsList
-  ).onComplete(onCompleteHandler);
+  var f = ff(this, getDeliverers, checkProductsList).onComplete(
+    onCompleteHandler
+  );
+
+  function getDeliverers() {
+    providerService.getDelivererProducts(delivererId, f.slotPlain(2));
+  }
 
   function checkProductsList(error, productsList) {
     if (error) {
@@ -138,11 +129,12 @@ var getDelivererProducts = function (delivererId, next) {
         data: "Deliverer does not have products to deliver",
       });
     }
-    f.pass(
-      productsList.map(function (product) {
-        return caseReformator(product.dataValues, CASE_FORMATS.SNAKE);
-      })
-    );
+
+    var reformatedProductsList = productsList.map(function (product) {
+      return providerReformator.inCamel(product.dataValues);
+    });
+
+    f.pass(reformatedProductsList);
   }
 
   function onCompleteHandler(error, productList) {
@@ -161,13 +153,13 @@ var getDelivererProducts = function (delivererId, next) {
 };
 
 var getProductDeliverers = function (productId, next) {
-  var f = ff(
-    this,
-    function () {
-      delivererService.getProductDeliverers(productId, f.slotPlain(2));
-    },
-    checkDeliverersList
-  ).onComplete(onCompleteHandler);
+  var f = ff(this, getDeliverersByProductId, checkDeliverersList).onComplete(
+    onCompleteHandler
+  );
+
+  function getDeliverersByProductId() {
+    delivererService.getProductDeliverers(productId, f.slotPlain(2));
+  }
 
   function checkDeliverersList(error, deliverersList) {
     if (error) {
@@ -183,14 +175,13 @@ var getProductDeliverers = function (productId, next) {
         data: "Product does not have deliverers",
       });
     }
-    f.pass(
-      deliverersList.map(function (product) {
-        return caseReformator(product, CASE_FORMATS.SNAKE);
-      })
-    );
+    var reformatedDeliverers = deliverersList.map(function (deliverer) {
+      return delivererReformator.inCamel(deliverer);
+    });
+    f.pass(reformatedDeliverers);
   }
 
-  function onCompleteHandler(error, productList) {
+  function onCompleteHandler(error, delivererList) {
     if (error) {
       return next(error);
     }
@@ -198,7 +189,7 @@ var getProductDeliverers = function (productId, next) {
     next({
       responseCode: RESPONSE_CODES.SUCCESS,
       data: {
-        data: productList,
+        data: delivererList,
         message: "Deliverer list of the product with id: " + productId,
       },
     });

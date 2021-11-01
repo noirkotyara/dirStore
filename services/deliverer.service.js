@@ -1,9 +1,9 @@
-var caseReformator = require("./../helpers/caseReformator");
+var delivererReformator = require("./../controllers/deliverer/helpers/delivererCaseReformator");
 
 var knexConnection = require("./../services/connectDBKnex").knexConnection;
 
 function createDeliverer(delivererInfo, callback) {
-  var reformatedDelivererInfo = caseReformator(delivererInfo, "LOWER_CAMEL");
+  var reformatedDelivererInfo = delivererReformator.inSnake(delivererInfo);
 
   return knexConnection
     .insert(reformatedDelivererInfo)
@@ -22,7 +22,7 @@ function getDelivererList(callback) {
 }
 
 function updateDelivererById(id, fields, callback) {
-  var preparedFields = caseReformator(fields, "LOWER_CAMEL");
+  var preparedFields = delivererReformator.inSnake(fields);
 
   return knexConnection("Deliverer")
     .where({ id: id })

@@ -3,7 +3,7 @@ var ff = require("ff");
 var pool = require("./connectDB");
 
 var myLodash = require("./../helpers/lodash");
-var caseReformator = require("./../helpers/caseReformator");
+var productReformator = require("./../controllers/product/helpers/productCaseReformator");
 
 function createTable() {
   var f = ff(this);
@@ -56,7 +56,7 @@ function getProductsList(callback) {
 }
 
 function updateProductById(id, fields, callback) {
-  var reformatedFields = caseReformator(fields);
+  var reformatedFields = productReformator.inSnake(fields);
 
   var fieldsToSet = Object.keys(reformatedFields)
     .map(function (key) {
