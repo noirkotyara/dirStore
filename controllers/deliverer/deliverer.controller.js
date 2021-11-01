@@ -192,11 +192,11 @@ var deleteDeliverer = function (delivererId, next) {
     function () {
       delivererService.getDelivererById(delivererId, f.slotPlain(2));
     },
-    checkAnddeleteDeliverer,
+    checkAndDeleteDeliverer,
     checkAndReformateCaseOfResult
   ).onComplete(onCompleteHandler);
 
-  function checkAnddeleteDeliverer(error, deliverers) {
+  function checkAndDeleteDeliverer(error, deliverers) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
