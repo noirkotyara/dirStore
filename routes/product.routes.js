@@ -23,7 +23,7 @@ router.put(
   "/item/:id",
   productMiddleware.updateProductValidation,
   function (req, res, next) {
-    productController.updateProduct(req.params.id, req.body, next);
+    productController.updateProductById(req.params.id, req.body, next);
   }
 );
 router.delete("/item/:id", function (req, res, next) {
