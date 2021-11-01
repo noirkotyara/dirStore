@@ -1,5 +1,3 @@
-var path = require("path");
-
 var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 var CASE_FORMATS = require("./../../enums/formatCase");
@@ -9,22 +7,22 @@ var caseReformator = require("./../../helpers/caseReformator");
 
 var productService = require("../../services/product.service");
 
-var createProduct = function(productInfo, next) {
+var createProduct = function (productInfo, next) {
   try {
     var newProduct = productInfo;
 
     var f = ff(
       this,
-      function() {
+      function () {
         productService.createTable(f);
       },
-      function() {
+      function () {
         productService.saveProduct(newProduct, f);
       },
-      function() {
+      function () {
         productService.getProductById(arguments[0], f);
       },
-      function() {
+      function () {
         var error = arguments[0];
         var results = arguments[1];
         if (error) {
@@ -55,13 +53,13 @@ var createProduct = function(productInfo, next) {
   }
 };
 
-var getProductsList = function(next) {
+var getProductsList = function (next) {
   var f = ff(
     this,
-    function() {
+    function () {
       productService.getProductsList(f);
     },
-    function() {
+    function () {
       caseReformator(arguments[0], CASE_FORMATS.SNAKE, f);
     }
   ).onComplete(onCompleteHandler);
@@ -84,10 +82,10 @@ var getProductsList = function(next) {
   }
 };
 
-var getProductById = function(productId, next) {
+var getProductById = function (productId, next) {
   var f = ff(
     this,
-    function() {
+    function () {
       productService.getProductById(productId, f);
     },
     checkAndPrepareProduct
@@ -129,10 +127,10 @@ var getProductById = function(productId, next) {
   }
 };
 
-var updateProduct = function(productId, productFields, next) {
+var updateProduct = function (productId, productFields, next) {
   var f = ff(
     this,
-    function() {
+    function () {
       productService.updateProductById(productId, productFields, f);
     },
     checkAndGetProduct,
@@ -187,10 +185,10 @@ var updateProduct = function(productId, productFields, next) {
   }
 };
 
-var deleteProduct = function(productId, next) {
+var deleteProduct = function (productId, next) {
   var f = ff(
     this,
-    function() {
+    function () {
       productService.getProductById(productId, f);
     },
     checkAndDeleteProduct
