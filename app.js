@@ -18,9 +18,10 @@ var pool = require("./services/connectDB");
 
 pool.mysqlConnection.connect(function (error) {
   if (error) {
-    return console.log(
+    console.log(
       "MYSQL2 adapter: Connection Failed!" + JSON.stringify(error, undefined, 2)
     );
+    return;
   }
   console.log("MYSQL2 adapter: Connection Established Successfully ");
 });
