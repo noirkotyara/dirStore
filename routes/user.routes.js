@@ -32,7 +32,7 @@ router.post(
   "/identifier",
   authMiddleware.verifyToken,
   function (req, res, next) {
-    identifierController.createIdentifier(req.user.userId, next);
+    identifierController.createIdentifier(req.user.userId, req.body, next);
   }
 );
 

@@ -1,10 +1,16 @@
 var util = require("util");
 
 var userModel = require("../models/user.model");
+var identifierModel = require("../models/identifier.model");
 
 function createUser(preparedCredentials, callback) {
   var c = util.callbackify(function () {
-    return userModel.create(preparedCredentials);
+    return userModel.create(preparedCredentials, {
+      include: {
+        model: identifierModel,
+        as: "identifier",
+      },
+    });
   });
   return c(callback);
 }

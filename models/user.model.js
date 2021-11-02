@@ -33,11 +33,6 @@ var userModel = seqConnection.define(
     phone: {
       type: seq.DataTypes.STRING(50),
     },
-    identifierId: {
-      type: seq.DataTypes.STRING(35),
-      references: { model: identifierModel, key: "id" },
-      field: "identifier_id",
-    },
     createdAt: {
       field: "created_date",
       type: seq.DataTypes.DATE,
@@ -61,5 +56,11 @@ var userModel = seqConnection.define(
     },
   }
 );
+
+userModel.hasOne(identifierModel, {
+  foreignKey: "userId",
+  as: "identifier",
+  onDelete: "CASCADE",
+});
 
 module.exports = userModel;

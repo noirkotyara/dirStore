@@ -49,6 +49,7 @@ productModel.belongsToMany(delivererModel, {
   as: "deliverers",
   foreignKey: "product_id",
 });
+
 delivererModel.belongsToMany(productModel, {
   through: providerModel,
   foreignKeyConstraint: "FK_Provider_Deliverer",

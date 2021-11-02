@@ -2,6 +2,8 @@ var seq = require("sequelize");
 
 var seqConnection = require("../services/connectDBSequelize").seqConnection;
 
+var userModel = require("./user.model");
+
 var identifierModel = seqConnection.define(
   "Identifier",
   {
@@ -11,9 +13,6 @@ var identifierModel = seqConnection.define(
       allowNull: false,
       unique: true,
       defaultValue: seq.Sequelize.UUIDV4,
-    },
-    type: {
-      type: seq.DataTypes.ENUM("ADMIN", "USER"),
     },
     firstName: {
       type: seq.DataTypes.STRING(35),
@@ -29,6 +28,12 @@ var identifierModel = seqConnection.define(
     code: {
       type: seq.DataTypes.STRING(15),
     },
+    userId: {
+      type: seq.DataTypes.STRING(35),
+      references: { model: userModel, key: "id" },
+      field: "user_id",
+      foreignKey: "FK_identifier_user",
+    },
   },
   {
     tableName: "Identifier",
@@ -36,12 +41,9 @@ var identifierModel = seqConnection.define(
   }
 );
 
-identifierModel.associate = function (models) {
-  identifierModel.hasOne(models.user, {
-    foreignKey: "identifierId",
-    as: "identifier",
-    onDelete: "CASCADE",
-  });
-};
+// identifierModel.belongsTo(userModel, {
+//   foreignKey: "FK_identifier_user",
+//   targetKey: "id",
+// });
 
 module.exports = identifierModel;
