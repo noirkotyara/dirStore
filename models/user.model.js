@@ -39,12 +39,18 @@ var userModel = seqConnection.define(
     phone: {
       type: seq.DataTypes.STRING(50),
     },
+    createdAt: {
+      field: "created_date",
+      type: seq.DataTypes.DATE,
+    },
+    updatedAt: {
+      field: "updated_date",
+      type: seq.DataTypes.DATE,
+    },
   },
   {
     tableName: "User",
     timestamps: true,
-    createdAt: "created_date",
-    updatedAt: "updated_date",
     hooks: {
       beforeCreate: function (model) {
         if (!model.username) {

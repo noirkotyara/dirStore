@@ -28,12 +28,18 @@ var productModel = seqConnection.define(
       type: seq.DataTypes.INTEGER(),
       defaultValue: 0,
     },
+    createdAt: {
+      field: "created_date",
+      type: seq.DataTypes.DATE,
+    },
+    updatedAt: {
+      field: "updated_date",
+      type: seq.DataTypes.DATE,
+    },
   },
   {
-    tableName: "User",
+    tableName: "Product",
     timestamps: true,
-    createdAt: "created_date",
-    updatedAt: "updated_date",
     hooks: {},
   }
 );

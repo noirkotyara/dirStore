@@ -43,7 +43,7 @@ function getProductDeliverers(productId, callback) {
       "Deliverer.id",
       "Deliverer.name",
       "Deliverer.description",
-      "Deliverer.delivery_price",
+      "Deliverer.delivery_price as deliveryPrice",
       "Deliverer.phone",
       "Deliverer.address"
     )
@@ -52,6 +52,16 @@ function getProductDeliverers(productId, callback) {
     .where("Provider.product_id", "=", productId.toString())
 
     .asCallback(callback);
+
+  //additional without reformating
+  // return knexConnection("Deliverer")
+  //   .whereIn(
+  //     "id",
+  //     knexConnection("Provider")
+  //       .select("deliverer_id")
+  //       .where("product_id", productId)
+  //   )
+  //   .asCallback(callback);
 }
 
 module.exports = {

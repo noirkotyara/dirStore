@@ -81,6 +81,7 @@ var getProvidersList = function (next) {
   }
 
   function checkProvidersList(error, providersList) {
+    console.log(providersList);
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
@@ -107,7 +108,6 @@ var getProvidersList = function (next) {
 };
 
 var getDelivererProducts = function (delivererId, next) {
-  //TODO: fix request
   var f = ff(this, getDeliverers, checkProductsList).onComplete(
     onCompleteHandler
   );
@@ -118,6 +118,7 @@ var getDelivererProducts = function (delivererId, next) {
 
   function checkProductsList(error, productsList) {
     if (error) {
+      console.log(error);
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
@@ -129,12 +130,8 @@ var getDelivererProducts = function (delivererId, next) {
         data: "Deliverer does not have products to deliver",
       });
     }
-
-    var reformatedProductsList = productsList.map(function (product) {
-      return providerReformator.inCamel(product.dataValues);
-    });
-
-    f.pass(reformatedProductsList);
+    console.log(productsList);
+    f.pass(productsList);
   }
 
   function onCompleteHandler(error, productList) {
@@ -153,35 +150,52 @@ var getDelivererProducts = function (delivererId, next) {
 };
 
 var getProductDeliverers = function (productId, next) {
-  var f = ff(this, getDeliverersByProductId, checkDeliverersList).onComplete(
-    onCompleteHandler
-  );
+  var productInfo = {};
 
-  function getDeliverersByProductId() {
-    delivererService.getProductDeliverers(productId, f.slotPlain(2));
+  var f = ff(
+    this,
+    getProductInfo,
+    getDeliverersByProductId,
+    checkDeliverersList
+  ).onComplete(onCompleteHandler);
+
+  function getProductInfo() {
+    productService.getProductById(productId, f.slotPlain(2));
   }
 
-  function checkDeliverersList(error, deliverersList) {
+  function getDeliverersByProductId(error, products) {
     if (error) {
+      console.log(error);
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
       });
     }
 
-    if (myLodash.isEmpty(deliverersList)) {
+    if (myLodash.isEmpty(products)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Product does not have deliverers",
+        data: "Product does not exist",
       });
     }
-    var reformatedDeliverers = deliverersList.map(function (deliverer) {
-      return delivererReformator.inCamel(deliverer);
-    });
-    f.pass(reformatedDeliverers);
+
+    productInfo = myLodash.deepClone(products[0]);
+
+    delivererService.getProductDeliverers(productId, f.slotPlain(2));
   }
 
-  function onCompleteHandler(error, delivererList) {
+  function checkDeliverersList(error, deliverersList) {
+    if (error) {
+      console.log(error);
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
+      });
+    }
+    productInfo.deliverers = deliverersList;
+  }
+
+  function onCompleteHandler(error) {
     if (error) {
       return next(error);
     }
@@ -189,7 +203,7 @@ var getProductDeliverers = function (productId, next) {
     next({
       responseCode: RESPONSE_CODES.SUCCESS,
       data: {
-        data: delivererList,
+        data: productInfo,
         message: "Deliverer list of the product with id: " + productId,
       },
     });

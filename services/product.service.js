@@ -38,12 +38,9 @@ function getLastCreatedProduct(callback) {
 }
 
 function getProductById(id, callback) {
-  var selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
-  var queryFormat = pool.mysqlConnection.format(selectQuery, [
-    "Product",
-    "id",
-    id,
-  ]);
+  var selectQuery =
+    "SELECT id, name, description, price, amount, created_date as createdDate, updated_date as updatedDate FROM Product WHERE id = ?";
+  var queryFormat = pool.mysqlConnection.format(selectQuery, [id]);
 
   pool.mysqlConnection.query(queryFormat, callback);
 }

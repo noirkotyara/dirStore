@@ -2,6 +2,7 @@ var util = require("util");
 
 var providerModel = require("../models/provider.model");
 var productModel = require("../models/product.model");
+var delivererModel = require("../models/deliverer.model");
 
 function createProvider(providerInfo, callback) {
   var c = util.callbackify(function () {
@@ -12,7 +13,9 @@ function createProvider(providerInfo, callback) {
 
 function getProviderList(callback) {
   var c = util.callbackify(function () {
-    return providerModel.findAll();
+    return providerModel.findAll({
+      include: [delivererModel],
+    });
   });
   return c(callback);
 }
@@ -25,15 +28,18 @@ function findProviderById(providerId, callback) {
 }
 
 function getDelivererProducts(delivererId, callback) {
-  //TODO: fix request
   var c = util.callbackify(function () {
-    return productModel.findAll({
-      include: [
-        {
-          model: "Provider",
-          where: ["deliverer_id = " + delivererId],
+    return delivererModel.findOne({
+      where: {
+        id: delivererId,
+      },
+      include: {
+        model: productModel,
+        as: "products",
+        through: {
+          attributes: [],
         },
-      ],
+      },
     });
   });
   return c(callback);
