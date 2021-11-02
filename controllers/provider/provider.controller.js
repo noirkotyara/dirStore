@@ -49,7 +49,6 @@ var createProvider = function (providerInfo, next) {
   }
 
   function checkProviderCreate(error) {
-    console.log(error);
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
@@ -59,7 +58,6 @@ var createProvider = function (providerInfo, next) {
   }
 
   function onCompleteHandler(error) {
-    console.log(error);
     if (error) {
       return next(error);
     }
