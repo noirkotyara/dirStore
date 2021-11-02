@@ -100,34 +100,50 @@ var getProductsList = function (next) {
 };
 
 var getProductById = function (productId, next) {
-  var f = ff(this, getProduct, checkAndPrepareProduct).onComplete(
-    onCompleteHandler
-  );
+  var productInfo = {};
 
-  function getProduct() {
+  var f = ff(
+    this,
+    getProductInfo,
+    getDeliverersByProductId,
+    checkDeliverersList
+  ).onComplete(onCompleteHandler);
+
+  function getProductInfo() {
     productService.getProductById(productId, f.slotPlain(2));
   }
 
-  function checkAndPrepareProduct(error, results) {
+  function getDeliverersByProductId(error, products) {
     if (error) {
       return f.fail({
-        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
       });
     }
 
-    if (myLodash.isEmpty(results)) {
+    if (myLodash.isEmpty(products)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Product with id: " + productId + " is not existed",
+        data: "Product does not exist",
       });
     }
 
-    var reformatedProduct = productReformator.inCamel(results[0]);
-    f.pass(reformatedProduct);
+    productInfo = myLodash.deepClone(products[0]);
+
+    productService.getProductDeliverers(productId, f.slotPlain(2));
   }
 
-  function onCompleteHandler(error, foundedProduct) {
+  function checkDeliverersList(error, deliverersList) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
+      });
+    }
+    productInfo.deliverers = deliverersList;
+  }
+
+  function onCompleteHandler(error) {
     if (error) {
       return next(error);
     }
@@ -135,8 +151,8 @@ var getProductById = function (productId, next) {
     next({
       responseCode: RESPONSE_CODES.SUCCESS,
       data: {
-        data: foundedProduct,
-        message: "Product info with id: " + productId,
+        data: productInfo,
+        message: "Deliverer list of the product with id: " + productId,
       },
     });
   }

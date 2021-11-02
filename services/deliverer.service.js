@@ -1,4 +1,9 @@
+var util = require("util");
+
 var delivererReformator = require("./../controllers/deliverer/helpers/delivererCaseReformator");
+
+var delivererModel = require("../models/deliverer.model");
+var productModel = require("../models/product.model");
 
 var knexConnection = require("./../services/connectDBKnex").knexConnection;
 
@@ -37,32 +42,22 @@ function deleteDelivererById(id, callback) {
     .asCallback(callback);
 }
 
-function getProductDeliverers(productId, callback) {
-  return knexConnection("Deliverer")
-    .select(
-      "Deliverer.id",
-      "Deliverer.name",
-      "Deliverer.description",
-      "Deliverer.delivery_price as deliveryPrice",
-      "Deliverer.phone",
-      "Deliverer.address",
-      "Provider.id as providerId"
-    )
-    .join("Provider", "Deliverer.id", "=", "Provider.deliverer_id")
-
-    .where("Provider.product_id", "=", productId.toString())
-
-    .asCallback(callback);
-
-  //additional without reformating
-  // return knexConnection("Deliverer")
-  //   .whereIn(
-  //     "id",
-  //     knexConnection("Provider")
-  //       .select("deliverer_id")
-  //       .where("product_id", productId)
-  //   )
-  //   .asCallback(callback);
+function getDelivererProducts(delivererId, callback) {
+  var c = util.callbackify(function () {
+    return delivererModel.findOne({
+      where: {
+        id: delivererId,
+      },
+      include: {
+        model: productModel,
+        as: "products",
+        through: {
+          attributes: [],
+        },
+      },
+    });
+  });
+  return c(callback);
 }
 
 module.exports = {
@@ -71,5 +66,5 @@ module.exports = {
   getDelivererList: getDelivererList,
   updateDelivererById: updateDelivererById,
   deleteDelivererById: deleteDelivererById,
-  getProductDeliverers: getProductDeliverers,
+  getDelivererProducts: getDelivererProducts,
 };

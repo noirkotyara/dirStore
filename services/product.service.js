@@ -1,6 +1,7 @@
 var uuid = require("uuid");
 var ff = require("ff");
 var pool = require("./connectDB");
+var knexConnection = require("./../services/connectDBKnex").knexConnection;
 
 var myLodash = require("./../helpers/lodash");
 var productReformator = require("./../controllers/product/helpers/productCaseReformator");
@@ -90,6 +91,24 @@ function isProductExist(productId, callback) {
   pool.mysqlConnection.query(queryFormat, callback);
 }
 
+function getProductDeliverers(productId, callback) {
+  return knexConnection("Deliverer")
+    .select(
+      "Deliverer.id",
+      "Deliverer.name",
+      "Deliverer.description",
+      "Deliverer.delivery_price as deliveryPrice",
+      "Deliverer.phone",
+      "Deliverer.address",
+      "Provider.id as providerId"
+    )
+    .join("Provider", "Deliverer.id", "=", "Provider.deliverer_id")
+
+    .where("Provider.product_id", "=", productId.toString())
+
+    .asCallback(callback);
+}
+
 module.exports = {
   createTable: createTable,
   saveProduct: saveProduct,
@@ -99,4 +118,5 @@ module.exports = {
   deleteProductById: deleteProductById,
   getLastCreatedProduct: getLastCreatedProduct,
   isProductExist: isProductExist,
+  getProductDeliverers: getProductDeliverers,
 };

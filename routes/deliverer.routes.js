@@ -9,9 +9,11 @@ var router = express.Router();
 router.get("/list", function (req, res, next) {
   delivererController.getDelivererList(next);
 });
+
 router.get("/item/:id", function (req, res, next) {
   delivererController.getDelivererById(req.params.id, next);
 });
+
 router.post(
   "/item",
   delivererMiddleware.createDelivererValidation,
