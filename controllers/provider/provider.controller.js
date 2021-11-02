@@ -2,8 +2,6 @@ var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("./../../helpers/lodash");
-var providerReformator = require("./helpers/providerCaseReformator");
-var delivererReformator = require("./../deliverer/helpers/delivererCaseReformator");
 
 var providerService = require("../../services/provider.service");
 var delivererService = require("../../services/deliverer.service");
@@ -71,42 +69,6 @@ var createProvider = function (providerInfo, next) {
   }
 };
 
-var getProvidersList = function (next) {
-  var f = ff(this, getProviders, checkProvidersList).onComplete(
-    onCompleteHandler
-  );
-
-  function getProviders() {
-    providerService.getProviderList(f.slotPlain(2));
-  }
-
-  function checkProvidersList(error, providersList) {
-    console.log(providersList);
-    if (error) {
-      return f.fail({
-        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
-      });
-    }
-
-    f.pass(providersList);
-  }
-
-  function onCompleteHandler(error, providersList) {
-    if (error) {
-      return next(error);
-    }
-
-    next({
-      responseCode: RESPONSE_CODES.SUCCESS,
-      data: {
-        data: providersList,
-        message: "Providers list",
-      },
-    });
-  }
-};
-
 var getDelivererProducts = function (delivererId, next) {
   var f = ff(this, getDeliverers, checkProductsList).onComplete(
     onCompleteHandler
@@ -165,7 +127,6 @@ var getProductDeliverers = function (productId, next) {
 
   function getDeliverersByProductId(error, products) {
     if (error) {
-      console.log(error);
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
@@ -186,7 +147,6 @@ var getProductDeliverers = function (productId, next) {
 
   function checkDeliverersList(error, deliverersList) {
     if (error) {
-      console.log(error);
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
         data: error,
@@ -212,7 +172,6 @@ var getProductDeliverers = function (productId, next) {
 
 module.exports = {
   createProvider: createProvider,
-  getProvidersList: getProvidersList,
   getDelivererProducts: getDelivererProducts,
   getProductDeliverers: getProductDeliverers,
 };

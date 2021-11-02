@@ -3,6 +3,8 @@ var bcrypt = require("bcrypt");
 
 var seqConnection = require("../services/connectDBSequelize").seqConnection;
 
+var identifierModel = require("./identifier.model");
+
 var userModel = seqConnection.define(
   "User",
   {
@@ -20,14 +22,6 @@ var userModel = seqConnection.define(
       type: seq.DataTypes.STRING(50),
       unique: true,
     },
-    firstName: {
-      type: seq.DataTypes.STRING(35),
-      field: "first_name",
-    },
-    lastName: {
-      type: seq.DataTypes.STRING(35),
-      field: "last_name",
-    },
     email: {
       type: seq.DataTypes.STRING(256),
       allowNull: false,
@@ -38,6 +32,11 @@ var userModel = seqConnection.define(
     },
     phone: {
       type: seq.DataTypes.STRING(50),
+    },
+    identifierId: {
+      type: seq.DataTypes.STRING(35),
+      references: { model: identifierModel, key: "id" },
+      field: "identifier_id",
     },
     createdAt: {
       field: "created_date",

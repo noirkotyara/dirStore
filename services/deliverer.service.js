@@ -45,7 +45,8 @@ function getProductDeliverers(productId, callback) {
       "Deliverer.description",
       "Deliverer.delivery_price as deliveryPrice",
       "Deliverer.phone",
-      "Deliverer.address"
+      "Deliverer.address",
+      "Provider.id as providerId"
     )
     .join("Provider", "Deliverer.id", "=", "Provider.deliverer_id")
 

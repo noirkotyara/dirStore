@@ -29,8 +29,6 @@ function verifyToken(req, res, next) {
 
 var registerUserValidation = {
   body: expressValidation.Joi.object({
-    firstName: expressValidation.Joi.string().max(50).required(),
-    lastName: expressValidation.Joi.string().max(50).required(),
     email: expressValidation.Joi.string().normalize().email().required(),
     password: expressValidation.Joi.string().min(6).required(),
     phone: expressValidation.Joi.string().max(15),
