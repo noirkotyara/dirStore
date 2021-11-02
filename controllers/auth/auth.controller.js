@@ -86,7 +86,7 @@ function login(userCredentials, next) {
 
       userWithToken.token = jwt.sign(
         {
-          userId: user.userId,
+          userId: user.id,
           email: user.email,
           type: user.type,
         },

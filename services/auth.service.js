@@ -39,4 +39,5 @@ function findUserByEmail(email, callback) {
 module.exports = {
   createUser: createUser,
   findUserByEmail: findUserByEmail,
+  findUserById: findUserById,
 };

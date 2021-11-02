@@ -17,6 +17,7 @@ router.post("/login", requesterTypeMiddleware, function (req, res, next) {
 });
 
 router.get("/profile", authMiddleware.verifyToken, function (req, res, next) {
+  console.log(req.user);
   userController.getUserProfile(req.user.userId, next);
 });
 
