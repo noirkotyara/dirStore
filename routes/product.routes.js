@@ -1,33 +1,51 @@
 var express = require("express");
 
 var productMiddleware = require("./../middlewares/product.middleware");
+var authMiddleware = require("./../middlewares/auth.middleware");
 
 var productController = require("./../controllers/product/product.controller");
 
-var router = express.Router();
+var productRouter = express.Router();
 
-router.get("/list", function (req, res, next) {
+/**
+ * PUBLIC routes:
+ * get -> /list
+ * get -> /item/:id
+ *
+ * ONLY for ADMIN:
+ * post/put/delete -> /item/:id
+ * **/
+
+productRouter.get("/list", function (req, res, next) {
   productController.getProductsList(next);
 });
-router.get("/item/:id", function (req, res, next) {
+
+productRouter.get("/item/:id", function (req, res, next) {
   productController.getProductById(req.params.id, next);
 });
-router.post(
+
+productRouter.post(
   "/item",
-  productMiddleware.createProductValidation,
+  [authMiddleware.verifyToken, productMiddleware.createProductValidation],
   function (req, res, next) {
     productController.createProduct(req.body, next);
   }
 );
-router.put(
+
+productRouter.put(
   "/item/:id",
-  productMiddleware.updateProductValidation,
+  [authMiddleware.verifyToken, productMiddleware.updateProductValidation],
   function (req, res, next) {
     productController.updateProductById(req.params.id, req.body, next);
   }
 );
-router.delete("/item/:id", function (req, res, next) {
-  productController.deleteProduct(req.params.id, next);
-});
 
-module.exports = router;
+productRouter.delete(
+  "/item/:id",
+  authMiddleware.verifyToken,
+  function (req, res, next) {
+    productController.deleteProduct(req.params.id, next);
+  }
+);
+
+module.exports = productRouter;
