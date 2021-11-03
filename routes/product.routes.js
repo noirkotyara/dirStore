@@ -2,6 +2,7 @@ var express = require("express");
 
 var productMiddleware = require("./../middlewares/product.middleware");
 var authMiddleware = require("./../middlewares/auth.middleware");
+var checkAccessMiddleware = require("./../middlewares/check-access.middleware");
 
 var productController = require("./../controllers/product/product.controller");
 
@@ -26,7 +27,11 @@ productRouter.get("/item/:id", function (req, res, next) {
 
 productRouter.post(
   "/item",
-  [authMiddleware.verifyToken, productMiddleware.createProductValidation],
+  [
+    authMiddleware.verifyToken,
+    checkAccessMiddleware,
+    productMiddleware.createProductValidation,
+  ],
   function (req, res, next) {
     productController.createProduct(req.body, next);
   }
@@ -34,7 +39,11 @@ productRouter.post(
 
 productRouter.put(
   "/item/:id",
-  [authMiddleware.verifyToken, productMiddleware.updateProductValidation],
+  [
+    authMiddleware.verifyToken,
+    checkAccessMiddleware,
+    productMiddleware.updateProductValidation,
+  ],
   function (req, res, next) {
     productController.updateProductById(req.params.id, req.body, next);
   }
@@ -42,7 +51,7 @@ productRouter.put(
 
 productRouter.delete(
   "/item/:id",
-  authMiddleware.verifyToken,
+  [authMiddleware.verifyToken, checkAccessMiddleware],
   function (req, res, next) {
     productController.deleteProduct(req.params.id, next);
   }

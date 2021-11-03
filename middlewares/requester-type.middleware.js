@@ -1,6 +1,6 @@
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
-var REQUESTER_TYPE = require("./../enums/requesterType");
+var REQUESTER_TYPE = require("../enums/requester-type");
 
 function requesterTypeMiddleware(req, res, next) {
   if (req.method === "OPTIONS") {

@@ -1,3 +1,5 @@
+var redis = require("redis");
+
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var bcrypt = require("bcrypt");
@@ -7,6 +9,8 @@ var jwt = require("jsonwebtoken");
 var myLodash = require("../../helpers/lodash");
 
 var authService = require("../../services/auth.service");
+
+var redisClient = redis.createClient(process.env.R_PORT);
 
 function register(userCredentials, next) {
   var f = ff(this, createUser, checkUserCreate).onComplete(onCompleteHandler);
@@ -32,11 +36,18 @@ function register(userCredentials, next) {
       return next(error);
     }
 
+    redisClient.set(savedUser.id, savedUser.type);
+
+    redisClient.get(savedUser.id, function (err, reply) {
+      console.log(reply.toString());
+    });
+
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: savedUser,
-        message: "User is registered " + userCredentials.email,
+        message:
+          userCredentials.type + " is registered " + userCredentials.email,
       },
     });
   }
@@ -87,8 +98,6 @@ function login(userCredentials, next) {
       userWithToken.token = jwt.sign(
         {
           userId: user.id,
-          email: user.email,
-          type: user.type,
         },
         process.env.JWT_S,
         {

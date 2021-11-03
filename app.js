@@ -12,7 +12,6 @@ var productRoutes = require("./routes/product.routes");
 var delivererRoutes = require("./routes/deliverer.routes");
 var checkoutRoutes = require("./routes/checkout.routes");
 var providerRoutes = require("./routes/provider.routes");
-
 var app = express();
 
 var pool = require("./services/connect-db-mysql2");

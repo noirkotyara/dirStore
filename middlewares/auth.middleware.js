@@ -1,11 +1,7 @@
-var redis = require("redis");
-
 var expressValidation = require("express-validation");
 var jwt = require("jsonwebtoken");
 
 var responseMiddleware = require("message-catcher");
-
-var redisClient = redis.createClient(process.env.R_PORT);
 
 function verifyToken(req, res, next) {
   if (req.method === "OPTIONS") {
@@ -20,11 +16,8 @@ function verifyToken(req, res, next) {
         data: "A token is required for authentication",
       });
 
-    var tokenUser = jwt.verify(token, process.env.JWT_S);
-
-    req.user = tokenUser;
-    redisClient.set(tokenUser.userId, tokenUser.type);
-
+    req.user = jwt.verify(token, process.env.JWT_S);
+    console.log(req.user);
     next();
   } catch (error) {
     next({
