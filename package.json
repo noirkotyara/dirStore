@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "env-cmd -f .env nodemon app.js",
-    "debug": "env-cmd -f .env.local nodemon --inspect app.js"
+    "debug": "env-cmd -f .env.local nodemon --inspect app.js",
+    "test": "env-cmd -f .env.local jest *.test.js --forceExit"
   },
   "repository": {
     "type": "git",
@@ -24,19 +25,26 @@
   },
   "homepage": "https://github.com/noirkotyara/dirStore#readme",
   "dependencies": {
+    "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "express-validation": "^3.0.8",
     "ff": "^0.2.2",
-    "method-override": "^3.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.12",
+    "lodash": "^4.17.21",
+    "message-catcher": "github:noirkotyara/message-catcher",
+    "mysql2": "^2.3.2",
+    "sequelize": "^6.8.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.3.1",
     "nodemon": "^2.0.14",
     "prettier": "2.4.1"
   }

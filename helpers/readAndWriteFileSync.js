@@ -13,6 +13,4 @@ function readAndWriteFileSync(path, functionToDo, args) {
   fs.writeFileSync(path, stringifiedData);
 }
 
-module.exports = {
-  readAndWriteFileSync: readAndWriteFileSync,
-};
+module.exports = readAndWriteFileSync;

@@ -1,143 +1,268 @@
-var fs = require("fs");
-var path = require("path");
+var ff = require("ff");
+var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
-var uuid = require("uuid");
+var myLodash = require("../../helpers/lodash");
+var productReformator = require("./helpers/productCaseReformator");
 
-var helpers = require("./helpers/readAndWriteFileSync");
-var createProduct = require("./helpers/createProduct");
+var productService = require("../../services/product.service");
 
-var objHelpers = require("./../../helpers/objectHelpers");
-var isEmptySendError = require("./helpers/isEmptyProductResponse");
-
-var RESPONSE_CODE = require("./../../enums/responseCodes");
-
-var productsFilePath = path.resolve(__dirname, "./../../mock/Products.json");
-
-var createItem = function (productInfo, next) {
+var createProduct = function (productInfo, next) {
   try {
     var newProduct = productInfo;
 
-    helpers.readAndWriteFileSync(productsFilePath, createProduct, productInfo);
+    var f = ff(
+      this,
+      productService.createTable,
+      saveProduct,
+      getSavedProduct,
+      checkAndReformateResultCase
+    ).onComplete(onCompleteHandler);
 
-    next({
-      responseCode: RESPONSE_CODE.SUCCESS,
-      data: { data: newProduct, message: "Product is created successfully!" },
-      status: 201,
-    });
+    function saveProduct() {
+      productService.saveProduct(newProduct, f.wait());
+    }
+
+    function getSavedProduct() {
+      productService.getLastCreatedProduct(f.slotPlain(2));
+    }
+
+    function checkAndReformateResultCase(error, results) {
+      if (error) {
+        return f.fail({
+          responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+          data: error,
+        });
+      }
+      if (myLodash.isEmpty(results)) {
+        return f.fail({
+          responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+          data: "Product is not founded",
+        });
+      }
+
+      var reformatedProduct = productReformator.inCamel(results[0]);
+      f.pass(reformatedProduct);
+    }
+
+    function onCompleteHandler(error, createdProduct) {
+      if (error) {
+        return next(next);
+      }
+
+      next({
+        responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+        data: {
+          data: createdProduct,
+          message: "Product is created successfully",
+        },
+      });
+    }
   } catch (e) {
     next(e);
   }
 };
 
-var getList = function (next) {
-  var stream = fs.createReadStream(productsFilePath, "utf8");
+var getProductsList = function (next) {
+  var f = ff(this, getProducts, checkAndReformateResults).onComplete(
+    onCompleteHandler
+  );
 
-  stream.on("data", function (data) {
-    var productsList = JSON.parse(data);
-    return next({
-      responseCode: RESPONSE_CODE.SUCCESS,
-      data: { data: productsList, message: "List of products" },
-      status: 200,
+  function getProducts() {
+    productService.getProductsList(f.slotPlain(2));
+  }
+
+  function checkAndReformateResults(error, productLists) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+    var reformatedProductsList = productLists.map(function (item) {
+      return productReformator.inCamel(item);
     });
-  });
+    f.pass(reformatedProductsList);
+  }
 
-  stream.on("error", function (err) {
+  function onCompleteHandler(error, productList) {
+    if (error) {
+      return next(error);
+    }
+
     next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
-      data: "Cannot read the file with the list of products",
-      status: 500,
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: productList,
+        message: "Products list",
+      },
     });
-  });
+  }
 };
 
-var getItem = function (productId, next) {
-  if (!productId)
-    return next({
-      responseCode: RESPONSE_CODE.PROCESS_ERROR,
-      data: "Product id is missing",
-      status: 404,
+var getProductById = function (productId, next) {
+  var productInfo = {};
+
+  var f = ff(
+    this,
+    getProductInfo,
+    getDeliverersByProductId,
+    checkDeliverersList
+  ).onComplete(onCompleteHandler);
+
+  function getProductInfo() {
+    productService.getProductById(productId, f.slotPlain(2));
+  }
+
+  function getDeliverersByProductId(error, products) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(products)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Product does not exist",
+      });
+    }
+
+    productInfo = myLodash.deepClone(products[0]);
+
+    productService.getProductDeliverers(productId, f.slotPlain(2));
+  }
+
+  function checkDeliverersList(error, deliverersList) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        data: error,
+      });
+    }
+    productInfo.deliverers = deliverersList;
+  }
+
+  function onCompleteHandler(error) {
+    if (error) {
+      return next(error);
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: productInfo,
+        message: "Deliverer list of the product with id: " + productId,
+      },
     });
-
-  var data = fs.readFileSync(productsFilePath, "utf8");
-
-  var productsList = JSON.parse(data);
-
-  var foundedProduct = productsList.find(function (item) {
-    return item.productId === productId;
-  });
-
-  isEmptySendError(productId, foundedProduct, next);
-
-  next({
-    responseCode: RESPONSE_CODE.SUCCESS,
-    data: {
-      data: foundedProduct,
-      message: "Product info with id: " + productId,
-    },
-    status: 200,
-  });
+  }
 };
 
-var updateItem = function (productId, productFields, next) {
-  var preparedProduct = {};
+var updateProductById = function (productId, productFields, next) {
+  var f = ff(
+    this,
+    updateProduct,
+    checkAndGetProduct,
+    checkAndPrepareProduct
+  ).onComplete(onCompleteHandler);
 
-  var updateProduct = function (productsList) {
-    var updatedProducts = productsList.map(function (item) {
-      if (item.productId === productId) {
-        Object.assign(preparedProduct, item, productFields);
-        return preparedProduct;
-      }
-      return item;
+  function updateProduct() {
+    productService.updateProductById(productId, productFields, f.slotPlain(2));
+  }
+
+  function checkAndGetProduct(error) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+
+    productService.getProductById(productId, f.slotPlain(2));
+  }
+
+  function checkAndPrepareProduct(error, results) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(results)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Product with id: " + productId + " is not existed",
+      });
+    }
+
+    var reformatedProduct = productReformator.inCamel(results[0]);
+    f.pass(reformatedProduct);
+  }
+
+  function onCompleteHandler(error, updatedProduct) {
+    if (error) {
+      return next(error);
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: updatedProduct,
+        message: "Product updated with id: " + productId,
+      },
     });
-    return updatedProducts;
-  };
-
-  helpers.readAndWriteFileSync(productsFilePath, updateProduct);
-
-  isEmptySendError(productId, preparedProduct, next);
-
-  next({
-    responseCode: RESPONSE_CODE.SUCCESS,
-    data: {
-      data: preparedProduct,
-      message: "Product is successfully updated",
-    },
-    status: 200,
-  });
+  }
 };
 
-var deleteItem = function (productId, next) {
-  var deletedItem = {};
+var deleteProduct = function (productId, next) {
+  var f = ff(this, getProduct, checkAndDeleteProduct).onComplete(
+    onCompleteHandler
+  );
 
-  var deleteProduct = function (productList) {
-    var restItems = productList.filter(function (item) {
-      var isDeletedProduct = item.productId === productId;
-      if (isDeletedProduct) {
-        deletedItem = item;
-      }
-      return !isDeletedProduct;
+  function getProduct() {
+    productService.getProductById(productId, f.slotPlain(2));
+  }
+
+  function checkAndDeleteProduct(error, results) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(results)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "Product with id: " + productId + " is not existed",
+      });
+    }
+    var reformatedProduct = productReformator.inCamel(results[0]);
+    f.pass(reformatedProduct);
+
+    productService.deleteProductById(productId, f.slot());
+  }
+
+  function onCompleteHandler(error, deletedProduct) {
+    if (error) {
+      return next(error);
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS,
+      data: {
+        data: deletedProduct,
+        message: "Product deleted successfully!",
+      },
     });
-    return restItems;
-  };
-
-  helpers.readAndWriteFileSync(productsFilePath, deleteProduct);
-
-  isEmptySendError(productId, deletedItem, next);
-
-  next({
-    responseCode: RESPONSE_CODE.SUCCESS,
-    data: {
-      data: deletedItem,
-      message: "Product is successfully deleted",
-    },
-    status: 200,
-  });
+  }
 };
 
 module.exports = {
-  getList: getList,
-  getItem: getItem,
-  updateItem: updateItem,
-  createItem: createItem,
-  deleteItem: deleteItem,
+  getProductsList: getProductsList,
+  getProductById: getProductById,
+  updateProductById: updateProductById,
+  createProduct: createProduct,
+  deleteProduct: deleteProduct,
 };
