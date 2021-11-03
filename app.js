@@ -3,7 +3,7 @@ var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
 
-var testConnectionToDB = require("./helpers/connectDB");
+var testConnectionToDB = require("./helpers/connect-db");
 
 var loggerMiddleware = require("./middlewares/logger.middleware");
 
@@ -14,7 +14,7 @@ var adminRoutes = require("./routes/admin.routes");
 
 var app = express();
 
-var pool = require("./services/connectDB");
+var pool = require("./services/connect-db-mysql2");
 
 pool.mysqlConnection.connect(function (error) {
   if (error) {

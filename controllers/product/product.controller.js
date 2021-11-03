@@ -2,7 +2,7 @@ var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
-var productReformator = require("./helpers/productCaseReformator");
+var productReformator = require("./helpers/product-case-reformator");
 
 var productService = require("../../services/product.service");
 

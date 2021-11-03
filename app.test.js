@@ -28,5 +28,3 @@ describe("Access to DB", function () {
     });
   });
 });
-
-//TODO : test knex connection

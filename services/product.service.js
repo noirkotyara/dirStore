@@ -1,10 +1,10 @@
 var uuid = require("uuid");
 var ff = require("ff");
-var pool = require("./connectDB");
-var knexConnection = require("./../services/connectDBKnex").knexConnection;
+var pool = require("./connect-db-mysql2");
+var knexConnection = require("./connect-db-knex").knexConnection;
 
 var myLodash = require("./../helpers/lodash");
-var productReformator = require("./../controllers/product/helpers/productCaseReformator");
+var productReformator = require("../controllers/product/helpers/product-case-reformator");
 
 function createTable() {
   var f = ff(this);

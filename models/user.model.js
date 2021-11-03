@@ -1,7 +1,7 @@
 var seq = require("sequelize");
 var bcrypt = require("bcrypt");
 
-var seqConnection = require("../services/connectDBSequelize").seqConnection;
+var seqConnection = require("../services/connect-db-sequelize").seqConnection;
 
 var identifierModel = require("./identifier.model");
 
