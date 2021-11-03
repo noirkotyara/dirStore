@@ -29,45 +29,53 @@ function checkAccessMiddleware(req, res, next) {
 
   var reqInfo = req.method + ":" + req.baseUrl + req.route.path;
 
-  var f = ff(this, getRequesterTypeRedis, checkAndGetRequesterType).onComplete(
-    checkAndGetRequesterTypeFromDB
-  );
+  var f = ff(
+    this,
+    getRequesterTypeRedis,
+    checkAndGetAlternateFromDB,
+    checkAlternateFromDB
+  ).onComplete(onCompleteHandler);
 
   function getRequesterTypeRedis() {
-    redisClient.get(req.user.userId, f.slotPlain(2));
+    redisClient.get("userType:" + req.user.userId, f.slotPlain(2));
   }
 
-  function checkAndGetRequesterType(error, reply) {
+  function checkAndGetAlternateFromDB(error, reply) {
     if (error) {
       return f.fail();
     }
     if (!myLodash.isEmpty(reply)) {
-      checkRequesterType(reply.toString());
-      return;
+      return f.succeed(reply.toString());
     }
-    authService.findUserById(req.user.userId, f.slot());
+    authService.findUserById(req.user.userId, f.slotPlain(2));
   }
 
-  function checkAndGetRequesterTypeFromDB(error, userInfo) {
+  function checkAlternateFromDB(error, userInfo) {
+    if (error) {
+      return f.fail(error.message);
+    }
+    console.log("userInfouserInfouserInfo", userInfo.dataValues);
+
+    if (userInfo) {
+      return f.succeed(userInfo.dataValues.type);
+    }
+  }
+
+  function onCompleteHandler(error, requesterType) {
     if (error) {
       return next({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
         data: error,
       });
     }
-    if (userInfo) {
-      checkRequesterType(userInfo[0].dataValues.type);
-    }
-  }
 
-  function checkRequesterType(requesterType) {
     if (!allowedRoutes[requesterType].includes(reqInfo)) {
       return next({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
         data: requesterType + " do not have access",
       });
     }
-    return next();
+    next();
   }
 }
 

@@ -11,6 +11,7 @@ var findUserByEmailCallback = util
 
 function createUser(preparedCredentials, callback) {
   return createUserCallback(
+    preparedCredentials,
     {
       include: {
         model: identifierModel,

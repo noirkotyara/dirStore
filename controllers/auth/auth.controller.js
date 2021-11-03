@@ -1,16 +1,14 @@
-var redis = require("redis");
-
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var bcrypt = require("bcrypt");
 var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
+var redisClient = require("./../../services/connect-redis");
+
 var myLodash = require("../../helpers/lodash");
 
 var authService = require("../../services/auth.service");
-
-var redisClient = redis.createClient(process.env.R_PORT);
 
 function register(userCredentials, next) {
   var f = ff(this, createUser, checkUserCreate).onComplete(onCompleteHandler);
@@ -36,11 +34,7 @@ function register(userCredentials, next) {
       return next(error);
     }
 
-    redisClient.set(savedUser.id, savedUser.type);
-
-    redisClient.get(savedUser.id, function (err, reply) {
-      console.log(reply.toString());
-    });
+    redisClient.set("userType:" + savedUser.id, savedUser.type);
 
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
