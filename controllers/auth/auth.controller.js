@@ -124,13 +124,18 @@ function login(userCredentials, next) {
 }
 
 function getUserProfile(userId, next) {
-  var f = ff(this, getUser, checkUser).onComplete(onCompleteHandler);
+  var f = ff(
+    this,
+    getUserInfoRedis,
+    checkAndGetAlternateFromDB,
+    checkAlternateFromDB
+  ).onComplete(onCompleteHandler);
 
-  function getUser() {
-    authService.findUserById(userId, f.slotPlain(2));
+  function getUserInfoRedis() {
+    redisClient.get("userProfile:" + userId, f.slotPlain(2));
   }
 
-  function checkUser(error, foundedUser) {
+  function checkAndGetAlternateFromDB(error, foundedUser) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
@@ -138,14 +143,39 @@ function getUserProfile(userId, next) {
       });
     }
 
-    if (myLodash.isEmpty(foundedUser)) {
+    if (!myLodash.isEmpty(foundedUser)) {
+      return f.succeed(JSON.parse(foundedUser));
+    }
+
+    authService.findUserById(userId, f.slotPlain(2));
+  }
+
+  function checkAlternateFromDB(error, foundedUserFromDB) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(foundedUserFromDB)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         data: "User is not founded",
       });
     }
 
-    f.pass(foundedUser);
+    var preparedUserFromDB = myLodash.deepClone(foundedUserFromDB.dataValues);
+
+    delete preparedUserFromDB.password;
+
+    redisClient.setex(
+      "userProfile:" + userId,
+      30,
+      JSON.stringify(preparedUserFromDB)
+    );
+
+    f.succeed(preparedUserFromDB);
   }
 
   function onCompleteHandler(error, foundedUser) {
@@ -153,14 +183,10 @@ function getUserProfile(userId, next) {
       return next(error);
     }
 
-    var userInfo = myLodash.deepClone(foundedUser);
-
-    delete userInfo.password;
-
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
-        data: userInfo,
+        data: foundedUser,
         message: "User info",
       },
     });

@@ -23,11 +23,29 @@ function createUser(preparedCredentials, callback) {
 }
 
 function findUserById(userId, callback) {
-  return findUserByIdCallback({ where: { id: userId } }, callback);
+  return findUserByIdCallback(
+    {
+      where: { id: userId },
+      include: {
+        model: identifierModel,
+        as: "identifier",
+      },
+    },
+    callback
+  );
 }
 
 function findUserByEmail(email, callback) {
-  return findUserByEmailCallback({ where: { email: email } }, callback);
+  return findUserByEmailCallback(
+    {
+      where: { email: email },
+      include: {
+        model: identifierModel,
+        as: "identifier",
+      },
+    },
+    callback
+  );
 }
 
 module.exports = {

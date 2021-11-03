@@ -54,10 +54,13 @@ function checkAccessMiddleware(req, res, next) {
     if (error) {
       return f.fail(error.message);
     }
-    console.log("userInfouserInfouserInfo", userInfo.dataValues);
 
     if (userInfo) {
-      return f.succeed(userInfo.dataValues.type);
+      var userType = userInfo.dataValues.type
+
+      redisClient.set("userType:" + req.user.userId, userType);
+      
+      return f.succeed(userType);
     }
   }
 
