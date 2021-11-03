@@ -1,6 +1,11 @@
 var ff = require("ff");
 var redis = require("redis");
+
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
+
+var myLodash = require("./../helpers/lodash");
+
+var authService = require("./../services/auth.service");
 
 var redisClient = redis.createClient();
 
@@ -24,22 +29,45 @@ function checkAccessMiddleware(req, res, next) {
 
   var reqInfo = req.method + ":" + req.baseUrl + req.route.path;
 
-  var f = ff(this, getRequesterType).onComplete(checkAndGetAccess);
+  var f = ff(this, getRequesterTypeRedis, checkAndGetRequesterType).onComplete(
+    checkAndGetRequesterTypeFromDB
+  );
 
-  function getRequesterType() {
-    redisClient.get(req.user.userId, f.slot());
+  function getRequesterTypeRedis() {
+    redisClient.get(req.user.userId, f.slotPlain(2));
   }
 
-  function checkAndGetAccess(error, reply) {
-    var requesterType = reply.toString();
+  function checkAndGetRequesterType(error, reply) {
+    if (error) {
+      return f.fail();
+    }
+    if (!myLodash.isEmpty(reply)) {
+      checkRequesterType(reply.toString());
+      return;
+    }
+    authService.findUserById(req.user.userId, f.slot());
+  }
 
+  function checkAndGetRequesterTypeFromDB(error, userInfo) {
+    if (error) {
+      return next({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+    if (userInfo) {
+      checkRequesterType(userInfo[0].dataValues.type);
+    }
+  }
+
+  function checkRequesterType(requesterType) {
     if (!allowedRoutes[requesterType].includes(reqInfo)) {
       return next({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
         data: requesterType + " do not have access",
       });
     }
-    next();
+    return next();
   }
 }
 

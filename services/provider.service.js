@@ -2,12 +2,7 @@ var util = require("util");
 
 var providerModel = require("../models/provider.model");
 
-function createProvider(providerInfo, callback) {
-  var c = util.callbackify(function () {
-    return providerModel.create(providerInfo);
-  });
-  return c(callback);
-}
+var createProvider = util.callbackify(providerModel.create).bind(providerModel);
 
 function findProviderById(providerId, callback) {
   var c = util.callbackify(function () {
