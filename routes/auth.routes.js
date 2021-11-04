@@ -3,7 +3,7 @@ var express = require("express");
 var requesterTypeMiddleware = require("../middlewares/requester-type.middleware");
 var authMiddleware = require("./../middlewares/auth.middleware");
 
-var authController = require("./../controllers/auth/auth.controller");
+var authController = require("./../controllers/auth");
 
 var authRouter = express.Router();
 

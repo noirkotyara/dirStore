@@ -5,7 +5,7 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("./../helpers/lodash");
 
-var authService = require("./../services/auth.service");
+var authService = require("./../services/auth");
 
 var redisClient = redis.createClient();
 
@@ -56,10 +56,10 @@ function checkAccessMiddleware(req, res, next) {
     }
 
     if (userInfo) {
-      var userType = userInfo.dataValues.type
+      var userType = userInfo.dataValues.type;
 
       redisClient.set("userType:" + req.user.userId, userType);
-      
+
       return f.succeed(userType);
     }
   }
