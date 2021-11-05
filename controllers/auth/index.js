@@ -1,6 +1,6 @@
 var getUserProfile = require("./getUserProfile");
 var login = require("./login");
-var register = require("./register");
+var register = require("./register").register;
 
 module.exports = {
   getUserProfile: getUserProfile,
