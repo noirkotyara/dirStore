@@ -1,11 +1,11 @@
 var util = require("util");
 
-var delivererReformator = require("./../controllers/deliverer/helpers/delivererCaseReformator");
+var delivererReformator = require("../controllers/deliverer/helpers/deliverer-case-reformator");
 
 var delivererModel = require("../models/deliverer.model");
 var productModel = require("../models/product.model");
 
-var knexConnection = require("./../services/connectDBKnex").knexConnection;
+var knexConnection = require("./connect-db-knex").knexConnection;
 
 function createDeliverer(delivererInfo, callback) {
   var reformatedDelivererInfo = delivererReformator.inSnake(delivererInfo);

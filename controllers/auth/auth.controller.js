@@ -4,6 +4,8 @@ var bcrypt = require("bcrypt");
 var ff = require("ff");
 var jwt = require("jsonwebtoken");
 
+var redisClient = require("./../../services/connect-redis");
+
 var myLodash = require("../../helpers/lodash");
 
 var authService = require("../../services/auth.service");
@@ -32,11 +34,14 @@ function register(userCredentials, next) {
       return next(error);
     }
 
+    redisClient.set("userType:" + savedUser.id, savedUser.type);
+
     next({
       responseCode: RESPONSE_CODES.SUCCESS__CREATED,
       data: {
         data: savedUser,
-        message: "User is registered " + userCredentials.email,
+        message:
+          userCredentials.type + " is registered " + userCredentials.email,
       },
     });
   }
@@ -45,7 +50,7 @@ function register(userCredentials, next) {
 function login(userCredentials, next) {
   var f = ff(
     this,
-    function () {
+    function() {
       authService.findUserByEmail(userCredentials.email, f.slotPlain(2));
     },
     comparePassword,
@@ -86,9 +91,7 @@ function login(userCredentials, next) {
 
       userWithToken.token = jwt.sign(
         {
-          userId: user.userId,
-          email: user.email,
-          type: user.type,
+          userId: user.id,
         },
         process.env.JWT_S,
         {
@@ -120,7 +123,80 @@ function login(userCredentials, next) {
   }
 }
 
+function getUserProfile(userId, next) {
+  var TIME_EXPIRES_SEC = 30;
+
+  var f = ff(
+    this,
+    getUserInfoRedis,
+    checkAndGetAlternateFromDB,
+    checkAlternateFromDB
+  ).onComplete(onCompleteHandler);
+
+  function getUserInfoRedis() {
+    redisClient.get("userProfile:" + userId, f.slotPlain(2));
+  }
+
+  function checkAndGetAlternateFromDB(error, foundedUser) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+
+    if (!myLodash.isEmpty(foundedUser)) {
+      return f.succeed(JSON.parse(foundedUser));
+    }
+
+    authService.findUserById(userId, f.slotPlain(2));
+  }
+
+  function checkAlternateFromDB(error, foundedUserFromDB) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
+        data: error,
+      });
+    }
+
+    if (myLodash.isEmpty(foundedUserFromDB)) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        data: "User is not founded",
+      });
+    }
+
+    var preparedUserFromDB = myLodash.deepClone(foundedUserFromDB.dataValues);
+
+    delete preparedUserFromDB.password;
+
+    redisClient.setex(
+      "userProfile:" + userId,
+      TIME_EXPIRES_SEC,
+      JSON.stringify(preparedUserFromDB)
+    );
+
+    f.succeed(preparedUserFromDB);
+  }
+
+  function onCompleteHandler(error, foundedUser) {
+    if (error) {
+      return next(error);
+    }
+
+    next({
+      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+      data: {
+        data: foundedUser,
+        message: "User info",
+      },
+    });
+  }
+}
+
 module.exports = {
   register: register,
   login: login,
+  getUserProfile: getUserProfile,
 };

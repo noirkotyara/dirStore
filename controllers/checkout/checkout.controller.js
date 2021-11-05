@@ -6,7 +6,7 @@ var ff = require("ff");
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
-var getRandomItem = require("./helpers/getRandomItem");
+var getRandomItem = require("./helpers/get-random-item");
 
 var deliverersFilePath = path.resolve(
   __dirname,

@@ -3,18 +3,18 @@ var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
 
-var testConnectionToDB = require("./helpers/connectDB");
+var testConnectionToDB = require("./helpers/connect-db");
 
 var loggerMiddleware = require("./middlewares/logger.middleware");
 
-var userRoutes = require("./routes/user.routes");
+var authRoutes = require("./routes/auth.routes");
 var productRoutes = require("./routes/product.routes");
 var delivererRoutes = require("./routes/deliverer.routes");
-var adminRoutes = require("./routes/admin.routes");
-
+var checkoutRoutes = require("./routes/checkout.routes");
+var providerRoutes = require("./routes/provider.routes");
 var app = express();
 
-var pool = require("./services/connectDB");
+var pool = require("./services/connect-db-mysql2");
 
 pool.mysqlConnection.connect(function (error) {
   if (error) {
@@ -29,8 +29,9 @@ pool.mysqlConnection.connect(function (error) {
 app.use(express.json());
 app.use(loggerMiddleware);
 
-app.use("/user", userRoutes);
-app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
+app.use("/provider", providerRoutes);
+app.use("/checkout", checkoutRoutes);
 app.use("/product", productRoutes);
 app.use("/deliverer", delivererRoutes);
 
