@@ -50,7 +50,7 @@ function register(userCredentials, next) {
 function login(userCredentials, next) {
   var f = ff(
     this,
-    function () {
+    function() {
       authService.findUserByEmail(userCredentials.email, f.slotPlain(2));
     },
     comparePassword,
@@ -124,6 +124,8 @@ function login(userCredentials, next) {
 }
 
 function getUserProfile(userId, next) {
+  var TIME_EXPIRES_SEC = 30;
+
   var f = ff(
     this,
     getUserInfoRedis,
@@ -171,7 +173,7 @@ function getUserProfile(userId, next) {
 
     redisClient.setex(
       "userProfile:" + userId,
-      30,
+      TIME_EXPIRES_SEC,
       JSON.stringify(preparedUserFromDB)
     );
 
