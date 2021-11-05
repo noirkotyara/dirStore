@@ -4,7 +4,7 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
 
-var delivererReformator = require("./helpers/delivererCaseReformator");
+var delivererReformator = require("./helpers/deliverer-case-reformator");
 
 var delivererService = require("./../../services/deliverer.service");
 

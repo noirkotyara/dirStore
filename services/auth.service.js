@@ -3,40 +3,53 @@ var util = require("util");
 var userModel = require("../models/user.model");
 var identifierModel = require("../models/identifier.model");
 
+var findUserByIdCallback = util.callbackify(userModel.findOne).bind(userModel);
+var createUserCallback = util.callbackify(userModel.create).bind(userModel);
+var findUserByEmailCallback = util
+  .callbackify(userModel.findOne)
+  .bind(userModel);
+
 function createUser(preparedCredentials, callback) {
-  var c = util.callbackify(function () {
-    return userModel.create(preparedCredentials, {
+  return createUserCallback(
+    preparedCredentials,
+    {
       include: {
         model: identifierModel,
         as: "identifier",
       },
-    });
-  });
-  return c(callback);
-}
-
-function saveUser(user, callback) {
-  var c = util.callbackify(function () {
-    return user.save();
-  });
-  return c(callback);
+    },
+    callback
+  );
 }
 
 function findUserById(userId, callback) {
-  var c = util.callbackify(function () {
-    return userModel.findOne({ where: { id: userId } });
-  });
-  return c(callback);
+  return findUserByIdCallback(
+    {
+      where: { id: userId },
+      include: {
+        model: identifierModel,
+        as: "identifier",
+      },
+    },
+    callback
+  );
 }
 
 function findUserByEmail(email, callback) {
-  var c = util.callbackify(function () {
-    return userModel.findOne({ where: { email: email } });
-  });
-  return c(callback);
+  return findUserByEmailCallback(
+    {
+      where: { email: email },
+      include: {
+        model: identifierModel,
+        as: "identifier",
+      },
+    },
+    callback
+  );
 }
 
 module.exports = {
   createUser: createUser,
   findUserByEmail: findUserByEmail,
+  findUserById: findUserById,
 };

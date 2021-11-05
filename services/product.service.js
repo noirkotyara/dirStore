@@ -1,10 +1,9 @@
-var uuid = require("uuid");
 var ff = require("ff");
-var pool = require("./connectDB");
-var knexConnection = require("./../services/connectDBKnex").knexConnection;
+var pool = require("./connect-db-mysql2");
+var knexConnection = require("./connect-db-knex").knexConnection;
 
 var myLodash = require("./../helpers/lodash");
-var productReformator = require("./../controllers/product/helpers/productCaseReformator");
+var productReformator = require("../controllers/product/helpers/product-case-reformator");
 
 function createTable() {
   var f = ff(this);
@@ -24,18 +23,10 @@ function createTable() {
 
 function saveProduct(product, callback) {
   var productClone = myLodash.deepClone(product);
-  productClone.id = uuid.v4();
 
   var insertQuery = "INSERT INTO Product SET ?";
   var queryFormat = pool.mysqlConnection.format(insertQuery, productClone);
   pool.mysqlConnection.query(queryFormat, callback);
-}
-
-function getLastCreatedProduct(callback) {
-  var selectLastInsertedQuery =
-    "SELECT * FROM Product WHERE id= LAST_INSERT_ID()";
-
-  pool.mysqlConnection.query(selectLastInsertedQuery, callback);
 }
 
 function getProductById(id, callback) {
@@ -56,12 +47,20 @@ function getProductsList(callback) {
 function updateProductById(id, fields, callback) {
   var reformatedFields = productReformator.inSnake(fields);
 
-  var fieldsToSet = Object.keys(reformatedFields)
-    .map(function (key) {
-      return key + " = ?";
-    })
-    .join(", ");
-  var valuesToSet = Object.values(reformatedFields);
+  var fieldsToSet = "";
+  var valuesToSet = [];
+
+  Object.entries(reformatedFields).forEach(function (entries) {
+    var key = entries[0];
+    var value = entries[1];
+    if (!value) {
+      return;
+    }
+    valuesToSet.push(value);
+    fieldsToSet += key + " = ?,";
+  });
+
+  fieldsToSet = fieldsToSet.substring(0, fieldsToSet.length - 1);
 
   var updateQuery = "UPDATE Product SET " + fieldsToSet + " WHERE id = ?";
 
@@ -116,7 +115,6 @@ module.exports = {
   getProductsList: getProductsList,
   updateProductById: updateProductById,
   deleteProductById: deleteProductById,
-  getLastCreatedProduct: getLastCreatedProduct,
   isProductExist: isProductExist,
   getProductDeliverers: getProductDeliverers,
 };

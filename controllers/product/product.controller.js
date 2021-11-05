@@ -1,21 +1,24 @@
 var ff = require("ff");
+var uuid = require("uuid");
+
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
-var productReformator = require("./helpers/productCaseReformator");
+var productReformator = require("./helpers/product-case-reformator");
 
 var productService = require("../../services/product.service");
 
 var createProduct = function (productInfo, next) {
   try {
-    var newProduct = productInfo;
+    var newProduct = myLodash.deepClone(productInfo);
+    newProduct.id = uuid.v4();
 
     var f = ff(
       this,
       productService.createTable,
       saveProduct,
       getSavedProduct,
-      checkAndReformateResultCase
+      checkProductSave
     ).onComplete(onCompleteHandler);
 
     function saveProduct() {
@@ -23,36 +26,35 @@ var createProduct = function (productInfo, next) {
     }
 
     function getSavedProduct() {
-      productService.getLastCreatedProduct(f.slotPlain(2));
+      productService.getProductById(newProduct.id, f.slotPlain(2));
     }
 
-    function checkAndReformateResultCase(error, results) {
+    function checkProductSave(error, results) {
       if (error) {
         return f.fail({
           responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
           data: error,
         });
       }
+
       if (myLodash.isEmpty(results)) {
         return f.fail({
           responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-          data: "Product is not founded",
+          data: "Created product is not founded",
         });
       }
 
-      var reformatedProduct = productReformator.inCamel(results[0]);
-      f.pass(reformatedProduct);
+      f.pass(results[0]);
     }
 
-    function onCompleteHandler(error, createdProduct) {
+    function onCompleteHandler(error, savedProduct) {
       if (error) {
         return next(next);
       }
-
       next({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
-          data: createdProduct,
+          data: savedProduct,
           message: "Product is created successfully",
         },
       });
@@ -196,8 +198,7 @@ var updateProductById = function (productId, productFields, next) {
       });
     }
 
-    var reformatedProduct = productReformator.inCamel(results[0]);
-    f.pass(reformatedProduct);
+    f.pass(results[0]);
   }
 
   function onCompleteHandler(error, updatedProduct) {

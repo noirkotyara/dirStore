@@ -1,35 +1,58 @@
 var express = require("express");
 
 var delivererMiddleware = require("./../middlewares/deliverer.middleware");
+var authMiddleware = require("./../middlewares/auth.middleware");
+var checkAccessMiddleware = require("./../middlewares/check-access.middleware");
 
 var delivererController = require("./../controllers/deliverer/deliverer.controller");
 
-var router = express.Router();
+var delivererRouter = express.Router();
 
-router.get("/list", function (req, res, next) {
+/**
+ * PUBLIC routes:
+ * get -> /list
+ * get -> /item/:id
+ *
+ * ONLY for ADMIN:
+ * post/put/delete -> /item/:id
+ * **/
+
+delivererRouter.get("/list", function (req, res, next) {
   delivererController.getDelivererList(next);
 });
 
-router.get("/item/:id", function (req, res, next) {
+delivererRouter.get("/item/:id", function (req, res, next) {
   delivererController.getDelivererById(req.params.id, next);
 });
 
-router.post(
+delivererRouter.post(
   "/item",
-  delivererMiddleware.createDelivererValidation,
+  [
+    authMiddleware.verifyToken,
+    checkAccessMiddleware,
+    delivererMiddleware.createDelivererValidation,
+  ],
   function (req, res, next) {
     delivererController.createDeliverer(req.body, next);
   }
 );
-router.put(
+delivererRouter.put(
   "/item/:id",
-  delivererMiddleware.updateDelivererValidation,
+  [
+    authMiddleware.verifyToken,
+    checkAccessMiddleware,
+    delivererMiddleware.updateDelivererValidation,
+  ],
   function (req, res, next) {
     delivererController.updateDeliverer(req.params.id, req.body, next);
   }
 );
-router.delete("/item/:id", function (req, res, next) {
-  delivererController.deleteDeliverer(req.params.id, next);
-});
+delivererRouter.delete(
+  "/item/:id",
+  [authMiddleware.verifyToken, checkAccessMiddleware],
+  function (req, res, next) {
+    delivererController.deleteDeliverer(req.params.id, next);
+  }
+);
 
-module.exports = router;
+module.exports = delivererRouter;

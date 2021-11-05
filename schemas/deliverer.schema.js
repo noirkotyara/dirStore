@@ -1,4 +1,4 @@
-var knexConnection = require("../services/connectDBKnex").knexConnection;
+var knexConnection = require("../services/connect-db-knex").knexConnection;
 
 exports.up = function (knex) {
   return knexConnection.schema.hasTable("Deliverer").then(function (exists) {
