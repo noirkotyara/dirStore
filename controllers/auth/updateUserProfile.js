@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,40 +55,51 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
+exports.updateUserProfile = void 0;
+var util = __importStar(require("util"));
 // @ts-ignore
 var message_catcher_1 = require("message-catcher");
-var createUser_1 = require("../../services/auth/createUser");
 var connect_redis_1 = require("../../services/connect-redis");
-var register = function (userCredentials, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var createdUser, preparedUser, error_1;
+var updateUserProfileById_1 = require("../../services/auth/updateUserProfileById");
+var findUserProfileById_1 = require("../../services/auth/findUserProfileById");
+var redisSetex = util.promisify(connect_redis_1.redisClient.setex).bind(connect_redis_1.redisClient);
+var updateUserProfile = function (userId, userProfileFieldsToChange, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var updatedRows, isUserUpdated, updatedUserProfile, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, createUser_1.createUser)(userCredentials)];
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, (0, updateUserProfileById_1.updateUserProfileById)(userId, userProfileFieldsToChange)];
             case 1:
-                createdUser = _a.sent();
-                preparedUser = Object.assign({}, createdUser.get());
-                delete preparedUser.password;
-                connect_redis_1.redisClient.set("userType:" + preparedUser.id, preparedUser.type);
+                updatedRows = _a.sent();
+                isUserUpdated = (updatedRows === null || updatedRows === void 0 ? void 0 : updatedRows.length) && updatedRows[0] !== 0;
+                console.log("CHANGED", isUserUpdated);
+                if (!isUserUpdated) {
+                    throw new Error("User is not updated");
+                }
+                return [4 /*yield*/, (0, findUserProfileById_1.findUserProfileById)(userId)];
+            case 2:
+                updatedUserProfile = _a.sent();
+                return [4 /*yield*/, redisSetex("userProfile:" + userId, 30, JSON.stringify(updatedUserProfile))];
+            case 3:
+                _a.sent();
                 next({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {
-                        data: preparedUser,
-                        message: userCredentials.type + " is registered " + userCredentials.email,
+                        data: updatedUserProfile,
+                        message: "User info is updated",
                     },
                 });
-                return [3 /*break*/, 3];
-            case 2:
+                return [3 /*break*/, 5];
+            case 4:
                 error_1 = _a.sent();
                 next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+                    responseCode: message_catcher_1.RESPONSE_CODES.S_ERROR_INTERNAL,
                     data: error_1,
                 });
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); };
-exports.register = register;
+exports.updateUserProfile = updateUserProfile;

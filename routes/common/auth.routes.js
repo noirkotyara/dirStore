@@ -27,4 +27,12 @@ authRouter.get(
   }
 );
 
+authRouter.put(
+  "/profile",
+  authMiddleware.verifyToken,
+  function (req, res, next) {
+    authController.updateUserProfile(req.user.userId, req.body, next);
+  }
+);
+
 module.exports = authRouter;
