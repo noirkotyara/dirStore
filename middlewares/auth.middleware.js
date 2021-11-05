@@ -17,7 +17,6 @@ function verifyToken(req, res, next) {
       });
 
     req.user = jwt.verify(token, process.env.JWT_S);
-    console.log(req.user);
     next();
   } catch (error) {
     next({

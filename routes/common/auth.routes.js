@@ -1,16 +1,14 @@
 var express = require("express");
 
-var requesterTypeMiddleware = require("../middlewares/requester-type.middleware");
-var authMiddleware = require("./../middlewares/auth.middleware");
+var requesterTypeMiddleware = require("../../middlewares/requester-type.middleware");
+var authMiddleware = require("../../middlewares/auth.middleware");
 
-var authController = require("./../controllers/auth");
+var authController = require("../../controllers/auth");
 
 var authRouter = express.Router();
 
-/** routes for ADMIN or USER type of requester **/
-
 authRouter.post(
-  "/register/:type",
+  "/register",
   requesterTypeMiddleware,
   function (req, res, next) {
     authController.register(req.body, next);

@@ -1,16 +1,11 @@
 var express = require("express");
 
-var authMiddleware = require("./../middlewares/auth.middleware");
-var checkAccessMiddleware = require("./../middlewares/check-access.middleware");
+var authMiddleware = require("../../middlewares/auth.middleware");
+var checkAccessMiddleware = require("../../middlewares/check-access.middleware");
 
-var checkoutController = require("./../controllers/checkout/checkout.controller");
+var checkoutController = require("../../controllers/checkout/checkout.controller");
 
 var checkoutRouter = express.Router();
-
-/**
- * ONLY for USER:
- * post -> /item
- * **/
 
 checkoutRouter.post(
   "/item",

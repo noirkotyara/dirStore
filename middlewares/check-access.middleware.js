@@ -14,20 +14,7 @@ function checkAccessMiddleware(req, res, next) {
     return next();
   }
 
-  var allowedRoutes = {
-    ADMIN: [
-      "PUT:/product/item/:id",
-      "POST:/product/item",
-      "DELETE:/product/item/:id",
-      "PUT:/deliverer/item/:id",
-      "POST:/deliverer/item",
-      "DELETE:/deliverer/item/:id",
-      "POST:/provider/item",
-    ],
-    USER: ["POST:/checkout/item"],
-  };
-
-  var reqInfo = req.method + ":" + req.baseUrl + req.route.path;
+  var routerType = req.originalUrl.split("/")[1].toUpperCase();
 
   var f = ff(
     this,
@@ -72,7 +59,7 @@ function checkAccessMiddleware(req, res, next) {
       });
     }
 
-    if (!allowedRoutes[requesterType].includes(reqInfo)) {
+    if (routerType !== requesterType) {
       return next({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
         data: requesterType + " do not have access",

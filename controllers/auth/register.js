@@ -35,12 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = void 0;
 // @ts-ignore
 var message_catcher_1 = require("message-catcher");
 var createUser_1 = require("../../services/auth/createUser");
-var connect_redisTS_1 = require("../../services/connect-redisTS");
+var connect_redis_1 = __importDefault(require("../../services/connect-redis"));
 var register = function (userCredentials, next) { return __awaiter(void 0, void 0, void 0, function () {
     var createdUser, preparedUser, error_1;
     return __generator(this, function (_a) {
@@ -52,7 +55,7 @@ var register = function (userCredentials, next) { return __awaiter(void 0, void 
                 createdUser = _a.sent();
                 preparedUser = Object.assign({}, createdUser.get());
                 delete preparedUser.password;
-                connect_redisTS_1.redisClient.set("userType:" + preparedUser.id, preparedUser.type);
+                connect_redis_1.default.set("userType:" + preparedUser.id, preparedUser.type);
                 next({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {

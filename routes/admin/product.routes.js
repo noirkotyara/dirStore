@@ -1,29 +1,12 @@
 var express = require("express");
 
-var productMiddleware = require("./../middlewares/product.middleware");
-var authMiddleware = require("./../middlewares/auth.middleware");
-var checkAccessMiddleware = require("./../middlewares/check-access.middleware");
+var productMiddleware = require("./../../middlewares/product.middleware");
+var authMiddleware = require("./../../middlewares/auth.middleware");
+var checkAccessMiddleware = require("./../../middlewares/check-access.middleware");
 
-var productController = require("../controllers/product");
+var productController = require("../../controllers/product");
 
 var productRouter = express.Router();
-
-/**
- * PUBLIC routes:
- * get -> /list
- * get -> /item/:id
- *
- * ONLY for ADMIN:
- * post/put/delete -> /item/:id
- * **/
-
-productRouter.get("/list", function (req, res, next) {
-  productController.getProductsList(next);
-});
-
-productRouter.get("/item/:id", function (req, res, next) {
-  productController.getProductById(req.params.id, next);
-});
 
 productRouter.post(
   "/item",

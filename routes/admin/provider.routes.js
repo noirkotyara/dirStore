@@ -1,16 +1,11 @@
 var express = require("express");
 
-var authMiddleware = require("./../middlewares/auth.middleware");
+var authMiddleware = require("./../../middlewares/auth.middleware");
+var checkAccessMiddleware = require("./../../middlewares/check-access.middleware");
 
-var providerController = require("../controllers/provider/provider.controller");
-var checkAccessMiddleware = require("./../middlewares/check-access.middleware");
+var providerController = require("../../controllers/provider/provider.controller");
 
 var providerRouter = express.Router();
-
-/**
- * ONLY for ADMIN:
- * post -> /provider
- * **/
 
 providerRouter.post(
   "/provider",
