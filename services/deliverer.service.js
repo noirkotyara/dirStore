@@ -48,13 +48,16 @@ function getDelivererProducts(delivererId, callback) {
       where: {
         id: delivererId,
       },
-      include: {
-        model: productModel,
-        as: "products",
-        through: {
-          attributes: [],
+      include: [
+        {
+          model: productModel,
+          as: "products",
+          through: {
+            as: "provider",
+            attributes: ["id"],
+          },
         },
-      },
+      ],
     });
   });
   return c(callback);

@@ -4,7 +4,7 @@ var productMiddleware = require("./../middlewares/product.middleware");
 var authMiddleware = require("./../middlewares/auth.middleware");
 var checkAccessMiddleware = require("./../middlewares/check-access.middleware");
 
-var productController = require("./../controllers/product/product.controller");
+var productController = require("../controllers/product");
 
 var productRouter = express.Router();
 

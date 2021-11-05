@@ -237,7 +237,7 @@ var getDelivererById = function (delivererId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        data: error.message,
       });
     }
     if (myLodash.isEmpty(productsList)) {
