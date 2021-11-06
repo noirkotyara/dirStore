@@ -13,7 +13,6 @@ function testConnectionToDBsequelize() {
   function onCompleteHandlerSequelize(error) {
     if (error) {
       console.log("SEQUELIZE: Unable to connect to the database:", error);
-      console.log(error.message);
       return process.exit(1);
     }
     console.log("SEQUELIZE: Database connection OK!");
