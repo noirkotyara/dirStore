@@ -41,15 +41,13 @@ export const deleteUserProfile = async (userId: string, next: NextFunction) => {
       throw new ErrorMessageCatcher("User is not deleted");
     }
 
-    if (userProfileRedis) {
-      const deletedRowsUserProfileRedis = redisClient.del(
-        "userProfile:" + userId
-      );
-      const deletedRowsUserTypeRedis = redisClient.del("userType:" + userId);
+    const deletedRowsUserProfileRedis = redisClient.del(
+      "userProfile:" + userId
+    );
+    const deletedRowsUserTypeRedis = redisClient.del("userType:" + userId);
 
-      if (!deletedRowsUserProfileRedis || !deletedRowsUserTypeRedis) {
-        throw new ErrorMessageCatcher("User cash is not empty");
-      }
+    if (!deletedRowsUserProfileRedis || !deletedRowsUserTypeRedis) {
+      throw new ErrorMessageCatcher("User cash is not empty");
     }
 
     next({

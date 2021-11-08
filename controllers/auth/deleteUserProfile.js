@@ -97,12 +97,10 @@ var deleteUserProfile = function (userId, next) { return __awaiter(void 0, void 
                 if (!isUserDeleted) {
                     throw new ErrorMessageCatcher_1.ErrorMessageCatcher("User is not deleted");
                 }
-                if (userProfileRedis) {
-                    deletedRowsUserProfileRedis = connect_redis_1.redisClient.del("userProfile:" + userId);
-                    deletedRowsUserTypeRedis = connect_redis_1.redisClient.del("userType:" + userId);
-                    if (!deletedRowsUserProfileRedis || !deletedRowsUserTypeRedis) {
-                        throw new ErrorMessageCatcher_1.ErrorMessageCatcher("User cash is not empty");
-                    }
+                deletedRowsUserProfileRedis = connect_redis_1.redisClient.del("userProfile:" + userId);
+                deletedRowsUserTypeRedis = connect_redis_1.redisClient.del("userType:" + userId);
+                if (!deletedRowsUserProfileRedis || !deletedRowsUserTypeRedis) {
+                    throw new ErrorMessageCatcher_1.ErrorMessageCatcher("User cash is not empty");
                 }
                 next({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
