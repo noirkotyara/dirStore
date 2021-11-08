@@ -1,7 +1,6 @@
 import * as util from "util";
 import { NextFunction } from "express";
 
-// @ts-ignore
 import { RESPONSE_CODES } from "message-catcher";
 
 import { findUserProfileById } from "../../services/auth/findUserProfileById";

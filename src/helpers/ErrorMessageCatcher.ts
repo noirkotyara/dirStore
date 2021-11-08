@@ -1,4 +1,3 @@
-// @ts-ignore
 import { RESPONSE_CODES } from "message-catcher";
 
 import { ErrorDataType } from "../types/ErrorCatcher";

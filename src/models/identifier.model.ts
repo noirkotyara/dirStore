@@ -32,7 +32,6 @@ export const IdentifierModel = seqConnection.define(
       type: DataTypes.STRING(35),
       references: { model: UserModel, key: "id" },
       field: "user_id",
-      // foreignKey: "FK_identifier_user",
     },
   },
   {

@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = void 0;
-// @ts-ignore
 var message_catcher_1 = require("message-catcher");
 var createUser_1 = require("../../services/auth/createUser");
 var connect_redis_1 = require("../../services/connectors/connect-redis");

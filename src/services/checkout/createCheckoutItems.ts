@@ -5,13 +5,10 @@ import {
 
 import { CheckoutItemModel } from "../../models/checkoutItem.model";
 
-// @ts-ignore
-import providerModel from "./../../models/provider.model";
-
 export const createCheckoutItems = async (
   checkoutId: string,
   providersIds: string[]
-): Promise<CheckoutItemAttributes[] | undefined> => {
+): Promise<CheckoutItemAttributes[]> => {
   const checkoutItems: CheckoutItemCreationAttributes[] = providersIds.map(
     (providerId) => {
       return { checkoutId, providerId };

@@ -57,7 +57,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUserProfile = void 0;
 var util = __importStar(require("util"));
-// @ts-ignore
 var message_catcher_1 = require("message-catcher");
 var connect_redis_1 = require("../../services/connectors/connect-redis");
 var updateUserProfileById_1 = require("../../services/auth/updateUserProfileById");

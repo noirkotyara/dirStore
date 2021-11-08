@@ -2,9 +2,9 @@ import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 
 import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
-// @ts-ignore
-import ProviderModel from "./provider.model";
 import { CheckoutModel } from "./checkout.model";
+import ProviderModel from "./provider.model";
+
 import {
   CheckoutItemAttributes,
   CheckoutItemCreationAttributes,
@@ -25,12 +25,10 @@ export const CheckoutItemModel: ModelDefined<
     },
     providerId: {
       type: DataTypes.STRING(35),
-      // references: { model: ProviderModel, key: "id" },
       field: "provider_id",
     },
     checkoutId: {
       type: DataTypes.STRING(35),
-      // references: { model: CheckoutModel, key: "id" },
       field: "checkout_id",
     },
     createdAt: {

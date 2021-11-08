@@ -1,6 +1,5 @@
 import { NextFunction } from "express";
 
-// @ts-ignore
 import { RESPONSE_CODES } from "message-catcher";
 import { CheckoutType } from "../../types/Checkout";
 import { ErrorCatcher } from "../../helpers/ErrorCatcher";

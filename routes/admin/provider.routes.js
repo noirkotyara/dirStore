@@ -8,7 +8,7 @@ var providerController = require("../../controllers/provider/provider.controller
 var providerRouter = express.Router();
 
 providerRouter.post(
-  "/provider",
+  "/item",
   [authMiddleware.verifyToken, checkAccessMiddleware],
   function (req, res, next) {
     providerController.createProvider(req.body, next);

@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCheckout = void 0;
-// @ts-ignore
 var message_catcher_1 = require("message-catcher");
 var ErrorCatcher_1 = require("../../helpers/ErrorCatcher");
 var ErrorMessageCatcher_1 = require("../../helpers/ErrorMessageCatcher");
@@ -75,7 +74,6 @@ var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(vo
                 if (error_1 instanceof ErrorCatcher_1.ErrorCatcher || error_1 instanceof ErrorMessageCatcher_1.ErrorMessageCatcher) {
                     return [2 /*return*/, next(error_1)];
                 }
-                console.log(error_1);
                 next({
                     responseCode: message_catcher_1.RESPONSE_CODES.DB_ERROR_SEQUELIZE,
                     data: error_1,

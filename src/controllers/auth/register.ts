@@ -1,6 +1,5 @@
 import { NextFunction } from "express";
 
-// @ts-ignore
 import { RESPONSE_CODES } from "message-catcher";
 
 import { UserAttributes } from "../../types/User";
