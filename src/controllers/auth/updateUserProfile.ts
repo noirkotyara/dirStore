@@ -9,8 +9,11 @@ import { updateUserProfileById } from "../../services/auth/updateUserProfileById
 
 import { UserAttributes } from "../../types/User";
 import { findUserProfileById } from "../../services/auth/findUserProfileById";
+import { ErrorMessageCatcher } from "../../helpers/ErrorMessageCatcher";
 
 const redisSetex = util.promisify(redisClient.setex).bind(redisClient);
+
+const EXPIRES_TIME_SEC = 30;
 
 export const updateUserProfile = async (
   userId: string,
@@ -25,17 +28,15 @@ export const updateUserProfile = async (
 
     const isUserUpdated = updatedRows?.length && updatedRows[0] !== 0;
 
-    console.log("CHANGED", isUserUpdated);
-
     if (!isUserUpdated) {
-      throw new Error("User is not updated");
+      throw new ErrorMessageCatcher("User is not updated");
     }
 
     const updatedUserProfile = await findUserProfileById(userId);
 
     await redisSetex(
       "userProfile:" + userId,
-      30,
+      EXPIRES_TIME_SEC,
       JSON.stringify(updatedUserProfile)
     );
 
@@ -47,9 +48,6 @@ export const updateUserProfile = async (
       },
     });
   } catch (error) {
-    next({
-      responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-      data: error,
-    });
+    next(error);
   }
 };

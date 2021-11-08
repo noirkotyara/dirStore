@@ -27,6 +27,14 @@ authRouter.get(
   }
 );
 
+authRouter.delete(
+  "/profile",
+  authMiddleware.verifyToken,
+  function (req, res, next) {
+    authController.deleteUserProfile(req.user.userId, next);
+  }
+);
+
 authRouter.put(
   "/profile",
   authMiddleware.verifyToken,

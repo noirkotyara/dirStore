@@ -62,7 +62,9 @@ var message_catcher_1 = require("message-catcher");
 var connect_redis_1 = require("../../services/connect-redis");
 var updateUserProfileById_1 = require("../../services/auth/updateUserProfileById");
 var findUserProfileById_1 = require("../../services/auth/findUserProfileById");
+var ErrorMessageCatcher_1 = require("../../helpers/ErrorMessageCatcher");
 var redisSetex = util.promisify(connect_redis_1.redisClient.setex).bind(connect_redis_1.redisClient);
+var EXPIRES_TIME_SEC = 30;
 var updateUserProfile = function (userId, userProfileFieldsToChange, next) { return __awaiter(void 0, void 0, void 0, function () {
     var updatedRows, isUserUpdated, updatedUserProfile, error_1;
     return __generator(this, function (_a) {
@@ -73,14 +75,13 @@ var updateUserProfile = function (userId, userProfileFieldsToChange, next) { ret
             case 1:
                 updatedRows = _a.sent();
                 isUserUpdated = (updatedRows === null || updatedRows === void 0 ? void 0 : updatedRows.length) && updatedRows[0] !== 0;
-                console.log("CHANGED", isUserUpdated);
                 if (!isUserUpdated) {
-                    throw new Error("User is not updated");
+                    throw new ErrorMessageCatcher_1.ErrorMessageCatcher("User is not updated");
                 }
                 return [4 /*yield*/, (0, findUserProfileById_1.findUserProfileById)(userId)];
             case 2:
                 updatedUserProfile = _a.sent();
-                return [4 /*yield*/, redisSetex("userProfile:" + userId, 30, JSON.stringify(updatedUserProfile))];
+                return [4 /*yield*/, redisSetex("userProfile:" + userId, EXPIRES_TIME_SEC, JSON.stringify(updatedUserProfile))];
             case 3:
                 _a.sent();
                 next({
@@ -93,10 +94,7 @@ var updateUserProfile = function (userId, userProfileFieldsToChange, next) { ret
                 return [3 /*break*/, 5];
             case 4:
                 error_1 = _a.sent();
-                next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.S_ERROR_INTERNAL,
-                    data: error_1,
-                });
+                next(error_1);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }
