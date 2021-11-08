@@ -38,7 +38,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.12",
     "lodash": "^4.17.21",
-    "message-catcher": "github:noirkotyara/message-catcher",
+    "message-catcher": "github:noirkotyara/response-controller",
     "mysql2": "^2.3.2",
     "redis": "^3.1.2",
     "sequelize": "^6.8.0",

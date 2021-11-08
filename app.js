@@ -13,7 +13,7 @@ var publicRouters = require("./routes/public");
 
 var app = express();
 
-var pool = require("./services/connect-db-mysql2");
+var pool = require("./services/connectors/connect-db-mysql2");
 
 pool.mysqlConnection.connect(function (error) {
   if (error) {

@@ -1,6 +1,6 @@
 import seq, { DataTypes } from "sequelize";
 
-import { seqConnection } from "../services/connect-db-sequelize";
+import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
 import { UserModel } from "./user.model";
 

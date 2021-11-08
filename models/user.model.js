@@ -7,7 +7,7 @@ exports.UserModel = void 0;
 var sequelize_1 = require("sequelize");
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var identifier_model_1 = require("./identifier.model");
-var connect_db_sequelize_1 = require("../services/connect-db-sequelize");
+var connect_db_sequelize_1 = require("../services/connectors/connect-db-sequelize");
 exports.UserModel = connect_db_sequelize_1.seqConnection.define("User", {
     id: {
         type: sequelize_1.DataTypes.UUIDV4,

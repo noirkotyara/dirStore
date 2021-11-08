@@ -1,72 +1,67 @@
 import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
-import bcrypt from "bcrypt";
 
-import { UserAttributes, UserCreationAttributes } from "../types/User";
+import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
-import { IdentifierModel } from "./identifier.model";
+// @ts-ignore
+import ProviderModel from "./provider.model";
+import { CheckoutModel } from "./checkout.model";
+import {
+  CheckoutItemAttributes,
+  CheckoutItemCreationAttributes,
+} from "../types/CheckoutItem";
 
-import { seqConnection } from "../services/connect-db-sequelize";
-
-export const UserModel: ModelDefined<UserAttributes, UserCreationAttributes> =
-  seqConnection.define(
-    "User",
-    {
-      id: {
-        type: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
-        unique: true,
-        defaultValue: UUIDV4,
-      },
-      type: {
-        type: DataTypes.ENUM("ADMIN", "USER"),
-      },
-      username: {
-        type: DataTypes.STRING(50),
-        unique: true,
-      },
-      email: {
-        type: DataTypes.STRING(256),
-        allowNull: false,
-        unique: true,
-      },
-      password: {
-        type: DataTypes.STRING(254),
-      },
-      phone: {
-        type: DataTypes.STRING(50),
-      },
-      createdAt: {
-        field: "created_date",
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        field: "updated_date",
-        type: DataTypes.DATE,
-      },
+export const CheckoutItemModel: ModelDefined<
+  CheckoutItemAttributes,
+  CheckoutItemCreationAttributes
+> = seqConnection.define(
+  "Checkout_Item",
+  {
+    id: {
+      type: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
+      unique: true,
+      defaultValue: UUIDV4,
     },
-    {
-      tableName: "User",
-      timestamps: true,
-      hooks: {
-        beforeCreate: (model, options) => {
-          if (!model.getDataValue("username")) {
-            const createdUsername = model.getDataValue("email").split("@")[0];
-            model.setDataValue("username", createdUsername);
-          }
-          const salt = bcrypt.genSaltSync();
-          const encryptedPassword = bcrypt.hashSync(
-            model.getDataValue("password"),
-            salt
-          );
-          model.setDataValue("password", encryptedPassword);
-        },
-      },
-    }
-  );
+    providerId: {
+      type: DataTypes.STRING(35),
+      // references: { model: ProviderModel, key: "id" },
+      field: "provider_id",
+    },
+    checkoutId: {
+      type: DataTypes.STRING(35),
+      // references: { model: CheckoutModel, key: "id" },
+      field: "checkout_id",
+    },
+    createdAt: {
+      field: "created_date",
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      field: "updated_date",
+      type: DataTypes.DATE,
+    },
+  },
+  {
+    tableName: "Checkout_Item",
+    timestamps: true,
+  }
+);
 
-UserModel.hasOne(IdentifierModel, {
-  foreignKey: "userId",
-  as: "identifier",
-  onDelete: "CASCADE",
+ProviderModel.belongsToMany(CheckoutModel, {
+  through: CheckoutItemModel,
+  as: "checkouts",
+  foreignKey: "provider_id",
 });
+
+CheckoutModel.belongsToMany(ProviderModel, {
+  through: CheckoutItemModel,
+  as: "providers",
+  foreignKey: "checkout_id",
+});
+
+CheckoutItemModel.belongsTo(CheckoutModel);
+CheckoutItemModel.belongsTo(ProviderModel);
+
+ProviderModel.hasMany(CheckoutItemModel);
+CheckoutModel.hasMany(CheckoutItemModel);

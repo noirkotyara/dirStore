@@ -21,7 +21,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IdentifierModel = void 0;
 var sequelize_1 = __importStar(require("sequelize"));
-var connect_db_sequelize_1 = require("../services/connect-db-sequelize");
+var connect_db_sequelize_1 = require("../services/connectors/connect-db-sequelize");
 var user_model_1 = require("./user.model");
 exports.IdentifierModel = connect_db_sequelize_1.seqConnection.define("Identifier", {
     id: {

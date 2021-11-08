@@ -2,7 +2,7 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var ff = require("ff");
 
-var redisClient = require("./../../services/connect-redis");
+var redisClient = require("../../services/connectors/connect-redis");
 
 var myLodash = require("../../helpers/lodash");
 

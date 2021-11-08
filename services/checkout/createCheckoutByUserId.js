@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,40 +47,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
-// @ts-ignore
-var message_catcher_1 = require("message-catcher");
-var createUser_1 = require("../../services/auth/createUser");
-var connect_redis_1 = require("../../services/connectors/connect-redis");
-var register = function (userCredentials, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var createdUser, preparedUser, error_1;
+exports.createCheckoutByUserId = void 0;
+var checkout_model_1 = require("../../models/checkout.model");
+var Checkout_1 = require("../../types/Checkout");
+var createCheckoutByUserId = function (userId, checkoutInfo) { return __awaiter(void 0, void 0, void 0, function () {
+    var createdCheckout;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, createUser_1.createUser)(userCredentials)];
+            case 0: return [4 /*yield*/, checkout_model_1.CheckoutModel.create(__assign({ userId: userId, status: Checkout_1.CheckoutStatus.ACTIVE }, checkoutInfo))];
             case 1:
-                createdUser = _a.sent();
-                preparedUser = Object.assign({}, createdUser.get());
-                delete preparedUser.password;
-                connect_redis_1.redisClient.set("userType:" + preparedUser.id, preparedUser.type);
-                next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
-                    data: {
-                        data: preparedUser,
-                        message: userCredentials.type + " is registered " + userCredentials.email,
-                    },
-                });
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-                    data: error_1,
-                });
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                createdCheckout = _a.sent();
+                return [2 /*return*/, createdCheckout.get()];
         }
     });
 }); };
-exports.register = register;
+exports.createCheckoutByUserId = createCheckoutByUserId;

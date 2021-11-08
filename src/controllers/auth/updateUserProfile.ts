@@ -4,7 +4,7 @@ import { NextFunction } from "express";
 // @ts-ignore
 import { RESPONSE_CODES } from "message-catcher";
 
-import { redisClient } from "../../services/connect-redis";
+import { redisClient } from "../../services/connectors/connect-redis";
 import { updateUserProfileById } from "../../services/auth/updateUserProfileById";
 
 import { UserAttributes } from "../../types/User";

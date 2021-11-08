@@ -7,7 +7,7 @@ import { RESPONSE_CODES } from "message-catcher";
 import { findUserProfileById } from "../../services/auth/findUserProfileById";
 import { deleteUserProfileById } from "../../services/auth/deleteUserProfileById";
 
-import { redisClient } from "../../services/connect-redis";
+import { redisClient } from "../../services/connectors/connect-redis";
 import { ErrorMessageCatcher } from "../../helpers/ErrorMessageCatcher";
 import { ErrorCatcher } from "../../helpers/ErrorCatcher";
 

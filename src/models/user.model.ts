@@ -5,7 +5,7 @@ import { UserAttributes, UserCreationAttributes } from "../types/User";
 
 import { IdentifierModel } from "./identifier.model";
 
-import { seqConnection } from "../services/connect-db-sequelize";
+import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
 export const UserModel: ModelDefined<UserAttributes, UserCreationAttributes> =
   seqConnection.define(

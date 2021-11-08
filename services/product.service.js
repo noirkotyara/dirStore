@@ -1,6 +1,6 @@
 var ff = require("ff");
-var pool = require("./connect-db-mysql2");
-var knexConnection = require("./connect-db-knex").knexConnection;
+var pool = require("./connectors/connect-db-mysql2");
+var knexConnection = require("./connectors/connect-db-knex").knexConnection;
 
 var myLodash = require("./../helpers/lodash");
 var productReformator = require("../controllers/product/helpers/product-case-reformator");

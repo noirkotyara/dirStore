@@ -36,40 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
-// @ts-ignore
-var message_catcher_1 = require("message-catcher");
-var createUser_1 = require("../../services/auth/createUser");
-var connect_redis_1 = require("../../services/connectors/connect-redis");
-var register = function (userCredentials, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var createdUser, preparedUser, error_1;
+exports.createCheckoutItems = void 0;
+var checkoutItem_model_1 = require("../../models/checkoutItem.model");
+var createCheckoutItems = function (checkoutId, providersIds) { return __awaiter(void 0, void 0, void 0, function () {
+    var checkoutItems, createdCheckoutItems;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, createUser_1.createUser)(userCredentials)];
+                checkoutItems = providersIds.map(function (providerId) {
+                    return { checkoutId: checkoutId, providerId: providerId };
+                });
+                return [4 /*yield*/, checkoutItem_model_1.CheckoutItemModel.bulkCreate(checkoutItems)];
             case 1:
-                createdUser = _a.sent();
-                preparedUser = Object.assign({}, createdUser.get());
-                delete preparedUser.password;
-                connect_redis_1.redisClient.set("userType:" + preparedUser.id, preparedUser.type);
-                next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
-                    data: {
-                        data: preparedUser,
-                        message: userCredentials.type + " is registered " + userCredentials.email,
-                    },
-                });
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-                    data: error_1,
-                });
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                createdCheckoutItems = _a.sent();
+                return [2 /*return*/, createdCheckoutItems.map(function (item) { return item.get(); })];
         }
     });
 }); };
-exports.register = register;
+exports.createCheckoutItems = createCheckoutItems;

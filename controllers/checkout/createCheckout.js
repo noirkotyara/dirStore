@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -55,49 +36,53 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserProfile = void 0;
-var util = __importStar(require("util"));
+exports.createCheckout = void 0;
 // @ts-ignore
 var message_catcher_1 = require("message-catcher");
-var connect_redis_1 = require("../../services/connectors/connect-redis");
-var updateUserProfileById_1 = require("../../services/auth/updateUserProfileById");
-var findUserProfileById_1 = require("../../services/auth/findUserProfileById");
+var ErrorCatcher_1 = require("../../helpers/ErrorCatcher");
 var ErrorMessageCatcher_1 = require("../../helpers/ErrorMessageCatcher");
-var redisSetex = util.promisify(connect_redis_1.redisClient.setex).bind(connect_redis_1.redisClient);
-var EXPIRES_TIME_SEC = 30;
-var updateUserProfile = function (userId, userProfileFieldsToChange, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var updatedRows, isUserUpdated, updatedUserProfile, error_1;
+var createCheckoutByUserId_1 = require("../../services/checkout/createCheckoutByUserId");
+var createCheckoutItems_1 = require("../../services/checkout/createCheckoutItems");
+var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var createdCheckout, checkoutId, createdCheckoutItems, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, (0, updateUserProfileById_1.updateUserProfileById)(userId, userProfileFieldsToChange)];
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, (0, createCheckoutByUserId_1.createCheckoutByUserId)(userId, checkoutInfo)];
             case 1:
-                updatedRows = _a.sent();
-                isUserUpdated = (updatedRows === null || updatedRows === void 0 ? void 0 : updatedRows.length) && updatedRows[0] !== 0;
-                if (!isUserUpdated) {
-                    throw new ErrorMessageCatcher_1.ErrorMessageCatcher("User is not updated");
+                createdCheckout = _a.sent();
+                checkoutId = createdCheckout.id;
+                if (!checkoutId) {
+                    throw new ErrorMessageCatcher_1.ErrorMessageCatcher("Checkout is not created");
                 }
-                return [4 /*yield*/, (0, findUserProfileById_1.findUserProfileById)(userId)];
+                return [4 /*yield*/, (0, createCheckoutItems_1.createCheckoutItems)(checkoutId, checkoutInfo.providersIds)];
             case 2:
-                updatedUserProfile = _a.sent();
-                return [4 /*yield*/, redisSetex("userProfile:" + userId, EXPIRES_TIME_SEC, JSON.stringify(updatedUserProfile))];
-            case 3:
-                _a.sent();
+                createdCheckoutItems = _a.sent();
+                if (!createdCheckoutItems) {
+                    throw new ErrorMessageCatcher_1.ErrorMessageCatcher("Providers are not connected to the checkout");
+                }
                 next({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {
-                        data: updatedUserProfile,
-                        message: "User info is updated",
+                        data: createdCheckoutItems,
+                        message: "Created checkout",
                     },
                 });
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 4];
+            case 3:
                 error_1 = _a.sent();
-                next(error_1);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                if (error_1 instanceof ErrorCatcher_1.ErrorCatcher || error_1 instanceof ErrorMessageCatcher_1.ErrorMessageCatcher) {
+                    return [2 /*return*/, next(error_1)];
+                }
+                console.log(error_1);
+                next({
+                    responseCode: message_catcher_1.RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+                    data: error_1,
+                });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.updateUserProfile = updateUserProfile;
+exports.createCheckout = createCheckout;

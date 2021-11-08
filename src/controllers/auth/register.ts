@@ -7,7 +7,7 @@ import { UserAttributes } from "../../types/User";
 
 import { createUser } from "../../services/auth/createUser";
 
-import { redisClient } from "../../services/connect-redis";
+import { redisClient } from "../../services/connectors/connect-redis";
 
 export const register = async (
   userCredentials: UserAttributes,

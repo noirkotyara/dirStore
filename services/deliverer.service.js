@@ -5,7 +5,7 @@ var delivererReformator = require("../controllers/deliverer/helpers/deliverer-ca
 var delivererModel = require("../models/deliverer.model");
 var productModel = require("../models/product.model");
 
-var knexConnection = require("./connect-db-knex").knexConnection;
+var knexConnection = require("./connectors/connect-db-knex").knexConnection;
 
 function createDeliverer(delivererInfo, callback) {
   var reformatedDelivererInfo = delivererReformator.inSnake(delivererInfo);

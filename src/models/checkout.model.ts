@@ -1,13 +1,18 @@
 import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 
-import { UserAttributes, UserCreationAttributes } from "../types/User";
+import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
-import { seqConnection } from "../services/connect-db-sequelize";
 import { UserModel } from "./user.model";
 
+import {
+  CheckoutAttributes,
+  CheckoutCreationAttributes,
+  CheckoutStatus,
+} from "../types/Checkout";
+
 export const CheckoutModel: ModelDefined<
-  UserAttributes,
-  UserCreationAttributes
+  CheckoutAttributes,
+  CheckoutCreationAttributes
 > = seqConnection.define(
   "Checkout",
   {
@@ -21,7 +26,25 @@ export const CheckoutModel: ModelDefined<
     userId: {
       type: DataTypes.STRING(35),
       references: { model: UserModel, key: "id" },
+      allowNull: false,
       field: "user_id",
+    },
+    status: {
+      type: DataTypes.ENUM(
+        CheckoutStatus.DRAFT,
+        CheckoutStatus.ACTIVE,
+        CheckoutStatus.PENDING,
+        CheckoutStatus.CONFIRMED,
+        CheckoutStatus.IN_PROGRESS,
+        CheckoutStatus.ARRIVED,
+        CheckoutStatus.DECLINED,
+        CheckoutStatus.RETURNED,
+        CheckoutStatus.FULLFILLED
+      ),
+      defaultValue: CheckoutStatus.DRAFT,
+    },
+    invoice: {
+      type: DataTypes.STRING(35),
     },
     createdAt: {
       field: "created_date",
@@ -35,5 +58,12 @@ export const CheckoutModel: ModelDefined<
   {
     tableName: "Checkout",
     timestamps: true,
+    hooks: {
+      beforeCreate: (model, options) => {
+        const createdInvoice =
+          model.getDataValue("id") + model.getDataValue("userId");
+        model.setDataValue("invoice", createdInvoice);
+      },
+    },
   }
 );
