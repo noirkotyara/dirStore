@@ -67,7 +67,6 @@ var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(vo
                     });
                     return [2 /*return*/];
                 }
-                console.log("createdCheckoutItemscreatedCheckoutItemscreatedCheckoutItems", createdCheckoutItems);
                 return [4 /*yield*/, (0, get_checkout_by_id_1.getCheckoutById)(createdCheckout.id)];
             case 3:
                 createdCheckoutInfo = _a.sent();
@@ -77,7 +76,6 @@ var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(vo
                     });
                     return [2 /*return*/];
                 }
-                console.log("createdCheckoutInfocreatedCheckoutInfocreatedCheckoutInfo", createdCheckoutInfo);
                 next((0, response_catcher_1.responseCatcher)({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {
@@ -88,7 +86,6 @@ var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(vo
                 return [3 /*break*/, 5];
             case 4:
                 error_1 = _a.sent();
-                console.log(error_1);
                 next(error_1);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];

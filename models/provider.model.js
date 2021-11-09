@@ -56,10 +56,13 @@ delivererModel.belongsToMany(productModel, {
   foreignKey: "deliverer_id",
 });
 
-providerModel.belongsTo(productModel);
-providerModel.belongsTo(delivererModel);
-
-delivererModel.hasMany(providerModel);
-productModel.hasMany(providerModel);
+providerModel.belongsTo(productModel, {
+  foreignKey: "productId",
+  as: "product",
+});
+providerModel.belongsTo(delivererModel, {
+  foreignKey: "delivererId",
+  as: "deliverer",
+});
 
 module.exports = providerModel;

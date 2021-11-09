@@ -70,6 +70,4 @@ var createProvider = function (providerInfo, next) {
   }
 };
 
-module.exports = {
-  createProvider: createProvider,
-};
+module.exports = createProvider;

@@ -3,7 +3,7 @@ import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 import { seqConnection } from "@services/connectors/connect-db-sequelize";
 
 import { CheckoutModel } from "./checkout.model";
-import ProviderModel from "./provider.model";
+import ProviderModel from "@models/provider.model";
 
 import {
   CheckoutItemAttributes,
@@ -25,12 +25,10 @@ export const CheckoutItemModel: ModelDefined<
     },
     providerId: {
       type: DataTypes.STRING(35),
-      references: { model: ProviderModel, key: "id" },
       field: "provider_id",
     },
     checkoutId: {
       type: DataTypes.STRING(35),
-      references: { model: CheckoutModel, key: "id" },
       field: "checkout_id",
     },
     createdAt: {
@@ -60,8 +58,11 @@ CheckoutModel.belongsToMany(ProviderModel, {
   foreignKey: "checkout_id",
 });
 
-CheckoutItemModel.belongsTo(CheckoutModel);
-CheckoutItemModel.belongsTo(ProviderModel);
-
-ProviderModel.hasMany(CheckoutItemModel);
-CheckoutModel.hasMany(CheckoutItemModel);
+CheckoutItemModel.belongsTo(CheckoutModel, {
+  foreignKey: "checkout_id",
+  as: "checkout",
+});
+CheckoutItemModel.belongsTo(ProviderModel, {
+  foreignKey: "provider_id",
+  as: "provider",
+});

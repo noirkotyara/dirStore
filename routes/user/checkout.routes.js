@@ -20,4 +20,20 @@ checkoutRouter.post(
   }
 );
 
+checkoutRouter.get(
+  "/item/:id",
+  [authMiddleware.verifyToken, checkAccessMiddleware],
+  function (req, res, next) {
+    checkoutController.getCheckoutInfo(req.params.id, next);
+  }
+);
+
+checkoutRouter.get(
+  "/list",
+  [authMiddleware.verifyToken, checkAccessMiddleware],
+  function (req, res, next) {
+    checkoutController.getUserCheckouts(req.user.userId, next);
+  }
+);
+
 module.exports = checkoutRouter;

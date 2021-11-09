@@ -7,7 +7,7 @@ exports.CheckoutItemModel = void 0;
 var sequelize_1 = require("sequelize");
 var connect_db_sequelize_1 = require("@services/connectors/connect-db-sequelize");
 var checkout_model_1 = require("./checkout.model");
-var provider_model_1 = __importDefault(require("./provider.model"));
+var provider_model_1 = __importDefault(require("@models/provider.model"));
 exports.CheckoutItemModel = connect_db_sequelize_1.seqConnection.define("Checkout_Item", {
     id: {
         type: sequelize_1.DataTypes.UUIDV4,
@@ -18,12 +18,10 @@ exports.CheckoutItemModel = connect_db_sequelize_1.seqConnection.define("Checkou
     },
     providerId: {
         type: sequelize_1.DataTypes.STRING(35),
-        references: { model: provider_model_1.default, key: "id" },
         field: "provider_id",
     },
     checkoutId: {
         type: sequelize_1.DataTypes.STRING(35),
-        references: { model: checkout_model_1.CheckoutModel, key: "id" },
         field: "checkout_id",
     },
     createdAt: {
@@ -48,7 +46,11 @@ checkout_model_1.CheckoutModel.belongsToMany(provider_model_1.default, {
     as: "providers",
     foreignKey: "checkout_id",
 });
-exports.CheckoutItemModel.belongsTo(checkout_model_1.CheckoutModel);
-exports.CheckoutItemModel.belongsTo(provider_model_1.default);
-provider_model_1.default.hasMany(exports.CheckoutItemModel);
-checkout_model_1.CheckoutModel.hasMany(exports.CheckoutItemModel);
+exports.CheckoutItemModel.belongsTo(checkout_model_1.CheckoutModel, {
+    foreignKey: "checkout_id",
+    as: "checkout",
+});
+exports.CheckoutItemModel.belongsTo(provider_model_1.default, {
+    foreignKey: "provider_id",
+    as: "provider",
+});

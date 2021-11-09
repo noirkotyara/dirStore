@@ -39,32 +39,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCheckoutById = void 0;
-var checkout_model_1 = require("@models/checkout.model");
+exports.getProviderById = void 0;
 var provider_model_1 = __importDefault(require("@models/provider.model"));
 var product_model_1 = __importDefault(require("@models/product.model"));
 var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
-var getCheckoutById = function (checkoutId) { return __awaiter(void 0, void 0, void 0, function () {
+var getProviderById = function (providerId) { return __awaiter(void 0, void 0, void 0, function () {
     var createdCheckout;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, checkout_model_1.CheckoutModel.findOne({
-                    where: { id: checkoutId },
+            case 0: return [4 /*yield*/, provider_model_1.default.findOne({
+                    where: { id: providerId },
+                    attributes: {
+                        exclude: ["productId", "delivererId", "product_id", "deliverer_id"],
+                    },
                     include: [
-                        {
-                            model: provider_model_1.default,
-                            as: "providers",
-                            attributes: {
-                                exclude: ["productId", "delivererId", "product_id", "deliverer_id"],
-                            },
-                            through: {
-                                attributes: [],
-                            },
-                            include: [
-                                { model: product_model_1.default, as: "product" },
-                                { model: deliverer_model_1.default, as: "deliverer" },
-                            ],
-                        },
+                        { model: product_model_1.default, as: "product" },
+                        { model: deliverer_model_1.default, as: "deliverer" },
                     ],
                 })];
             case 1:
@@ -73,4 +63,4 @@ var getCheckoutById = function (checkoutId) { return __awaiter(void 0, void 0, v
         }
     });
 }); };
-exports.getCheckoutById = getCheckoutById;
+exports.getProviderById = getProviderById;

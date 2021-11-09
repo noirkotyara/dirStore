@@ -35,42 +35,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCheckoutById = void 0;
-var checkout_model_1 = require("@models/checkout.model");
-var provider_model_1 = __importDefault(require("@models/provider.model"));
-var product_model_1 = __importDefault(require("@models/product.model"));
-var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
-var getCheckoutById = function (checkoutId) { return __awaiter(void 0, void 0, void 0, function () {
-    var createdCheckout;
+exports.getProviderInfo = void 0;
+var message_catcher_1 = require("message-catcher");
+var get_provider_by_id_1 = require("@services/provider/get-provider-by-id");
+var response_catcher_1 = require("@helpers/response-catcher");
+var error_catcher_1 = require("@helpers/error-catcher");
+var getProviderInfo = function (providerId, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var providerInfo, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, checkout_model_1.CheckoutModel.findOne({
-                    where: { id: checkoutId },
-                    include: [
-                        {
-                            model: provider_model_1.default,
-                            as: "providers",
-                            attributes: {
-                                exclude: ["productId", "delivererId", "product_id", "deliverer_id"],
-                            },
-                            through: {
-                                attributes: [],
-                            },
-                            include: [
-                                { model: product_model_1.default, as: "product" },
-                                { model: deliverer_model_1.default, as: "deliverer" },
-                            ],
-                        },
-                    ],
-                })];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, get_provider_by_id_1.getProviderById)(providerId)];
             case 1:
-                createdCheckout = _a.sent();
-                return [2 /*return*/, createdCheckout ? createdCheckout.get() : null];
+                providerInfo = _a.sent();
+                if (!providerInfo) {
+                    (0, error_catcher_1.errorCatcher)({
+                        message: "Provider info is not founded",
+                    });
+                    return [2 /*return*/];
+                }
+                next((0, response_catcher_1.responseCatcher)({
+                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
+                    data: {
+                        data: providerInfo,
+                        message: "Provider is here",
+                    },
+                }));
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                next(error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-exports.getCheckoutById = getCheckoutById;
+exports.getProviderInfo = getProviderInfo;

@@ -35,42 +35,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCheckoutById = void 0;
+exports.getCheckoutsByUserId = void 0;
 var checkout_model_1 = require("@models/checkout.model");
-var provider_model_1 = __importDefault(require("@models/provider.model"));
-var product_model_1 = __importDefault(require("@models/product.model"));
-var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
-var getCheckoutById = function (checkoutId) { return __awaiter(void 0, void 0, void 0, function () {
+var getCheckoutsByUserId = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
     var createdCheckout;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, checkout_model_1.CheckoutModel.findOne({
-                    where: { id: checkoutId },
-                    include: [
-                        {
-                            model: provider_model_1.default,
-                            as: "providers",
-                            attributes: {
-                                exclude: ["productId", "delivererId", "product_id", "deliverer_id"],
-                            },
-                            through: {
-                                attributes: [],
-                            },
-                            include: [
-                                { model: product_model_1.default, as: "product" },
-                                { model: deliverer_model_1.default, as: "deliverer" },
-                            ],
-                        },
-                    ],
+            case 0: return [4 /*yield*/, checkout_model_1.CheckoutModel.findAll({
+                    where: { userId: userId },
                 })];
             case 1:
                 createdCheckout = _a.sent();
-                return [2 /*return*/, createdCheckout ? createdCheckout.get() : null];
+                return [2 /*return*/, createdCheckout
+                        ? createdCheckout.map(function (checkout) { return checkout.get(); })
+                        : null];
         }
     });
 }); };
-exports.getCheckoutById = getCheckoutById;
+exports.getCheckoutsByUserId = getCheckoutsByUserId;

@@ -8,8 +8,8 @@ import { createCheckoutItems } from "@services/checkout/create-checkout-items";
 import { errorCatcher } from "@helpers/error-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
 import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
-import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
 import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
+import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
 
 export const createCheckout = async (
   userId: string,
@@ -38,11 +38,6 @@ export const createCheckout = async (
       return;
     }
 
-    console.log(
-      "createdCheckoutItemscreatedCheckoutItemscreatedCheckoutItems",
-      createdCheckoutItems
-    );
-
     const createdCheckoutInfo = await getCheckoutById(createdCheckout.id);
 
     if (!createdCheckoutInfo) {
@@ -51,11 +46,6 @@ export const createCheckout = async (
       });
       return;
     }
-
-    console.log(
-      "createdCheckoutInfocreatedCheckoutInfocreatedCheckoutInfo",
-      createdCheckoutInfo
-    );
 
     next(
       responseCatcher<CheckoutAttributes>({
@@ -67,7 +57,6 @@ export const createCheckout = async (
       })
     );
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
