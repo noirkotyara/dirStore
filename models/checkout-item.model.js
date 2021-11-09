@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckoutItemModel = void 0;
 var sequelize_1 = require("sequelize");
-var connect_db_sequelize_1 = require("../services/connectors/connect-db-sequelize");
+var connect_db_sequelize_1 = require("@services/connectors/connect-db-sequelize");
 var checkout_model_1 = require("./checkout.model");
 var provider_model_1 = __importDefault(require("./provider.model"));
 exports.CheckoutItemModel = connect_db_sequelize_1.seqConnection.define("Checkout_Item", {

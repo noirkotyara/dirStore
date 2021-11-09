@@ -1,7 +1,7 @@
-import { UserAttributes } from "../../types/user/user-attributes";
+import { UserAttributes } from "@types-internal/user/user-attributes";
 
-import { UserModel } from "../../models/user.model";
-import { IdentifierModel } from "../../models/identifier.model";
+import { UserModel } from "@models/user.model";
+import { IdentifierModel } from "@models/identifier.model";
 
 export const createUser = async (
   userInfo: UserAttributes

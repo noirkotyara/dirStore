@@ -58,11 +58,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUserProfile = void 0;
 var util = __importStar(require("util"));
 var message_catcher_1 = require("message-catcher");
-var find_user_profile_by_id_1 = require("../../services/auth/find-user-profile-by-id");
-var delete_user_profile_by_id_1 = require("../../services/auth/delete-user-profile-by-id");
-var connect_redis_1 = require("../../services/connectors/connect-redis");
-var error_catcher_1 = require("../../helpers/error-catcher");
-var response_catcher_1 = require("../../helpers/response-catcher");
+var find_user_profile_by_id_1 = require("@services/auth/find-user-profile-by-id");
+var delete_user_profile_by_id_1 = require("@services/auth/delete-user-profile-by-id");
+var connect_redis_1 = require("@services/connectors/connect-redis");
+var error_catcher_1 = require("@helpers/error-catcher");
+var response_catcher_1 = require("@helpers/response-catcher");
 var redisGet = util.promisify(connect_redis_1.redisClient.get).bind(connect_redis_1.redisClient);
 var deleteUserProfile = function (userId, next) { return __awaiter(void 0, void 0, void 0, function () {
     var userProfile, userProfileRedis, isUserDeleted, deletedRowsUserProfileRedis, deletedRowsUserTypeRedis, error_1;

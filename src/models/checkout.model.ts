@@ -1,6 +1,6 @@
 import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 
-import { seqConnection } from "../services/connectors/connect-db-sequelize";
+import { seqConnection } from "@services/connectors/connect-db-sequelize";
 
 import { UserModel } from "./user.model";
 
@@ -8,7 +8,8 @@ import {
   CheckoutAttributes,
   CheckoutCreationAttributes,
 } from "../types/checkout/checkout-attributes";
-import { CheckoutStatus } from "../enums/checkout-status";
+
+import { CheckoutStatus } from "@enums/checkout-status";
 
 export const CheckoutModel: ModelDefined<
   CheckoutAttributes,
@@ -59,7 +60,7 @@ export const CheckoutModel: ModelDefined<
     tableName: "Checkout",
     timestamps: true,
     hooks: {
-      beforeCreate: (model, options) => {
+      beforeCreate: (model) => {
         const createdInvoice =
           model.getDataValue("id") + model.getDataValue("userId");
         model.setDataValue("invoice", createdInvoice);

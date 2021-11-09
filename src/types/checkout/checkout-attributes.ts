@@ -1,5 +1,6 @@
 import { Optional } from "sequelize";
-import { CheckoutStatus } from "../../enums/checkout-status";
+
+import { CheckoutStatus } from "@enums/checkout-status";
 
 export interface CheckoutAttributes {
   id: string;

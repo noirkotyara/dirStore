@@ -3,13 +3,15 @@ import { NextFunction } from "express";
 
 import { RESPONSE_CODES } from "message-catcher";
 
-import { redisClient } from "../../services/connectors/connect-redis";
-import { updateUserProfileById } from "../../services/auth/update-user-profile-by-id";
+import { redisClient } from "@services/connectors/connect-redis";
+import { updateUserProfileById } from "@services/auth/update-user-profile-by-id";
 
-import { UserAttributes } from "../../types/user/user-attributes";
-import { errorCatcher } from "../../helpers/error-catcher";
-import { responseCatcher } from "../../helpers/response-catcher";
-import { findUserById } from "../../services/auth/find-user-by-id";
+import { errorCatcher } from "@helpers/error-catcher";
+import { responseCatcher } from "@helpers/response-catcher";
+
+import { findUserById } from "@services/auth/find-user-by-id";
+
+import { UserAttributes } from "@types-internal/user/user-attributes";
 
 const redisSetex = util.promisify(redisClient.setex).bind(redisClient);
 
@@ -21,12 +23,11 @@ export const updateUserProfile = async (
   next: NextFunction
 ) => {
   try {
-    console.log("hello");
     const isUserUpdated = await updateUserProfileById(
       userId,
       userProfileFieldsToChange
     );
-    console.log(isUserUpdated);
+
     if (!isUserUpdated) {
       errorCatcher({
         message: "User is not updated",
@@ -42,7 +43,7 @@ export const updateUserProfile = async (
       });
       return;
     }
-    console.log(updatedUserProfile);
+
     await redisSetex(
       "userProfile:" + userId,
       EXPIRES_TIME_SEC,

@@ -1,14 +1,14 @@
 import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 import bcrypt from "bcrypt";
 
+import { IdentifierModel } from "./identifier.model";
+
+import { seqConnection } from "@services/connectors/connect-db-sequelize";
+
 import {
   UserAttributes,
   UserCreationAttributes,
-} from "../types/user/user-attributes";
-
-import { IdentifierModel } from "./identifier.model";
-
-import { seqConnection } from "../services/connectors/connect-db-sequelize";
+} from "@types-internal/user/user-attributes";
 
 export const UserModel: ModelDefined<UserAttributes, UserCreationAttributes> =
   seqConnection.define(
@@ -52,7 +52,7 @@ export const UserModel: ModelDefined<UserAttributes, UserCreationAttributes> =
       tableName: "User",
       timestamps: true,
       hooks: {
-        beforeCreate: (model, options) => {
+        beforeCreate: (model) => {
           if (!model.getDataValue("username")) {
             const createdUsername = model.getDataValue("email").split("@")[0];
             model.setDataValue("username", createdUsername);

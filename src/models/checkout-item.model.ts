@@ -1,13 +1,14 @@
 import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 
-import { seqConnection } from "../services/connectors/connect-db-sequelize";
+import { seqConnection } from "@services/connectors/connect-db-sequelize";
 
 import { CheckoutModel } from "./checkout.model";
 import ProviderModel from "./provider.model";
+
 import {
   CheckoutItemAttributes,
   CheckoutItemCreationAttributes,
-} from "../types/checkout-item/checkout-item-attributes";
+} from "@types-internal/checkout-item/checkout-item-attributes";
 
 export const CheckoutItemModel: ModelDefined<
   CheckoutItemAttributes,

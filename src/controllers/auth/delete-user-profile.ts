@@ -3,13 +3,15 @@ import { NextFunction } from "express";
 
 import { RESPONSE_CODES } from "message-catcher";
 
-import { findUserProfileById } from "../../services/auth/find-user-profile-by-id";
-import { deleteUserProfileById } from "../../services/auth/delete-user-profile-by-id";
+import { findUserProfileById } from "@services/auth/find-user-profile-by-id";
+import { deleteUserProfileById } from "@services/auth/delete-user-profile-by-id";
 
-import { redisClient } from "../../services/connectors/connect-redis";
-import { errorCatcher } from "../../helpers/error-catcher";
-import { responseCatcher } from "../../helpers/response-catcher";
-import { UserAttributes } from "../../types/user/user-attributes";
+import { redisClient } from "@services/connectors/connect-redis";
+
+import { errorCatcher } from "@helpers/error-catcher";
+import { responseCatcher } from "@helpers/response-catcher";
+
+import { UserAttributes } from "@types-internal/user/user-attributes";
 
 const redisGet = util.promisify(redisClient.get).bind(redisClient);
 

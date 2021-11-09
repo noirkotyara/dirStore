@@ -48,8 +48,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCheckoutByUserId = void 0;
-var checkout_model_1 = require("../../models/checkout.model");
-var checkout_status_1 = require("../../enums/checkout-status");
+var checkout_model_1 = require("@models/checkout.model");
+var checkout_status_1 = require("@enums/checkout-status");
 var createCheckoutByUserId = function (userId, checkoutInfo) { return __awaiter(void 0, void 0, void 0, function () {
     var createdCheckout;
     return __generator(this, function (_a) {

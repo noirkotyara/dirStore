@@ -1,12 +1,15 @@
 import { NextFunction } from "express";
 
 import { RESPONSE_CODES } from "message-catcher";
-import { createCheckoutByUserId } from "../../services/checkout/create-checkout-by-user-id";
-import { createCheckoutItems } from "../../services/checkout/create-checkout-items";
-import { CheckoutInfo } from "../../types/checkout/checkout-info";
-import { errorCatcher } from "../../helpers/error-catcher";
-import { responseCatcher } from "../../helpers/response-catcher";
-import { CheckoutItemAttributes } from "../../types/checkout-item/checkout-item-attributes";
+
+import { createCheckoutByUserId } from "@services/checkout/create-checkout-by-user-id";
+import { createCheckoutItems } from "@services/checkout/create-checkout-items";
+
+import { errorCatcher } from "@helpers/error-catcher";
+import { responseCatcher } from "@helpers/response-catcher";
+
+import { CheckoutItemAttributes } from "@types-internal/checkout-item/checkout-item-attributes";
+import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
 
 export const createCheckout = async (
   userId: string,

@@ -1,6 +1,8 @@
 import { Optional } from "sequelize";
-import { UserType } from "../../enums/user-type";
+
 import { IdentifierAttributes } from "./identifier-attributes";
+
+import { UserType } from "@enums/user-type";
 
 export interface UserAttributes {
   id?: string;

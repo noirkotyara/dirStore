@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUserProfileById = void 0;
-var user_model_1 = require("../../models/user.model");
+var user_model_1 = require("@models/user.model");
 var updateUserProfileById = function (userId, userProfile) { return __awaiter(void 0, void 0, void 0, function () {
     var updatedRows;
     return __generator(this, function (_a) {

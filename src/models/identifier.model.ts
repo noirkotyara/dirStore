@@ -1,12 +1,12 @@
 import seq, { DataTypes, ModelDefined } from "sequelize";
 
-import { seqConnection } from "../services/connectors/connect-db-sequelize";
+import { seqConnection } from "@services/connectors/connect-db-sequelize";
 
 import { UserModel } from "./user.model";
 import {
   IdentifierAttributes,
   IdentifierCreationAttributes,
-} from "../types/user/identifier-attributes";
+} from "@types-internal/user/identifier-attributes";
 
 export const IdentifierModel: ModelDefined<
   IdentifierAttributes,

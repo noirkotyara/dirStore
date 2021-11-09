@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCheckoutItems = void 0;
-var checkout_item_model_1 = require("../../models/checkout-item.model");
+var checkout_item_model_1 = require("@models/checkout-item.model");
 var createCheckoutItems = function (checkoutId, providersIds) { return __awaiter(void 0, void 0, void 0, function () {
     var checkoutItems, createdCheckoutItems;
     return __generator(this, function (_a) {

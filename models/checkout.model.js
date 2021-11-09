@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckoutModel = void 0;
 var sequelize_1 = require("sequelize");
-var connect_db_sequelize_1 = require("../services/connectors/connect-db-sequelize");
+var connect_db_sequelize_1 = require("@services/connectors/connect-db-sequelize");
 var user_model_1 = require("./user.model");
 var checkout_status_1 = require("../enums/checkout-status");
 exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", {

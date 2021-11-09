@@ -1,5 +1,6 @@
-import { UserAttributes } from "../../types/user/user-attributes";
-import { UserModel } from "../../models/user.model";
+import { UserModel } from "@models/user.model";
+
+import { UserAttributes } from "@types-internal/user/user-attributes";
 
 export const updateUserProfileById = async (
   userId: string,

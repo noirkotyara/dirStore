@@ -1,4 +1,4 @@
-import { FormedError } from "../types/error/formed-error";
+import { FormedError } from "@types-internal/error/formed-error";
 
 export const errorCatcher = (formedError: FormedError): FormedError => {
   const responseCode =

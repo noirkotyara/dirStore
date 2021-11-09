@@ -1,7 +1,9 @@
-import { CheckoutModel } from "../../models/checkout.model";
-import { CheckoutAttributes } from "../../types/checkout/checkout-attributes";
-import { CheckoutInfo } from "../../types/checkout/checkout-info";
-import { CheckoutStatus } from "../../enums/checkout-status";
+import { CheckoutModel } from "@models/checkout.model";
+
+import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
+import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
+
+import { CheckoutStatus } from "@enums/checkout-status";
 
 export const createCheckoutByUserId = async (
   userId: string,

@@ -58,11 +58,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUserProfile = void 0;
 var util = __importStar(require("util"));
 var message_catcher_1 = require("message-catcher");
-var connect_redis_1 = require("../../services/connectors/connect-redis");
-var update_user_profile_by_id_1 = require("../../services/auth/update-user-profile-by-id");
-var error_catcher_1 = require("../../helpers/error-catcher");
-var response_catcher_1 = require("../../helpers/response-catcher");
-var find_user_by_id_1 = require("../../services/auth/find-user-by-id");
+var connect_redis_1 = require("@services/connectors/connect-redis");
+var update_user_profile_by_id_1 = require("@services/auth/update-user-profile-by-id");
+var error_catcher_1 = require("@helpers/error-catcher");
+var response_catcher_1 = require("@helpers/response-catcher");
+var find_user_by_id_1 = require("@services/auth/find-user-by-id");
 var redisSetex = util.promisify(connect_redis_1.redisClient.setex).bind(connect_redis_1.redisClient);
 var EXPIRES_TIME_SEC = 30;
 var updateUserProfile = function (userId, userProfileFieldsToChange, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -71,11 +71,9 @@ var updateUserProfile = function (userId, userProfileFieldsToChange, next) { ret
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 4, , 5]);
-                console.log("hello");
                 return [4 /*yield*/, (0, update_user_profile_by_id_1.updateUserProfileById)(userId, userProfileFieldsToChange)];
             case 1:
                 isUserUpdated = _a.sent();
-                console.log(isUserUpdated);
                 if (!isUserUpdated) {
                     (0, error_catcher_1.errorCatcher)({
                         message: "User is not updated",
@@ -91,7 +89,6 @@ var updateUserProfile = function (userId, userProfileFieldsToChange, next) { ret
                     });
                     return [2 /*return*/];
                 }
-                console.log(updatedUserProfile);
                 return [4 /*yield*/, redisSetex("userProfile:" + userId, EXPIRES_TIME_SEC, JSON.stringify(updatedUserProfile))];
             case 3:
                 _a.sent();

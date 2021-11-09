@@ -4,10 +4,10 @@ import { RESPONSE_CODES } from "message-catcher";
 
 import { UserAttributes } from "../../types/user/user-attributes";
 
-import { createUser } from "../../services/auth/create-user";
+import { createUser } from "@services/auth/create-user";
 
-import { redisClient } from "../../services/connectors/connect-redis";
-import { responseCatcher } from "../../helpers/response-catcher";
+import { redisClient } from "@services/connectors/connect-redis";
+import { responseCatcher } from "@helpers/response-catcher";
 
 export const register = async (
   userCredentials: UserAttributes,

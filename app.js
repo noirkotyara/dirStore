@@ -1,3 +1,4 @@
+require("module-alias/register");
 require("dotenv").config();
 var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules

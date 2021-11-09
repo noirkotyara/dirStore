@@ -38,9 +38,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = void 0;
 var message_catcher_1 = require("message-catcher");
-var create_user_1 = require("../../services/auth/create-user");
-var connect_redis_1 = require("../../services/connectors/connect-redis");
-var response_catcher_1 = require("../../helpers/response-catcher");
+var create_user_1 = require("@services/auth/create-user");
+var connect_redis_1 = require("@services/connectors/connect-redis");
+var response_catcher_1 = require("@helpers/response-catcher");
 var register = function (userCredentials, next) { return __awaiter(void 0, void 0, void 0, function () {
     var createdUser, preparedUser, error_1;
     return __generator(this, function (_a) {

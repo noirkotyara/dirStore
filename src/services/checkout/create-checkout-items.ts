@@ -1,8 +1,9 @@
-import { CheckoutItemModel } from "../../models/checkout-item.model";
+import { CheckoutItemModel } from "@models/checkout-item.model";
+
 import {
   CheckoutItemAttributes,
   CheckoutItemCreationAttributes,
-} from "../../types/checkout-item/checkout-item-attributes";
+} from "@types-internal/checkout-item/checkout-item-attributes";
 
 export const createCheckoutItems = async (
   checkoutId: string,
