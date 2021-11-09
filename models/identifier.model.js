@@ -49,7 +49,6 @@ exports.IdentifierModel = connect_db_sequelize_1.seqConnection.define("Identifie
         type: sequelize_1.DataTypes.STRING(35),
         references: { model: user_model_1.UserModel, key: "id" },
         field: "user_id",
-        // foreignKey: "FK_identifier_user",
     },
 }, {
     tableName: "Identifier",

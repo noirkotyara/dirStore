@@ -2,7 +2,8 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var ff = require("ff");
 
-var redisClient = require("../../services/connectors/connect-redis");
+var redisClient =
+  require("../../services/connectors/connect-redis").redisClient;
 
 var myLodash = require("../../helpers/lodash");
 
@@ -50,7 +51,7 @@ function getUserProfile(userId, next) {
       });
     }
 
-    var preparedUserFromDB = myLodash.deepClone(foundedUserFromDB.dataValues);
+    var preparedUserFromDB = myLodash.deepClone(foundedUserFromDB.get());
 
     delete preparedUserFromDB.password;
 

@@ -1,8 +1,8 @@
 import { UserModel } from "../../models/user.model";
 import { IdentifierModel } from "../../models/identifier.model";
 
-export const findUserByEmail = async (email: string) => {
-  return await UserModel.findOne({
+export const findUserByEmail = (email: string) => {
+  return UserModel.findOne({
     where: { email },
     include: {
       model: IdentifierModel,
