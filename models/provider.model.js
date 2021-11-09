@@ -20,13 +20,11 @@ var providerModel = seqConnection.define(
       type: seq.DataTypes.STRING(50),
       field: "product_id",
       require: true,
-      foreignKey: "FK_provider_product",
     },
     delivererId: {
       type: seq.DataTypes.STRING(50),
       field: "deliverer_id",
       require: true,
-      foreignKey: "FK_Provider_Deliverer",
     },
     createdAt: {
       field: "created_date",

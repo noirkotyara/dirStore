@@ -4,7 +4,7 @@ exports.CheckoutModel = void 0;
 var sequelize_1 = require("sequelize");
 var connect_db_sequelize_1 = require("@services/connectors/connect-db-sequelize");
 var user_model_1 = require("./user.model");
-var checkout_status_1 = require("../enums/checkout-status");
+var checkout_status_1 = require("@enums/checkout-status");
 exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", {
     id: {
         type: sequelize_1.DataTypes.UUIDV4,
@@ -38,7 +38,7 @@ exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", 
     tableName: "Checkout",
     timestamps: true,
     hooks: {
-        beforeCreate: function (model, options) {
+        beforeCreate: function (model) {
             var createdInvoice = model.getDataValue("id") + model.getDataValue("userId");
             model.setDataValue("invoice", createdInvoice);
         },

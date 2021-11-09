@@ -46,7 +46,7 @@ exports.UserModel = connect_db_sequelize_1.seqConnection.define("User", {
     tableName: "User",
     timestamps: true,
     hooks: {
-        beforeCreate: function (model, options) {
+        beforeCreate: function (model) {
             if (!model.getDataValue("username")) {
                 var createdUsername = model.getDataValue("email").split("@")[0];
                 model.setDataValue("username", createdUsername);

@@ -7,9 +7,9 @@ import { createCheckoutItems } from "@services/checkout/create-checkout-items";
 
 import { errorCatcher } from "@helpers/error-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
-
-import { CheckoutItemAttributes } from "@types-internal/checkout-item/checkout-item-attributes";
 import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
+import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
+import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
 
 export const createCheckout = async (
   userId: string,
@@ -38,16 +38,36 @@ export const createCheckout = async (
       return;
     }
 
+    console.log(
+      "createdCheckoutItemscreatedCheckoutItemscreatedCheckoutItems",
+      createdCheckoutItems
+    );
+
+    const createdCheckoutInfo = await getCheckoutById(createdCheckout.id);
+
+    if (!createdCheckoutInfo) {
+      errorCatcher({
+        message: "Checkout is not founded",
+      });
+      return;
+    }
+
+    console.log(
+      "createdCheckoutInfocreatedCheckoutInfocreatedCheckoutInfo",
+      createdCheckoutInfo
+    );
+
     next(
-      responseCatcher<CheckoutItemAttributes[]>({
+      responseCatcher<CheckoutAttributes>({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
-          data: createdCheckoutItems,
+          data: createdCheckoutInfo,
           message: "Created checkout",
         },
       })
     );
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };

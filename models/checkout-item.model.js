@@ -18,10 +18,12 @@ exports.CheckoutItemModel = connect_db_sequelize_1.seqConnection.define("Checkou
     },
     providerId: {
         type: sequelize_1.DataTypes.STRING(35),
+        references: { model: provider_model_1.default, key: "id" },
         field: "provider_id",
     },
     checkoutId: {
         type: sequelize_1.DataTypes.STRING(35),
+        references: { model: checkout_model_1.CheckoutModel, key: "id" },
         field: "checkout_id",
     },
     createdAt: {

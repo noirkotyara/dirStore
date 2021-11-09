@@ -42,12 +42,13 @@ var create_checkout_by_user_id_1 = require("@services/checkout/create-checkout-b
 var create_checkout_items_1 = require("@services/checkout/create-checkout-items");
 var error_catcher_1 = require("@helpers/error-catcher");
 var response_catcher_1 = require("@helpers/response-catcher");
+var get_checkout_by_id_1 = require("@services/checkout/get-checkout-by-id");
 var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var createdCheckout, createdCheckoutItems, error_1;
+    var createdCheckout, createdCheckoutItems, createdCheckoutInfo, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
+                _a.trys.push([0, 4, , 5]);
                 return [4 /*yield*/, (0, create_checkout_by_user_id_1.createCheckoutByUserId)(userId, checkoutInfo)];
             case 1:
                 createdCheckout = _a.sent();
@@ -66,19 +67,31 @@ var createCheckout = function (userId, checkoutInfo, next) { return __awaiter(vo
                     });
                     return [2 /*return*/];
                 }
+                console.log("createdCheckoutItemscreatedCheckoutItemscreatedCheckoutItems", createdCheckoutItems);
+                return [4 /*yield*/, (0, get_checkout_by_id_1.getCheckoutById)(createdCheckout.id)];
+            case 3:
+                createdCheckoutInfo = _a.sent();
+                if (!createdCheckoutInfo) {
+                    (0, error_catcher_1.errorCatcher)({
+                        message: "Checkout is not founded",
+                    });
+                    return [2 /*return*/];
+                }
+                console.log("createdCheckoutInfocreatedCheckoutInfocreatedCheckoutInfo", createdCheckoutInfo);
                 next((0, response_catcher_1.responseCatcher)({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {
-                        data: createdCheckoutItems,
+                        data: createdCheckoutInfo,
                         message: "Created checkout",
                     },
                 }));
-                return [3 /*break*/, 4];
-            case 3:
+                return [3 /*break*/, 5];
+            case 4:
                 error_1 = _a.sent();
+                console.log(error_1);
                 next(error_1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); };

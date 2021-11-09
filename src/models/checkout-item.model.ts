@@ -25,10 +25,12 @@ export const CheckoutItemModel: ModelDefined<
     },
     providerId: {
       type: DataTypes.STRING(35),
+      references: { model: ProviderModel, key: "id" },
       field: "provider_id",
     },
     checkoutId: {
       type: DataTypes.STRING(35),
+      references: { model: CheckoutModel, key: "id" },
       field: "checkout_id",
     },
     createdAt: {
