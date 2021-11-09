@@ -1,8 +1,8 @@
-var createProduct = require("./createProduct");
-var deleteProduct = require("./deleteProduct");
-var getProductById = require("./getProductById");
-var getProductsList = require("./getProductsList");
-var updateProductById = require("./updateProductById");
+var createProduct = require("./create-product");
+var deleteProduct = require("./delete-product");
+var getProductById = require("./get-product-by-id");
+var getProductsList = require("./get-products-list");
+var updateProductById = require("./update-product-by-id");
 
 module.exports = {
   createProduct: createProduct,

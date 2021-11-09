@@ -1,9 +1,9 @@
 var ff = require("ff");
-var pool = require("./connectors/connect-db-mysql2");
-var knexConnection = require("./connectors/connect-db-knex").knexConnection;
+var pool = require("../connectors/connect-db-mysql2");
+var knexConnection = require("../connectors/connect-db-knex").knexConnection;
 
-var myLodash = require("./../helpers/lodash");
-var productReformator = require("../controllers/product/helpers/product-case-reformator");
+var myLodash = require("../../helpers/lodash");
+var productReformator = require("../../controllers/product/helpers/product-case-reformator");
 
 function createTable() {
   var f = ff(this);

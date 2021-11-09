@@ -6,7 +6,7 @@ var myLodash = require("../../helpers/lodash");
 
 var delivererReformator = require("./helpers/deliverer-case-reformator");
 
-var delivererService = require("./../../services/deliverer.service");
+var delivererService = require("../../services/deliverer/deliverer.service");
 
 var createDeliverer = function (delivererInfo, next) {
   var delivererId = uuid.v4();

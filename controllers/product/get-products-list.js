@@ -4,7 +4,7 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var productReformator = require("./helpers/product-case-reformator");
 
-var productService = require("../../services/product.service");
+var productService = require("../../services/product/product.service");
 
 var getProductsList = function (next) {
   var f = ff(this, getProducts, checkAndReformateResults).onComplete(

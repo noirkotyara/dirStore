@@ -1,4 +1,4 @@
-var getUserProfile = require("./getUserProfile");
+var getUserProfile = require("./get-user-profile");
 var login = require("./login");
 var register = require("./register").register;
 var updateUserProfile = require("./update-user-profile").updateUserProfile;

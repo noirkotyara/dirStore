@@ -3,9 +3,9 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("./../../helpers/lodash");
 
-var providerService = require("../../services/provider.service");
-var delivererService = require("../../services/deliverer.service");
-var productService = require("../../services/product.service");
+var providerService = require("../../services/provider/provider.service");
+var delivererService = require("../../services/deliverer/deliverer.service");
+var productService = require("../../services/product/product.service");
 
 var createProvider = function (providerInfo, next) {
   var f = ff(

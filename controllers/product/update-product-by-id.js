@@ -4,7 +4,7 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
 
-var productService = require("../../services/product.service");
+var productService = require("../../services/product/product.service");
 
 var updateProductById = function (productId, productFields, next) {
   var f = ff(
