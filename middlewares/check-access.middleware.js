@@ -43,7 +43,7 @@ function checkAccessMiddleware(req, res, next) {
     }
 
     if (userInfo) {
-      var userType = userInfo.dataValues.type;
+      var userType = userInfo.type;
 
       redisClient.set("userType:" + req.user.userId, userType);
 
@@ -55,14 +55,14 @@ function checkAccessMiddleware(req, res, next) {
     if (error) {
       return next({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
 
     if (routerType !== requesterType) {
       return next({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
-        data: requesterType + " do not have access",
+        message: requesterType + " do not have access",
       });
     }
     next();

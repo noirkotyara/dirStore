@@ -4,7 +4,7 @@ exports.CheckoutModel = void 0;
 var sequelize_1 = require("sequelize");
 var connect_db_sequelize_1 = require("../services/connectors/connect-db-sequelize");
 var user_model_1 = require("./user.model");
-var Checkout_1 = require("../types/Checkout");
+var checkout_status_1 = require("../enums/checkout-status");
 exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", {
     id: {
         type: sequelize_1.DataTypes.UUIDV4,
@@ -20,8 +20,8 @@ exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", 
         field: "user_id",
     },
     status: {
-        type: sequelize_1.DataTypes.ENUM(Checkout_1.CheckoutStatus.DRAFT, Checkout_1.CheckoutStatus.ACTIVE, Checkout_1.CheckoutStatus.PENDING, Checkout_1.CheckoutStatus.CONFIRMED, Checkout_1.CheckoutStatus.IN_PROGRESS, Checkout_1.CheckoutStatus.ARRIVED, Checkout_1.CheckoutStatus.DECLINED, Checkout_1.CheckoutStatus.RETURNED, Checkout_1.CheckoutStatus.FULLFILLED),
-        defaultValue: Checkout_1.CheckoutStatus.DRAFT,
+        type: sequelize_1.DataTypes.ENUM(checkout_status_1.CheckoutStatus.DRAFT, checkout_status_1.CheckoutStatus.ACTIVE, checkout_status_1.CheckoutStatus.PENDING, checkout_status_1.CheckoutStatus.CONFIRMED, checkout_status_1.CheckoutStatus.IN_PROGRESS, checkout_status_1.CheckoutStatus.ARRIVED, checkout_status_1.CheckoutStatus.DECLINED, checkout_status_1.CheckoutStatus.RETURNED, checkout_status_1.CheckoutStatus.FULLFILLED),
+        defaultValue: checkout_status_1.CheckoutStatus.DRAFT,
     },
     invoice: {
         type: sequelize_1.DataTypes.STRING(35),

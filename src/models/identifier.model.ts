@@ -1,10 +1,17 @@
-import seq, { DataTypes } from "sequelize";
+import seq, { DataTypes, ModelDefined } from "sequelize";
 
 import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
 import { UserModel } from "./user.model";
+import {
+  IdentifierAttributes,
+  IdentifierCreationAttributes,
+} from "../types/user/identifier-attributes";
 
-export const IdentifierModel = seqConnection.define(
+export const IdentifierModel: ModelDefined<
+  IdentifierAttributes,
+  IdentifierCreationAttributes
+> = seqConnection.define(
   "Identifier",
   {
     id: {

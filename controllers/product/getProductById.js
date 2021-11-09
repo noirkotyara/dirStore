@@ -24,14 +24,14 @@ var getProductById = function (productId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        message: error,
       });
     }
 
     if (myLodash.isEmpty(products)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Product does not exist",
+        message: "Product does not exist",
       });
     }
 
@@ -44,7 +44,7 @@ var getProductById = function (productId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        message: error,
       });
     }
     productInfo.deliverers = deliverersList.map(function (item) {

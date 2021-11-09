@@ -4,11 +4,10 @@ import { seqConnection } from "../services/connectors/connect-db-sequelize";
 
 import { CheckoutModel } from "./checkout.model";
 import ProviderModel from "./provider.model";
-
 import {
   CheckoutItemAttributes,
   CheckoutItemCreationAttributes,
-} from "../types/CheckoutItem";
+} from "../types/checkout-item/checkout-item-attributes";
 
 export const CheckoutItemModel: ModelDefined<
   CheckoutItemAttributes,

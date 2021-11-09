@@ -11,7 +11,7 @@ var authService = require("../../services/auth");
 function login(userCredentials, next) {
   var f = ff(
     this,
-    function() {
+    function () {
       authService.findUserByEmail(userCredentials.email, f.slotPlain(2));
     },
     comparePassword,
@@ -23,17 +23,17 @@ function login(userCredentials, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        message: error,
       });
     }
     if (!user) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "User is not registered",
+        message: "User is not registered",
       });
     }
 
-    f.pass(user.dataValues);
+    f.pass(user);
     bcrypt.compare(userCredentials.password, user.password, f.slot());
   }
 
@@ -41,7 +41,7 @@ function login(userCredentials, next) {
     if (!isValid) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
-        data: "Email or Password are incorrect",
+        message: "Email or Password are incorrect",
       });
     }
     f.pass(user);

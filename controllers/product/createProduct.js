@@ -32,14 +32,14 @@ var createProduct = function (productInfo, next) {
       if (error) {
         return f.fail({
           responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
-          data: error,
+          dbData: error,
         });
       }
 
       if (myLodash.isEmpty(results)) {
         return f.fail({
           responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-          data: "Created product is not founded",
+          message: "Created product is not founded",
         });
       }
 

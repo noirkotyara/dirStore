@@ -2,11 +2,12 @@ import { NextFunction } from "express";
 
 import { RESPONSE_CODES } from "message-catcher";
 
-import { UserAttributes } from "../../types/User";
+import { UserAttributes } from "../../types/user/user-attributes";
 
-import { createUser } from "../../services/auth/createUser";
+import { createUser } from "../../services/auth/create-user";
 
 import { redisClient } from "../../services/connectors/connect-redis";
+import { responseCatcher } from "../../helpers/response-catcher";
 
 export const register = async (
   userCredentials: UserAttributes,
@@ -15,24 +16,26 @@ export const register = async (
   try {
     const createdUser = await createUser(userCredentials);
 
-    const preparedUser = Object.assign({}, createdUser.get());
+    const preparedUser: UserAttributes = Object.assign({}, createdUser);
 
     delete preparedUser.password;
 
     redisClient.set("userType:" + preparedUser.id, preparedUser.type);
 
-    next({
-      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
-      data: {
-        data: preparedUser,
-        message:
-          userCredentials.type + " is registered " + userCredentials.email,
-      },
-    });
+    next(
+      responseCatcher<UserAttributes>({
+        responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+        data: {
+          data: preparedUser,
+          message:
+            userCredentials.type + " is registered " + userCredentials.email,
+        },
+      })
+    );
   } catch (error) {
     next({
       responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-      data: error,
+      message: error,
     });
   }
 };

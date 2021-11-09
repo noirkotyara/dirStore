@@ -1,7 +1,10 @@
 import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 import bcrypt from "bcrypt";
 
-import { UserAttributes, UserCreationAttributes } from "../types/User";
+import {
+  UserAttributes,
+  UserCreationAttributes,
+} from "../types/user/user-attributes";
 
 import { IdentifierModel } from "./identifier.model";
 

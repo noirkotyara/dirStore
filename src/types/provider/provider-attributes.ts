@@ -1,7 +1,7 @@
 import { Optional } from "sequelize";
 
 export interface ProviderAttributes {
-  id?: string;
+  id: string;
   productId: string;
   delivererId: string;
 }

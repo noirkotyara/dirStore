@@ -1,7 +1,7 @@
 var util = require("util");
 
-var findUserByEmailTS = require("./findUserByEmail");
-var findUserByIdTS = require("./findUserById");
+var findUserByEmailTS = require("./find-user-by-email");
+var findUserByIdTS = require("./find-user-by-id");
 
 var findUserByEmail = util
   .callbackify(findUserByEmailTS.findUserByEmail)

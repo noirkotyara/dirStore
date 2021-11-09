@@ -22,7 +22,7 @@ var updateProductById = function (productId, productFields, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
-        data: error,
+        dbData: error,
       });
     }
 
@@ -33,14 +33,14 @@ var updateProductById = function (productId, productFields, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
-        data: error,
+        dbData: error,
       });
     }
 
     if (myLodash.isEmpty(results)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Product with id: " + productId + " is not existed",
+        message: "Product with id: " + productId + " is not existed",
       });
     }
 

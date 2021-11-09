@@ -7,7 +7,7 @@ var productReformator = require("./helpers/product-case-reformator");
 
 var productService = require("../../services/product.service");
 
-var deleteProduct = function(productId, next) {
+var deleteProduct = function (productId, next) {
   var f = ff(this, getProduct, checkAndDeleteProduct).onComplete(
     onCompleteHandler
   );
@@ -20,14 +20,14 @@ var deleteProduct = function(productId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
-        data: error,
+        dbData: error,
       });
     }
 
     if (myLodash.isEmpty(results)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Product with id: " + productId + " is not existed",
+        message: "Product with id: " + productId + " is not existed",
       });
     }
     var reformatedProduct = productReformator.inCamel(results[0]);
@@ -51,5 +51,4 @@ var deleteProduct = function(productId, next) {
   }
 };
 
-module.exports = deleteProduct
-
+module.exports = deleteProduct;

@@ -1,4 +1,5 @@
 declare module "*provider.model" {
-  const ProviderModel: any;
+  import { ModelDefined } from "sequelize";
+  const ProviderModel: ModelDefined<any, any>;
   export = ProviderModel;
 }

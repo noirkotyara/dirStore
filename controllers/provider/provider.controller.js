@@ -29,20 +29,21 @@ var createProvider = function (providerInfo, next) {
     if (errorDeliverer || errorProduct) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: errorDeliverer || errorProduct,
+        message: errorDeliverer || errorProduct,
       });
     }
     if (myLodash.isEmpty(deliverer)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data:
+        message:
           "Deliverer with id: " + providerInfo.delivererId + " is not existed",
       });
     }
     if (myLodash.isEmpty(product)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Product with id: " + providerInfo.productId + " is not existed",
+        message:
+          "Product with id: " + providerInfo.productId + " is not existed",
       });
     }
     providerService.createProvider(providerInfo, f.slotPlain(1));
@@ -52,7 +53,7 @@ var createProvider = function (providerInfo, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        message: error,
       });
     }
   }
@@ -64,7 +65,7 @@ var createProvider = function (providerInfo, next) {
 
     next({
       responseCode: RESPONSE_CODES.BASIC_SUCCESS__CREATED,
-      data: "Provider is created successfully",
+      message: "Provider is created successfully",
     });
   }
 };

@@ -1,14 +1,13 @@
+import { CheckoutItemModel } from "../../models/checkout-item.model";
 import {
   CheckoutItemAttributes,
   CheckoutItemCreationAttributes,
-} from "../../types/CheckoutItem";
-
-import { CheckoutItemModel } from "../../models/checkoutItem.model";
+} from "../../types/checkout-item/checkout-item-attributes";
 
 export const createCheckoutItems = async (
   checkoutId: string,
   providersIds: string[]
-): Promise<CheckoutItemAttributes[]> => {
+): Promise<CheckoutItemAttributes[] | null> => {
   const checkoutItems: CheckoutItemCreationAttributes[] = providersIds.map(
     (providerId) => {
       return { checkoutId, providerId };
@@ -19,5 +18,7 @@ export const createCheckoutItems = async (
     checkoutItems
   );
 
-  return createdCheckoutItems.map((item) => item.get());
+  return createdCheckoutItems.length === 0
+    ? null
+    : createdCheckoutItems.map((item) => item.get());
 };

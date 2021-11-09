@@ -25,7 +25,7 @@ function getUserProfile(userId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
 
@@ -40,18 +40,18 @@ function getUserProfile(userId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
 
     if (myLodash.isEmpty(foundedUserFromDB)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "User is not founded",
+        message: "User is not founded",
       });
     }
 
-    var preparedUserFromDB = myLodash.deepClone(foundedUserFromDB.get());
+    var preparedUserFromDB = myLodash.deepClone(foundedUserFromDB);
 
     delete preparedUserFromDB.password;
 

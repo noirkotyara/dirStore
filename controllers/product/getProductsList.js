@@ -19,7 +19,7 @@ var getProductsList = function (next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_MYSQL,
-        data: error,
+        dbData: error,
       });
     }
     var reformatedProductsList = productLists.map(function (item) {

@@ -3,18 +3,19 @@ import { NextFunction } from "express";
 
 import { RESPONSE_CODES } from "message-catcher";
 
-import { findUserProfileById } from "../../services/auth/findUserProfileById";
-import { deleteUserProfileById } from "../../services/auth/deleteUserProfileById";
+import { findUserProfileById } from "../../services/auth/find-user-profile-by-id";
+import { deleteUserProfileById } from "../../services/auth/delete-user-profile-by-id";
 
 import { redisClient } from "../../services/connectors/connect-redis";
-import { ErrorMessageCatcher } from "../../helpers/ErrorMessageCatcher";
-import { ErrorCatcher } from "../../helpers/ErrorCatcher";
+import { errorCatcher } from "../../helpers/error-catcher";
+import { responseCatcher } from "../../helpers/response-catcher";
+import { UserAttributes } from "../../types/user/user-attributes";
 
 const redisGet = util.promisify(redisClient.get).bind(redisClient);
 
 export const deleteUserProfile = async (userId: string, next: NextFunction) => {
   try {
-    let userProfile;
+    let userProfile: UserAttributes | null = null;
     const userProfileRedis = await redisGet("userProfile:" + userId);
 
     if (userProfileRedis) {
@@ -26,18 +27,20 @@ export const deleteUserProfile = async (userId: string, next: NextFunction) => {
     }
 
     if (!userProfile) {
-      throw new ErrorCatcher({
+      errorCatcher({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "User is not existed",
+        message: "User is not existed",
       });
+      return;
     }
 
-    const deletedRows = await deleteUserProfileById(userId);
-
-    const isUserDeleted = deletedRows !== 0;
+    const isUserDeleted = await deleteUserProfileById(userId);
 
     if (!isUserDeleted) {
-      throw new ErrorMessageCatcher("User is not deleted");
+      errorCatcher({
+        message: "User is not deleted",
+      });
+      return;
     }
 
     const deletedRowsUserProfileRedis = redisClient.del(
@@ -46,16 +49,21 @@ export const deleteUserProfile = async (userId: string, next: NextFunction) => {
     const deletedRowsUserTypeRedis = redisClient.del("userType:" + userId);
 
     if (!deletedRowsUserProfileRedis || !deletedRowsUserTypeRedis) {
-      throw new ErrorMessageCatcher("User cash is not empty");
+      errorCatcher({
+        message: "User cash is not empty",
+      });
+      return;
     }
 
-    next({
-      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
-      data: {
-        data: userProfile,
-        message: "User profile was deleted",
-      },
-    });
+    next(
+      responseCatcher<UserAttributes>({
+        responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+        data: {
+          data: userProfile,
+          message: "User profile was deleted",
+        },
+      })
+    );
   } catch (error) {
     next(error);
   }

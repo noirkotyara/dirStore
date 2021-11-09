@@ -1,16 +1,6 @@
 import { Optional } from "sequelize";
-
-export interface Identifier {
-  firstName?: string;
-  lastName?: string;
-  code?: number;
-  publisher?: string;
-}
-
-export enum UserType {
-  USER = "USER",
-  ADMIN = "ADMIN",
-}
+import { UserType } from "../../enums/user-type";
+import { IdentifierAttributes } from "./identifier-attributes";
 
 export interface UserAttributes {
   id?: string;
@@ -19,14 +9,9 @@ export interface UserAttributes {
   email: string;
   password?: string;
   phone?: string | null;
-  identifier?: Identifier;
+  identifier?: IdentifierAttributes;
   createdAt?: string;
   updatedAt?: string;
-}
-
-export interface UserCredentials {
-  email: string;
-  password: string;
 }
 
 export interface UserCreationAttributes

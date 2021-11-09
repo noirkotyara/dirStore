@@ -7,8 +7,8 @@ import { UserModel } from "./user.model";
 import {
   CheckoutAttributes,
   CheckoutCreationAttributes,
-  CheckoutStatus,
-} from "../types/Checkout";
+} from "../types/checkout/checkout-attributes";
+import { CheckoutStatus } from "../enums/checkout-status";
 
 export const CheckoutModel: ModelDefined<
   CheckoutAttributes,

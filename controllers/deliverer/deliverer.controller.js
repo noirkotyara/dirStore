@@ -28,7 +28,7 @@ var createDeliverer = function (delivererInfo, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        message: error,
       });
     }
     delivererService.getDelivererById(delivererId, f.slotPlain(2));
@@ -38,13 +38,13 @@ var createDeliverer = function (delivererInfo, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error,
+        message: error,
       });
     }
     if (myLodash.isEmpty(deliverers)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Deliverer with id: " + delivererId + " is not existed",
+        message: "Deliverer with id: " + delivererId + " is not existed",
       });
     }
 
@@ -79,13 +79,13 @@ var getDelivererList = function (next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
     if (myLodash.isEmpty(deliverers)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Deliverer list is empty",
+        message: "Deliverer list is empty",
       });
     }
 
@@ -131,13 +131,13 @@ var updateDeliverer = function (delivererId, delivererFields, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
     if (myLodash.isEmpty(deliverers)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Deliverer with id: " + delivererId + " is not existed",
+        message: "Deliverer with id: " + delivererId + " is not existed",
       });
     }
 
@@ -148,7 +148,7 @@ var updateDeliverer = function (delivererId, delivererFields, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
     f.pass(delivererReformator.inCamel(deliverers[0]));
@@ -186,13 +186,13 @@ var deleteDeliverer = function (delivererId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
     if (myLodash.isEmpty(deliverers)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Deliverer with id: " + delivererId + " is not existed",
+        message: "Deliverer with id: " + delivererId + " is not existed",
       });
     }
 
@@ -204,7 +204,7 @@ var deleteDeliverer = function (delivererId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
     f.pass(delivererReformator.inCamel(deletedDelivery));
@@ -237,13 +237,13 @@ var getDelivererById = function (delivererId, next) {
     if (error) {
       return f.fail({
         responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-        data: error.message,
+        message: error.message,
       });
     }
     if (myLodash.isEmpty(productsList)) {
       return f.fail({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        data: "Deliverer does not have products to deliver",
+        message: "Deliverer does not have products to deliver",
       });
     }
 
