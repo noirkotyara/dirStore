@@ -1,6 +1,7 @@
 var seq = require("sequelize");
 
-var seqConnection = require("../services/connect-db-sequelize").seqConnection;
+var seqConnection =
+  require("../services/connectors/connect-db-sequelize").seqConnection;
 
 var productModel = require("./product.model");
 var delivererModel = require("./deliverer.model");
@@ -19,13 +20,11 @@ var providerModel = seqConnection.define(
       type: seq.DataTypes.STRING(50),
       field: "product_id",
       require: true,
-      foreignKey: "FK_provider_product",
     },
     delivererId: {
       type: seq.DataTypes.STRING(50),
       field: "deliverer_id",
       require: true,
-      foreignKey: "FK_Provider_Deliverer",
     },
     createdAt: {
       field: "created_date",
@@ -57,10 +56,13 @@ delivererModel.belongsToMany(productModel, {
   foreignKey: "deliverer_id",
 });
 
-providerModel.belongsTo(productModel, { targetKey: "id" });
-providerModel.belongsTo(delivererModel, { targetKey: "id" });
-
-delivererModel.hasMany(providerModel);
-productModel.hasMany(providerModel);
+providerModel.belongsTo(productModel, {
+  foreignKey: "productId",
+  as: "product",
+});
+providerModel.belongsTo(delivererModel, {
+  foreignKey: "delivererId",
+  as: "deliverer",
+});
 
 module.exports = providerModel;

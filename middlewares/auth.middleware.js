@@ -13,16 +13,15 @@ function verifyToken(req, res, next) {
     if (!token)
       return next({
         responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__UNAUTHORIZED,
-        data: "A token is required for authentication",
+        message: "A token is required for authentication",
       });
 
     req.user = jwt.verify(token, process.env.JWT_S);
-    console.log(req.user);
     next();
   } catch (error) {
     next({
       responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__FORBIDDEN,
-      data: error.message,
+      message: error.message,
     });
   }
 }

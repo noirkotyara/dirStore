@@ -1,6 +1,8 @@
 var ff = require("ff");
-var seqConnection = require("../services/connect-db-sequelize").seqConnection;
-var knexConnection = require("../services/connect-db-knex").knexConnection;
+var seqConnection =
+  require("../services/connectors/connect-db-sequelize").seqConnection;
+var knexConnection =
+  require("../services/connectors/connect-db-knex").knexConnection;
 
 function testConnectionToDBsequelize() {
   console.log("SEQUELIZE: Checking database connection...");
@@ -13,7 +15,6 @@ function testConnectionToDBsequelize() {
   function onCompleteHandlerSequelize(error) {
     if (error) {
       console.log("SEQUELIZE: Unable to connect to the database:", error);
-      console.log(error.message);
       return process.exit(1);
     }
     console.log("SEQUELIZE: Database connection OK!");

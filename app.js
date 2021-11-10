@@ -1,3 +1,4 @@
+require("module-alias/register");
 require("dotenv").config();
 var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
@@ -7,14 +8,13 @@ var testConnectionToDB = require("./helpers/connect-db");
 
 var loggerMiddleware = require("./middlewares/logger.middleware");
 
-var authRoutes = require("./routes/auth.routes");
-var productRoutes = require("./routes/product.routes");
-var delivererRoutes = require("./routes/deliverer.routes");
-var checkoutRoutes = require("./routes/checkout.routes");
-var providerRoutes = require("./routes/provider.routes");
+var adminRouters = require("./routes/admin");
+var userRoutes = require("./routes/user");
+var publicRouters = require("./routes/public");
+
 var app = express();
 
-var pool = require("./services/connect-db-mysql2");
+var pool = require("./services/connectors/connect-db-mysql2");
 
 pool.mysqlConnection.connect(function (error) {
   if (error) {
@@ -29,11 +29,9 @@ pool.mysqlConnection.connect(function (error) {
 app.use(express.json());
 app.use(loggerMiddleware);
 
-app.use("/auth", authRoutes);
-app.use("/provider", providerRoutes);
-app.use("/checkout", checkoutRoutes);
-app.use("/product", productRoutes);
-app.use("/deliverer", delivererRoutes);
+app.use("/admin", adminRouters);
+app.use("/user", userRoutes);
+app.use("/public", publicRouters);
 
 app.get("/", function (request, response) {
   response.send("<h2>Welcome to the dirStore</h2>");

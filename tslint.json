@@ -1,0 +1,15 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-console": false,
+    "no-any": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 5
+  },
+  "rulesDirectory": []
+}

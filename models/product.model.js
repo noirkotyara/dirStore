@@ -1,6 +1,7 @@
 var seq = require("sequelize");
 
-var seqConnection = require("../services/connect-db-sequelize").seqConnection;
+var seqConnection =
+  require("../services/connectors/connect-db-sequelize").seqConnection;
 
 var productModel = seqConnection.define(
   "Product",
