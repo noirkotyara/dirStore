@@ -1,8 +1,7 @@
-import { Optional } from "sequelize";
-
 import { CheckoutStatus } from "@enums/checkout-status";
 
 import { CheckoutItemAttributes } from "@types-internal/checkout-item/checkout-item-attributes";
+import { Optional } from "sequelize";
 
 export interface CheckoutAttributes {
   id: string;
@@ -13,4 +12,5 @@ export interface CheckoutAttributes {
 }
 
 export interface CheckoutCreationAttributes
-  extends Optional<CheckoutAttributes, "id" | "invoice" | "providers"> {}
+  extends Optional<CheckoutAttributes, "id" | "invoice" | "providers"> {
+}

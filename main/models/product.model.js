@@ -40,8 +40,7 @@ var productModel = seqConnection.define(
   },
   {
     tableName: "Product",
-    timestamps: true,
-    hooks: {}
+    timestamps: true
   }
 );
 

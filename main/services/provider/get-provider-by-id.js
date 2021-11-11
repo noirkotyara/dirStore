@@ -41,21 +41,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProviderById = void 0;
 var provider_model_1 = __importDefault(require("@models/provider.model"));
-var product_model_1 = __importDefault(require("@models/product.model"));
-var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
 var getProviderById = function (providerId) { return __awaiter(void 0, void 0, void 0, function () {
     var createdCheckout;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, provider_model_1.default.findOne({
-                    where: { id: providerId },
-                    attributes: {
-                        exclude: ["productId", "delivererId", "product_id", "deliverer_id"],
-                    },
-                    include: [
-                        { model: product_model_1.default, as: "product" },
-                        { model: deliverer_model_1.default, as: "deliverer" },
-                    ],
+                    where: { id: providerId }
                 })];
             case 1:
                 createdCheckout = _a.sent();

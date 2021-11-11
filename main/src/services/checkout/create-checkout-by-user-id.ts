@@ -12,7 +12,7 @@ export const createCheckoutByUserId = async (
   const createdCheckout = await CheckoutModel.create({
     userId,
     status: CheckoutStatus.ACTIVE,
-    ...checkoutInfo,
+    ...checkoutInfo
   });
   return createdCheckout ? createdCheckout.get() : null;
 };

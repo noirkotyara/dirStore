@@ -38,21 +38,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProviderInfo = void 0;
 var message_catcher_1 = require("message-catcher");
-var get_provider_by_id_1 = require("@services/provider/get-provider-by-id");
 var response_catcher_1 = require("@helpers/response-catcher");
 var error_catcher_1 = require("@helpers/error-catcher");
+var get_provider_info_by_id_1 = require("@services/provider/get-provider-info-by-id");
 var getProviderInfo = function (providerId, next) { return __awaiter(void 0, void 0, void 0, function () {
     var providerInfo, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, get_provider_by_id_1.getProviderById)(providerId)];
+                return [4 /*yield*/, (0, get_provider_info_by_id_1.getProviderInfoById)(providerId)];
             case 1:
                 providerInfo = _a.sent();
                 if (!providerInfo) {
                     (0, error_catcher_1.errorCatcher)({
-                        message: "Provider info is not founded",
+                        message: "Provider info is not founded"
                     });
                     return [2 /*return*/];
                 }
@@ -60,8 +60,8 @@ var getProviderInfo = function (providerId, next) { return __awaiter(void 0, voi
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
                     data: {
                         data: providerInfo,
-                        message: "Provider is here",
-                    },
+                        message: "Provider is here"
+                    }
                 }));
                 return [3 /*break*/, 3];
             case 2:

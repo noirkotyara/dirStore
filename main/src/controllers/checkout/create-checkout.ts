@@ -4,12 +4,13 @@ import { RESPONSE_CODES } from "message-catcher";
 
 import { createCheckoutByUserId } from "@services/checkout/create-checkout-by-user-id";
 import { createCheckoutItems } from "@services/checkout/create-checkout-items";
+import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
 
 import { errorCatcher } from "@helpers/error-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
+
 import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
 import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
-import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
 
 export const createCheckout = async (
   userId: string,
@@ -21,7 +22,7 @@ export const createCheckout = async (
 
     if (!createdCheckout) {
       errorCatcher({
-        message: "Checkout is not created",
+        message: "Checkout is not created"
       });
       return;
     }
@@ -33,7 +34,7 @@ export const createCheckout = async (
 
     if (!createdCheckoutItems) {
       errorCatcher({
-        message: "Providers are not connected to the checkout",
+        message: "Providers are not connected to the checkout"
       });
       return;
     }
@@ -42,7 +43,7 @@ export const createCheckout = async (
 
     if (!createdCheckoutInfo) {
       errorCatcher({
-        message: "Checkout is not founded",
+        message: "Checkout is not founded"
       });
       return;
     }
@@ -52,8 +53,8 @@ export const createCheckout = async (
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
           data: createdCheckoutInfo,
-          message: "Created checkout",
-        },
+          message: "Created checkout"
+        }
       })
     );
   } catch (error) {
