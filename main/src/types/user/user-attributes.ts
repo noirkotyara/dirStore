@@ -9,15 +9,20 @@ export interface UserAttributes {
   type: UserType;
   username: string;
   email: string;
-  password?: string;
+  password: string;
   phone?: string | null;
-  identifier?: IdentifierAttributes;
-  createdAt?: string;
-  updatedAt?: string;
+  identifier: IdentifierAttributes;
+  token?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface UserCreationAttributes
-  extends Optional<
-    UserAttributes,
-    "id" | "phone" | "password" | "createdAt" | "updatedAt"
-  > {}
+  extends Optional<UserAttributes,
+    "id" | "phone" | "password" | "token" | "createdAt" | "updatedAt"> {
+}
+
+export type UserAttributesWithToken = {
+  profile: Omit<UserAttributes, "password">
+  token: string
+}

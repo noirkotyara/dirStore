@@ -21,7 +21,7 @@ export const register = async (
         data: {
           data: registeredUser,
           message:
-            `${userInfo.type} is registered ${userInfo.email}`
+            userInfo.type + " is registered " + userInfo.email
         }
       })
     );

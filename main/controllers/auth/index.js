@@ -1,5 +1,5 @@
 var getUserProfile = require("./get-user-profile");
-var login = require("./login");
+var login = require("./login").login;
 var register = require("./register").register;
 var updateUserProfile = require("./update-user-profile").updateUserProfile;
 var deleteUserProfile = require("./delete-user-profile").deleteUserProfile;
@@ -9,5 +9,5 @@ module.exports = {
   login: login,
   register: register,
   updateUserProfile: updateUserProfile,
-  deleteUserProfile: deleteUserProfile,
+  deleteUserProfile: deleteUserProfile
 };

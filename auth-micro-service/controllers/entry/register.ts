@@ -17,17 +17,15 @@ export const register = async (
   try {
     const createdUser = await createUser(userInfo);
 
-    const preparedUser: UserAttributes = Object.assign({}, createdUser);
+    const { password, ...userProfile }: UserAttributes = Object.assign({}, createdUser);
 
-    delete preparedUser.password;
-
-    redisClient.set("userType:" + preparedUser.id, preparedUser.type);
+    redisClient.set("userType:" + userProfile.id, userProfile.type);
 
     next(
-      responseCatcher<UserAttributes>({
+      responseCatcher<Omit<UserAttributes, "password">>({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
-          data: preparedUser,
+          data: userProfile,
           message:
             userInfo.type + " is registered " + userInfo.email
         }

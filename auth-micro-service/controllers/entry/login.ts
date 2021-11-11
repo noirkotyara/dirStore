@@ -1,79 +1,61 @@
-import { UserCredentials } from "@types-internal/user/user-credentials";
 import { NextFunction } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { RESPONSE_CODES } from "message-catcher";
 
-export const login = (userCredentials: UserCredentials, next: NextFunction) => {
-  // var f = ff(
-  //   this,
-  //   function() {
-  //     authService.findUserByEmail(userCredentials.email, f.slotPlain(2));
-  //   },
-  //   comparePassword,
-  //   checkIsValid,
-  //   createToken
-  // ).onComplete(onCompleteHandler);
-  //
-  // function comparePassword(error, user) {
-  //   if (error) {
-  //     return f.fail({
-  //       responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
-  //       message: error
-  //     });
-  //   }
-  //   if (!user) {
-  //     return f.fail({
-  //       responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-  //       message: "User is not registered"
-  //     });
-  //   }
-  //
-  //   f.pass(user);
-  //   bcrypt.compare(userCredentials.password, user.password, f.slot());
-  // }
-  //
-  // function checkIsValid(user, isValid) {
-  //   if (!isValid) {
-  //     return f.fail({
-  //       responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
-  //       message: "Email or Password are incorrect"
-  //     });
-  //   }
-  //   f.pass(user);
-  // }
-  //
-  // function createToken(user) {
-  //   try {
-  //     var userWithToken = myLodash.omit(user, "password");
-  //
-  //     userWithToken.token = jwt.sign(
-  //       {
-  //         userId: user.id
-  //       },
-  //       process.env.JWT_S,
-  //       {
-  //         expiresIn: "1h"
-  //       }
-  //     );
-  //
-  //     f.pass(userWithToken);
-  //   } catch (error) {
-  //     f.fail({
-  //       responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-  //       message: "Cannot create token"
-  //     });
-  //   }
-  // }
-  //
-  // function onCompleteHandler(error, userInSystem) {
-  //   if (error) {
-  //     return next(error);
-  //   }
-  //
-  //   next({
-  //     responseCode: RESPONSE_CODES.SUCCESS__CREATED,
-  //     data: {
-  //       data: userInSystem,
-  //       message: "Login is successful for " + userCredentials.email
-  //     }
-  //   });
-  // }
+import { UserCredentials } from "@types-internal/user/user-credentials";
+
+import { findUserByEmail } from "@services/auth/find-user-by-email";
+
+import { errorCatcher } from "@helpers/error-catcher";
+import { responseCatcher } from "@helpers/response-catcher";
+
+import { UserAttributesWithToken } from "@types-internal/user/user-attributes";
+
+export const login = async (userCredentials: UserCredentials, next: NextFunction) => {
+  try {
+    const foundedUser = await findUserByEmail(userCredentials.email);
+
+    if (!foundedUser) {
+      next(errorCatcher({
+        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+        message: "User is not founded"
+      }));
+      return;
+    }
+
+    const { password, ...userProfile } = foundedUser;
+
+    const isPasswordValid = await bcrypt.compare(userCredentials.password, password);
+
+    if (!isPasswordValid) {
+      next(errorCatcher({
+        responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
+        message: "Email or password is incorrect"
+      }));
+      return;
+    }
+
+    const userToken = jwt.sign(
+      {
+        userId: userProfile.id
+      },
+      process.env.JWT_S || "no-jwt-provided",
+      {
+        expiresIn: "1h"
+      }
+    );
+
+    next(responseCatcher<UserAttributesWithToken>({
+        responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+        data: {
+          data: { profile: userProfile, token: userToken },
+          message: "Login is successful for " + userCredentials.email
+        }
+      })
+    );
+
+  } catch (error) {
+    next(error);
+  }
 };
