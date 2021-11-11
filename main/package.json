@@ -47,7 +47,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.12",
     "lodash": "^4.17.21",
-    "message-catcher": "file:../../response-controller",
+    "message-catcher": "github:noirkotyara/response-controller",
     "module-alias": "^2.2.2",
     "mysql2": "^2.3.2",
     "redis": "^3.1.2",

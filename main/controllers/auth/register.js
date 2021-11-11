@@ -43,7 +43,6 @@ exports.register = void 0;
 var axios_1 = __importDefault(require("axios"));
 var message_catcher_1 = require("message-catcher");
 var response_catcher_1 = require("@helpers/response-catcher");
-var axios_error_1 = require("@types-internal/error/axios-error");
 var register = function (userInfo, next) { return __awaiter(void 0, void 0, void 0, function () {
     var registeredUser, error_1;
     return __generator(this, function (_a) {
@@ -63,13 +62,8 @@ var register = function (userInfo, next) { return __awaiter(void 0, void 0, void
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
-                if ((0, axios_error_1.isAxiosError)(error_1)) {
-                    next({
-                        responseCode: error_1.response.data.errorCode,
-                        message: error_1.response.data.message
-                    });
-                    return [2 /*return*/];
-                }
+                // @ts-ignore
+                console.log("ERORORORROROROROOROROROR", error_1.response.data);
                 next(error_1);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];

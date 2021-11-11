@@ -5,7 +5,6 @@ import { RESPONSE_CODES } from "message-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
 
 import { UserAttributes } from "@types-internal/user/user-attributes";
-import { isAxiosError } from "@types-internal/error/axios-error";
 import { AxiosResponse } from "@types-internal/error/axios-response";
 
 
@@ -27,13 +26,6 @@ export const register = async (
       })
     );
   } catch (error) {
-    if (isAxiosError<null>(error)) {
-      next({
-        responseCode: error.response.data.errorCode,
-        message: error.response.data.message
-      });
-      return;
-    }
     next(error);
   }
 };

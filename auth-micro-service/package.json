@@ -37,10 +37,10 @@
     "express": "^4.17.1",
     "express-validation": "^3.0.8",
     "jsonwebtoken": "^8.5.1",
+    "message-catcher": "github:noirkotyara/response-controller",
     "module-alias": "^2.2.2",
     "mysql2": "^2.3.2",
     "redis": "^3.1.2",
-    "message-catcher": "file:../../response-controller",
     "sequelize": "^6.8.0",
     "ts-node": "^10.4.0"
   },
