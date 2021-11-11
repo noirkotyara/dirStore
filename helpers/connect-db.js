@@ -1,6 +1,8 @@
 var ff = require("ff");
-var seqConnection = require("../services/connect-db-sequelize").seqConnection;
-var knexConnection = require("../services/connect-db-knex").knexConnection;
+var seqConnection =
+  require("../services/connectors/connect-db-sequelize").seqConnection;
+var knexConnection =
+  require("../services/connectors/connect-db-knex").knexConnection;
 
 function testConnectionToDBsequelize() {
   console.log("SEQUELIZE: Checking database connection...");

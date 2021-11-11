@@ -5,7 +5,7 @@ var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("./../helpers/lodash");
 
-var authService = require("./../services/auth.service");
+var authService = require("./../services/auth");
 
 var redisClient = redis.createClient();
 
@@ -14,20 +14,7 @@ function checkAccessMiddleware(req, res, next) {
     return next();
   }
 
-  var allowedRoutes = {
-    ADMIN: [
-      "PUT:/product/item/:id",
-      "POST:/product/item",
-      "DELETE:/product/item/:id",
-      "PUT:/deliverer/item/:id",
-      "POST:/deliverer/item",
-      "DELETE:/deliverer/item/:id",
-      "POST:/provider/item",
-    ],
-    USER: ["POST:/checkout/item"],
-  };
-
-  var reqInfo = req.method + ":" + req.baseUrl + req.route.path;
+  var routerType = req.originalUrl.split("/")[1].toUpperCase();
 
   var f = ff(
     this,
@@ -56,10 +43,10 @@ function checkAccessMiddleware(req, res, next) {
     }
 
     if (userInfo) {
-      var userType = userInfo.dataValues.type
+      var userType = userInfo.type;
 
       redisClient.set("userType:" + req.user.userId, userType);
-      
+
       return f.succeed(userType);
     }
   }
@@ -68,14 +55,14 @@ function checkAccessMiddleware(req, res, next) {
     if (error) {
       return next({
         responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        data: error,
+        message: error,
       });
     }
 
-    if (!allowedRoutes[requesterType].includes(reqInfo)) {
+    if (routerType !== requesterType) {
       return next({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
-        data: requesterType + " do not have access",
+        message: requesterType + " do not have access",
       });
     }
     next();
