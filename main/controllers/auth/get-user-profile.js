@@ -39,24 +39,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = void 0;
+exports.getUserProfile = void 0;
 var axios_1 = __importDefault(require("axios"));
 var message_catcher_1 = require("message-catcher");
 var response_catcher_1 = require("@helpers/response-catcher");
-var register = function (userInfo, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var registeredUser, error_1;
+var getUserProfile = function (userId, token, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var userProfile, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, axios_1.default.post("http://localhost:3021/auth/entry/register", userInfo).then(function (response) { return response.data.data; })];
+                return [4 /*yield*/, axios_1.default.get("http://localhost:3021/auth/profile", {
+                        headers: {
+                            "x-access-token": token
+                        }
+                    }).then(function (response) { return response.data.data; })];
             case 1:
-                registeredUser = _a.sent();
+                userProfile = _a.sent();
                 next((0, response_catcher_1.responseCatcher)({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {
-                        data: registeredUser,
-                        message: userInfo.type + " is registered " + userInfo.email
+                        data: userProfile,
+                        message: userProfile.type + " profile"
                     }
                 }));
                 return [3 /*break*/, 3];
@@ -68,4 +72,4 @@ var register = function (userInfo, next) { return __awaiter(void 0, void 0, void
         }
     });
 }); };
-exports.register = register;
+exports.getUserProfile = getUserProfile;

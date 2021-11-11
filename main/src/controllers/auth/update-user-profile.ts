@@ -1,62 +1,33 @@
-import * as util from "util";
 import { NextFunction } from "express";
-
+import axios from "axios";
 import { RESPONSE_CODES } from "message-catcher";
 
-import { redisClient } from "@services/connectors/connect-redis";
-import { updateUserProfileById } from "@services/auth/update-user-profile-by-id";
-
-import { errorCatcher } from "@helpers/error-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
 
-import { findUserById } from "@services/auth/find-user-by-id";
-
 import { UserAttributes } from "@types-internal/user/user-attributes";
-
-const redisSetex = util.promisify(redisClient.setex).bind(redisClient);
-
-const EXPIRES_TIME_SEC = 30;
+import { AxiosResponse } from "@types-internal/error/axios-response";
 
 export const updateUserProfile = async (
   userId: string,
   userProfileFieldsToChange: UserAttributes,
+  token: string,
   next: NextFunction
 ) => {
   try {
-    const isUserUpdated = await updateUserProfileById(
-      userId,
-      userProfileFieldsToChange
-    );
-
-    if (!isUserUpdated) {
-      errorCatcher({
-        message: "User is not updated",
-      });
-      return;
-    }
-
-    const updatedUserProfile = await findUserById(userId);
-
-    if (!updatedUserProfile) {
-      errorCatcher({
-        message: "Updated user is not found",
-      });
-      return;
-    }
-
-    await redisSetex(
-      "userProfile:" + userId,
-      EXPIRES_TIME_SEC,
-      JSON.stringify(updatedUserProfile)
-    );
+    const userProfile = await axios.put<UserAttributes, AxiosResponse<UserAttributes>, UserAttributes>("http://localhost:3021/auth/profile", userProfileFieldsToChange, {
+      headers: {
+        "x-access-token": token
+      }
+    }).then(response => response.data.data);
 
     next(
       responseCatcher<UserAttributes>({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
-          data: updatedUserProfile,
-          message: "User info is updated",
-        },
+          data: userProfile,
+          message:
+            `${userProfile.type} profile ${userProfile.email} is updated successfully`
+        }
       })
     );
   } catch (error) {

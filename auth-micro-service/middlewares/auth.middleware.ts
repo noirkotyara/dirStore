@@ -6,7 +6,6 @@ import { validate } from "express-validation";
 
 import { errorCatcher } from "@helpers/error-catcher";
 
-
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   if (req.method === "OPTIONS") {
     return next();
@@ -21,7 +20,6 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
       });
       return;
     }
-
 
     res.locals.user = jwt.verify(token, process.env.JWT_S || "no-jwt-secret-provided");
     next();

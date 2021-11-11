@@ -17,10 +17,10 @@ export const login = async (userCredentials: UserCredentials, next: NextFunction
     const foundedUser = await findUserByEmail(userCredentials.email);
 
     if (!foundedUser) {
-      next(errorCatcher({
+      errorCatcher({
         responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
         message: "User is not founded"
-      }));
+      });
       return;
     }
 
@@ -29,10 +29,10 @@ export const login = async (userCredentials: UserCredentials, next: NextFunction
     const isPasswordValid = await bcrypt.compare(userCredentials.password, password);
 
     if (!isPasswordValid) {
-      next(errorCatcher({
+      errorCatcher({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
         message: "Email or password is incorrect"
-      }));
+      });
       return;
     }
 

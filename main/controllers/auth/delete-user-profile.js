@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -54,72 +35,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUserProfile = void 0;
-var util = __importStar(require("util"));
+var axios_1 = __importDefault(require("axios"));
 var message_catcher_1 = require("message-catcher");
-var find_user_profile_by_id_1 = require("@services/auth/find-user-profile-by-id");
-var delete_user_profile_by_id_1 = require("@services/auth/delete-user-profile-by-id");
-var connect_redis_1 = require("@services/connectors/connect-redis");
-var error_catcher_1 = require("@helpers/error-catcher");
 var response_catcher_1 = require("@helpers/response-catcher");
-var redisGet = util.promisify(connect_redis_1.redisClient.get).bind(connect_redis_1.redisClient);
-var deleteUserProfile = function (userId, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var userProfile, userProfileRedis, isUserDeleted, deletedRowsUserProfileRedis, deletedRowsUserTypeRedis, error_1;
+var deleteUserProfile = function (userId, token, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var deletedUserProfile, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 5, , 6]);
-                userProfile = null;
-                return [4 /*yield*/, redisGet("userProfile:" + userId)];
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, axios_1.default.delete("http://localhost:3021/auth/profile", {
+                        headers: {
+                            "x-access-token": token
+                        }
+                    }).then(function (response) { return response.data.data; })];
             case 1:
-                userProfileRedis = _a.sent();
-                if (userProfileRedis) {
-                    userProfile = JSON.parse(userProfileRedis);
-                }
-                if (!!userProfile) return [3 /*break*/, 3];
-                return [4 /*yield*/, (0, find_user_profile_by_id_1.findUserProfileById)(userId)];
-            case 2:
-                userProfile = _a.sent();
-                _a.label = 3;
-            case 3:
-                if (!userProfile) {
-                    (0, error_catcher_1.errorCatcher)({
-                        responseCode: message_catcher_1.RESPONSE_CODES.P_ERROR__NOT_FOUND,
-                        message: "User is not existed",
-                    });
-                    return [2 /*return*/];
-                }
-                return [4 /*yield*/, (0, delete_user_profile_by_id_1.deleteUserProfileById)(userId)];
-            case 4:
-                isUserDeleted = _a.sent();
-                if (!isUserDeleted) {
-                    (0, error_catcher_1.errorCatcher)({
-                        message: "User is not deleted",
-                    });
-                    return [2 /*return*/];
-                }
-                deletedRowsUserProfileRedis = connect_redis_1.redisClient.del("userProfile:" + userId);
-                deletedRowsUserTypeRedis = connect_redis_1.redisClient.del("userType:" + userId);
-                if (!deletedRowsUserProfileRedis || !deletedRowsUserTypeRedis) {
-                    (0, error_catcher_1.errorCatcher)({
-                        message: "User cash is not empty",
-                    });
-                    return [2 /*return*/];
-                }
+                deletedUserProfile = _a.sent();
                 next((0, response_catcher_1.responseCatcher)({
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
                     data: {
-                        data: userProfile,
-                        message: "User profile was deleted",
-                    },
+                        data: deletedUserProfile,
+                        message: deletedUserProfile.username + " profile is deleted successfully!"
+                    }
                 }));
-                return [3 /*break*/, 6];
-            case 5:
+                return [3 /*break*/, 3];
+            case 2:
                 error_1 = _a.sent();
                 next(error_1);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };

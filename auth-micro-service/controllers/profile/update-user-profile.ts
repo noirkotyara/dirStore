@@ -1,6 +1,5 @@
 import * as util from "util";
 import { NextFunction } from "express";
-
 import { RESPONSE_CODES } from "message-catcher";
 
 import { redisClient } from "@services/connectors/connect-redis";
@@ -44,17 +43,19 @@ export const updateUserProfile = async (
       return;
     }
 
-    await redisSetex(
+    const { password, ...userProfile } = updatedUserProfile
+
+    redisSetex(
       "userProfile:" + userId,
       EXPIRES_TIME_SEC,
-      JSON.stringify(updatedUserProfile)
+      JSON.stringify(userProfile)
     );
 
     next(
-      responseCatcher<UserAttributes>({
+      responseCatcher<Omit<UserAttributes, "password">>({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
-          data: updatedUserProfile,
+          data: userProfile,
           message: "User info is updated"
         }
       })

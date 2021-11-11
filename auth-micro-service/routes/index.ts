@@ -1,4 +1,5 @@
 import express from "express";
+
 import entryRouter from "./entry.routes";
 import profileRouter from "./profile.routes";
 

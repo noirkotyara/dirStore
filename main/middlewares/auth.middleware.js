@@ -3,6 +3,7 @@ var jwt = require("jsonwebtoken");
 
 var responseMiddleware = require("message-catcher");
 
+
 function verifyToken(req, res, next) {
   if (req.method === "OPTIONS") {
     return next();
@@ -13,7 +14,7 @@ function verifyToken(req, res, next) {
     if (!token)
       return next({
         responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__UNAUTHORIZED,
-        message: "A token is required for authentication",
+        message: "A token is required for authentication"
       });
 
     req.user = jwt.verify(token, process.env.JWT_S);
@@ -21,7 +22,7 @@ function verifyToken(req, res, next) {
   } catch (error) {
     next({
       responseCode: responseMiddleware.RESPONSE_CODES.P_ERROR__FORBIDDEN,
-      message: error.message,
+      message: error.message
     });
   }
 }
@@ -31,16 +32,16 @@ var registerUserValidation = {
     email: expressValidation.Joi.string().normalize().email().required(),
     password: expressValidation.Joi.string().min(6).required(),
     phone: expressValidation.Joi.string().max(15),
-    type: expressValidation.Joi.string(),
-  }),
+    type: expressValidation.Joi.string()
+  })
 };
 
 var loginUserValidation = {
   body: expressValidation.Joi.object({
     email: expressValidation.Joi.string().email().required(),
     password: expressValidation.Joi.string().min(6).required(),
-    type: expressValidation.Joi.string(),
-  }),
+    type: expressValidation.Joi.string()
+  })
 };
 
 module.exports = {
@@ -50,5 +51,5 @@ module.exports = {
     {},
     {}
   ),
-  loginUserValidation: expressValidation.validate(loginUserValidation, {}, {}),
+  loginUserValidation: expressValidation.validate(loginUserValidation, {}, {})
 };

@@ -23,7 +23,7 @@ authRouter.get(
   "/profile",
   authMiddleware.verifyToken,
   function(req, res, next) {
-    authController.getUserProfile(req.user.userId, next);
+    authController.getUserProfile(req.user.userId, req.headers["x-access-token"], next);
   }
 );
 
@@ -31,7 +31,7 @@ authRouter.delete(
   "/profile",
   authMiddleware.verifyToken,
   function(req, res, next) {
-    authController.deleteUserProfile(req.user.userId, next);
+    authController.deleteUserProfile(req.user.userId, req.headers["x-access-token"], next);
   }
 );
 
@@ -39,7 +39,7 @@ authRouter.put(
   "/profile",
   authMiddleware.verifyToken,
   function(req, res, next) {
-    authController.updateUserProfile(req.user.userId, req.body, next);
+    authController.updateUserProfile(req.user.userId, req.body, req.headers["x-access-token"], next);
   }
 );
 
