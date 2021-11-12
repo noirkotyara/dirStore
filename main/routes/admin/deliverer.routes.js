@@ -4,7 +4,7 @@ var delivererMiddleware = require("../../middlewares/deliverer.middleware");
 var authMiddleware = require("../../middlewares/auth.middleware");
 var checkAccessMiddleware = require("../../middlewares/check-access.middleware");
 
-var delivererController = require("../../controllers/deliverer/deliverer.controller");
+var delivererController = require("../../controllers/deliverer");
 
 var delivererRouter = express.Router();
 

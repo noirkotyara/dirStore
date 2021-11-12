@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,34 +46,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProducts = void 0;
-var connect_db_knex_1 = require("@services/connectors/connect-db-knex");
-var products_filters_knex_1 = require("@services/product/products-filters-knex");
-var product_case_reformator_1 = require("@controllers/product/helpers/product-case-reformator");
-var deliverers_filters_knex_1 = require("@services/deliverer/deliverers-filters-knex");
-var getProducts = function (filters) { return __awaiter(void 0, void 0, void 0, function () {
-    var product, deliverer, order, products;
+exports.getDeliverers = void 0;
+var like_operator_1 = require("@helpers/filtration/sequelize/like-operator");
+var min_max_operator_1 = require("@helpers/filtration/sequelize/min-max-operator");
+var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
+var product_model_1 = __importDefault(require("@models/product.model"));
+var greater_than_operator_1 = require("@helpers/filtration/sequelize/greater-than-operator");
+var in_operator_1 = require("@helpers/filtration/sequelize/in-operator");
+var getDeliverers = function (filters) { return __awaiter(void 0, void 0, void 0, function () {
+    var product, deliverer, order;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 product = filters.product, deliverer = filters.deliverer, order = filters.order;
-                return [4 /*yield*/, connect_db_knex_1.knexConnection
-                        .select("Product.*")
-                        .from("Product")
-                        .join("Provider", "Provider.product_id", "Product.id")
-                        .join("Deliverer", "Deliverer.id", "Provider.deliverer_id")
-                        .modify(function (queryBuilder) { return (0, products_filters_knex_1.productFilters)(queryBuilder, product); })
-                        .modify(function (queryBuilder) { return (0, deliverers_filters_knex_1.deliverersFiltersKnex)(queryBuilder, deliverer); })
-                        .modify(function (queryBuilder) {
-                        if (order) {
-                            queryBuilder.orderBy(order.by, order.direction);
-                        }
+                return [4 /*yield*/, deliverer_model_1.default.findAndCountAll({
+                        where: __assign(__assign(__assign({}, (0, like_operator_1.likeOperator)("name", deliverer.name)), (0, like_operator_1.likeOperator)("description", deliverer.description)), (0, min_max_operator_1.minMaxOperator)("deliveryPrice", deliverer.deliveryPrice)),
+                        include: [
+                            {
+                                model: product_model_1.default,
+                                as: "products",
+                                attributes: [],
+                                where: __assign(__assign(__assign(__assign(__assign(__assign({}, (0, like_operator_1.likeOperator)("name", product.name)), (0, like_operator_1.likeOperator)("description", product.description)), (0, min_max_operator_1.minMaxOperator)("price", product.price)), (0, min_max_operator_1.minMaxOperator)("createdDate", product.createdDate)), (0, greater_than_operator_1.greaterThanOperator)("amount", product.amount)), (0, in_operator_1.inOperator)("category", product.category))
+                            }
+                        ]
                     })];
-            case 1:
-                products = _a.sent();
-                return [2 /*return*/, products.map(function (item) { return (0, product_case_reformator_1.inCamel)(item); })];
+            case 1: return [2 /*return*/, _a.sent()];
         }
     });
 }); };
-exports.getProducts = getProducts;
+exports.getDeliverers = getDeliverers;

@@ -36,33 +36,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProducts = void 0;
-var connect_db_knex_1 = require("@services/connectors/connect-db-knex");
-var products_filters_knex_1 = require("@services/product/products-filters-knex");
-var product_case_reformator_1 = require("@controllers/product/helpers/product-case-reformator");
-var deliverers_filters_knex_1 = require("@services/deliverer/deliverers-filters-knex");
-var getProducts = function (filters) { return __awaiter(void 0, void 0, void 0, function () {
-    var product, deliverer, order, products;
+exports.getDelivererList = void 0;
+var message_catcher_1 = require("message-catcher");
+var response_catcher_1 = require("@helpers/response-catcher");
+var get_deliverers_1 = require("@services/deliverer/get-deliverers");
+var getDelivererList = function (filterOptions, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var deliverersList, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                product = filters.product, deliverer = filters.deliverer, order = filters.order;
-                return [4 /*yield*/, connect_db_knex_1.knexConnection
-                        .select("Product.*")
-                        .from("Product")
-                        .join("Provider", "Provider.product_id", "Product.id")
-                        .join("Deliverer", "Deliverer.id", "Provider.deliverer_id")
-                        .modify(function (queryBuilder) { return (0, products_filters_knex_1.productFilters)(queryBuilder, product); })
-                        .modify(function (queryBuilder) { return (0, deliverers_filters_knex_1.deliverersFiltersKnex)(queryBuilder, deliverer); })
-                        .modify(function (queryBuilder) {
-                        if (order) {
-                            queryBuilder.orderBy(order.by, order.direction);
-                        }
-                    })];
+                _a.trys.push([0, 2, , 3]);
+                console.log("filters", filterOptions);
+                return [4 /*yield*/, (0, get_deliverers_1.getDeliverers)(filterOptions)];
             case 1:
-                products = _a.sent();
-                return [2 /*return*/, products.map(function (item) { return (0, product_case_reformator_1.inCamel)(item); })];
+                deliverersList = _a.sent();
+                next((0, response_catcher_1.responseCatcher)({
+                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
+                    data: {
+                        data: deliverersList,
+                        message: "Deliverers"
+                    }
+                }));
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                next(error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-exports.getProducts = getProducts;
+exports.getDelivererList = getDelivererList;

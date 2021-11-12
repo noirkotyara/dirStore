@@ -19,5 +19,10 @@ export interface DelivererFilterOptionsReformated extends GeneralFilterType {
 export interface FilterOptionsReformated {
   product: ProductFilterOptionsReformated;
   deliverer: DelivererFilterOptionsReformated;
-  order?: { by: string, direction: "DESC" | "ASC" };
+  order?: OrderFilterOptionReformated;
+}
+
+export interface OrderFilterOptionReformated {
+  by: string,
+  direction: "DESC" | "ASC"
 }

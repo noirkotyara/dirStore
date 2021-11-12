@@ -4,8 +4,8 @@ import { ProductFilterOptionsReformated } from "@types-internal/filtration/filtr
 import { ProductAttributesKnex } from "@types-internal/product/product-attributes-knex";
 
 import { parseIntoArray } from "@helpers/filtration/parse-into-array";
-import { minMaxQuery } from "@helpers/filtration/min-max-query";
-import { likeQuery } from "@helpers/filtration/like-query";
+import { minMaxQuery } from "@helpers/filtration/knex/min-max-query";
+import { likeQuery } from "@helpers/filtration/knex/like-query";
 
 export const productFilters = (queryBuilder: Knex.QueryBuilder<ProductAttributesKnex, ProductAttributesKnex[]>, product: ProductFilterOptionsReformated) => {
   const { createdDate, price, amount, category, ...otherProductFilters } = product;

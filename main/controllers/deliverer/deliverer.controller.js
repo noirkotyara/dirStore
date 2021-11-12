@@ -66,51 +66,6 @@ var createDeliverer = function(delivererInfo, next) {
   }
 };
 
-var getDelivererList = function(next) {
-  var f = ff(this, getDeliverers, checkAndReformateCaseOfList).onComplete(
-    onCompleteHandler
-  );
-
-  function getDeliverers() {
-    delivererService.getDelivererList(f.slotPlain(2));
-  }
-
-  function checkAndReformateCaseOfList(error, deliverers) {
-    if (error) {
-      return f.fail({
-        responseCode: RESPONSE_CODES.S_ERROR_INTERNAL,
-        message: error
-      });
-    }
-    if (myLodash.isEmpty(deliverers)) {
-      return f.fail({
-        responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-        message: "Deliverer list is empty"
-      });
-    }
-
-    var reformatedDelivererList = deliverers.map(function(item) {
-      return delivererReformator.inCamel(item);
-    });
-
-    f.pass(reformatedDelivererList);
-  }
-
-  function onCompleteHandler(error, delivererList) {
-    if (error) {
-      next(error);
-    }
-
-    next({
-      responseCode: RESPONSE_CODES.SUCCESS__CREATED,
-      data: {
-        data: delivererList,
-        message: "Deliverer is created successfully!"
-      }
-    });
-  }
-};
-
 var updateDeliverer = function(delivererId, delivererFields, next) {
   var f = ff(
     this,
@@ -266,7 +221,6 @@ var getDelivererById = function(delivererId, next) {
 };
 
 module.exports = {
-  getDelivererList: getDelivererList,
   getDelivererById: getDelivererById,
   updateDeliverer: updateDeliverer,
   createDeliverer: createDeliverer,

@@ -22,10 +22,6 @@ function getDelivererById(delivererId, callback) {
     .asCallback(callback);
 }
 
-function getDelivererList(callback) {
-  return knexConnection.select().from("Deliverer").asCallback(callback);
-}
-
 function updateDelivererById(id, fields, callback) {
   var preparedFields = delivererReformator.inSnake(fields);
 
@@ -66,7 +62,6 @@ function getDelivererProducts(delivererId, callback) {
 module.exports = {
   createDeliverer: createDeliverer,
   getDelivererById: getDelivererById,
-  getDelivererList: getDelivererList,
   updateDelivererById: updateDelivererById,
   deleteDelivererById: deleteDelivererById,
   getDelivererProducts: getDelivererProducts
