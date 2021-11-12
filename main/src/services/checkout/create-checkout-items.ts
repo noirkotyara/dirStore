@@ -17,7 +17,7 @@ export const createCheckoutItems = async (
     await Promise.all(providersIds.map(async (providerId) => {
         const providerInfo = await getProviderById(providerId);
         if (!providerInfo) {
-          throw new Error("Provider is nt founded");
+          throw new Error("Provider is not founded");
         }
         const productId = providerInfo.productId;
         return ProductModel.increment({ amount: -1 }, { where: { id: productId } });

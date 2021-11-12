@@ -35,51 +35,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCheckoutItems = void 0;
-var checkout_item_model_1 = require("@models/checkout-item.model");
-var get_provider_by_id_1 = require("@services/provider/get-provider-by-id");
-var product_model_1 = __importDefault(require("@models/product.model"));
-var createCheckoutItems = function (checkoutId, providersIds) { return __awaiter(void 0, void 0, void 0, function () {
-    var checkoutItems, createdCheckoutItems, error_1;
+exports.getProducts = void 0;
+var connect_db_knex_1 = require("@services/connectors/connect-db-knex");
+var products_filters_1 = require("@services/product/products-filters");
+var product_case_reformator_1 = require("@controllers/product/helpers/product-case-reformator");
+var deliverers_filters_1 = require("@services/deliverer/deliverers-filters");
+var getProducts = function (filters) { return __awaiter(void 0, void 0, void 0, function () {
+    var product, deliverer, order, products;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, Promise.all(providersIds.map(function (providerId) { return __awaiter(void 0, void 0, void 0, function () {
-                        var providerInfo, productId;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, (0, get_provider_by_id_1.getProviderById)(providerId)];
-                                case 1:
-                                    providerInfo = _a.sent();
-                                    if (!providerInfo) {
-                                        throw new Error("Provider is not founded");
-                                    }
-                                    productId = providerInfo.productId;
-                                    return [2 /*return*/, product_model_1.default.increment({ amount: -1 }, { where: { id: productId } })];
-                            }
-                        });
-                    }); }))];
+                product = filters.product, deliverer = filters.deliverer, order = filters.order;
+                return [4 /*yield*/, connect_db_knex_1.knexConnection
+                        .select("Product.*")
+                        .from("Product")
+                        .join("Provider", "Provider.product_id", "Product.id")
+                        .join("Deliverer", "Deliverer.id", "Provider.deliverer_id")
+                        .modify(function (queryBuilder) { return (0, products_filters_1.productFilters)(queryBuilder, product); })
+                        .modify(function (queryBuilder) { return (0, deliverers_filters_1.deliverersFilters)(queryBuilder, deliverer); })
+                        .modify(function (queryBuilder) {
+                        if (order) {
+                            queryBuilder.orderBy(order.by, order.direction);
+                        }
+                    })];
             case 1:
-                _a.sent();
-                checkoutItems = providersIds.map(function (providerId) {
-                    return { checkoutId: checkoutId, providerId: providerId };
-                });
-                return [4 /*yield*/, checkout_item_model_1.CheckoutItemModel.bulkCreate(checkoutItems)];
-            case 2:
-                createdCheckoutItems = _a.sent();
-                return [2 /*return*/, createdCheckoutItems.length === 0
-                        ? null
-                        : createdCheckoutItems.map(function (item) { return item.get(); })];
-            case 3:
-                error_1 = _a.sent();
-                return [2 /*return*/, null];
-            case 4: return [2 /*return*/];
+                products = _a.sent();
+                return [2 /*return*/, products.map(function (item) { return (0, product_case_reformator_1.inCamel)(item); })];
         }
     });
 }); };
-exports.createCheckoutItems = createCheckoutItems;
+exports.getProducts = getProducts;

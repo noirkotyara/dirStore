@@ -5,8 +5,9 @@ function inCamel(obj) {
     description: obj.description,
     price: obj.price,
     amount: obj.amount,
+    category: obj.category,
     createdDate: obj.created_date,
-    updatedDate: obj.updated_date,
+    updatedDate: obj.updated_date
   };
 }
 
@@ -17,12 +18,13 @@ function inSnake(obj) {
     description: obj.description || undefined,
     price: obj.price || undefined,
     amount: obj.amount || undefined,
+    category: obj.category || undefined,
     created_date: obj.createdDate || undefined,
-    updated_date: obj.updatedDate || undefined,
+    updated_date: obj.updatedDate || undefined
   };
 }
 
 module.exports = {
   inCamel: inCamel,
-  inSnake: inSnake,
+  inSnake: inSnake
 };

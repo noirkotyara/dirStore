@@ -29,6 +29,9 @@ var productModel = seqConnection.define(
       type: seq.DataTypes.INTEGER(),
       defaultValue: 0
     },
+    category: {
+      type: seq.DataTypes.ENUM("AUTO", "ANIMALS", "CHEMICALS", "FOOD", "SPORT", "HEALTHCARE")
+    },
     createdAt: {
       field: "created_date",
       type: seq.DataTypes.DATE
