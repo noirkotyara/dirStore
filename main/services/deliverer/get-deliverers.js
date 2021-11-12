@@ -53,28 +53,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDeliverers = void 0;
 var like_operator_1 = require("@helpers/filtration/sequelize/like-operator");
 var min_max_operator_1 = require("@helpers/filtration/sequelize/min-max-operator");
-var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
-var product_model_1 = __importDefault(require("@models/product.model"));
 var greater_than_operator_1 = require("@helpers/filtration/sequelize/greater-than-operator");
 var in_operator_1 = require("@helpers/filtration/sequelize/in-operator");
+var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
+var product_model_1 = __importDefault(require("@models/product.model"));
 var getDeliverers = function (filters) { return __awaiter(void 0, void 0, void 0, function () {
     var product, deliverer, order;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 product = filters.product, deliverer = filters.deliverer, order = filters.order;
-                return [4 /*yield*/, deliverer_model_1.default.findAndCountAll({
-                        where: __assign(__assign(__assign({}, (0, like_operator_1.likeOperator)("name", deliverer.name)), (0, like_operator_1.likeOperator)("description", deliverer.description)), (0, min_max_operator_1.minMaxOperator)("deliveryPrice", deliverer.deliveryPrice)),
-                        include: [
+                return [4 /*yield*/, deliverer_model_1.default.findAndCountAll(__assign({ where: __assign(__assign(__assign({}, (0, like_operator_1.likeOperator)("name", deliverer.name)), (0, like_operator_1.likeOperator)("description", deliverer.description)), (0, min_max_operator_1.minMaxOperator)("deliveryPrice", deliverer.deliveryPrice)), include: [
                             {
                                 model: product_model_1.default,
                                 as: "products",
                                 attributes: [],
                                 where: __assign(__assign(__assign(__assign(__assign(__assign({}, (0, like_operator_1.likeOperator)("name", product.name)), (0, like_operator_1.likeOperator)("description", product.description)), (0, min_max_operator_1.minMaxOperator)("price", product.price)), (0, min_max_operator_1.minMaxOperator)("createdDate", product.createdDate)), (0, greater_than_operator_1.greaterThanOperator)("amount", product.amount)), (0, in_operator_1.inOperator)("category", product.category))
                             }
-                        ]
-                    })];
-            case 1: return [2 /*return*/, _a.sent()];
+                        ] }, ((order === null || order === void 0 ? void 0 : order.by) && { order: [[order.by, (_a = order.direction) !== null && _a !== void 0 ? _a : "DESC"]] })))];
+            case 1: return [2 /*return*/, _b.sent()];
         }
     });
 }); };

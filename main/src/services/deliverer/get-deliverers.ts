@@ -5,12 +5,11 @@ import { DelivererAttributes, DelivererCreationAttributes } from "@types-interna
 
 import { likeOperator } from "@helpers/filtration/sequelize/like-operator";
 import { minMaxOperator } from "@helpers/filtration/sequelize/min-max-operator";
-
-import DelivererModel from "@models/deliverer.model";
-import ProductModel from "@models/product.model";
 import { greaterThanOperator } from "@helpers/filtration/sequelize/greater-than-operator";
 import { inOperator } from "@helpers/filtration/sequelize/in-operator";
 
+import DelivererModel from "@models/deliverer.model";
+import ProductModel from "@models/product.model";
 
 export const getDeliverers = async (filters: FilterOptionsReformated): Promise<{ rows: Model<DelivererAttributes, DelivererCreationAttributes>[], count: number }> => {
   const { product, deliverer, order } = filters;
@@ -35,7 +34,8 @@ export const getDeliverers = async (filters: FilterOptionsReformated): Promise<{
           ...inOperator("category", product.category)
         }
       }
-    ]
+    ],
+    ...(order?.by && { order: [[order.by, order.direction ?? "DESC"]] })
   });
 };
 
