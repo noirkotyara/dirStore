@@ -3,6 +3,7 @@ require("dotenv").config();
 var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
+var cors = require("cors");
 
 var testConnectionToDB = require("./helpers/connect-db");
 
@@ -26,6 +27,7 @@ pool.mysqlConnection.connect(function(error) {
   console.log("MYSQL2 adapter: Connection Established Successfully ");
 });
 
+app.use(cors());
 app.use(express.json());
 app.use(loggerMiddleware);
 

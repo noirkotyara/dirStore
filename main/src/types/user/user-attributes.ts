@@ -11,10 +11,10 @@ export interface UserAttributes {
   email: string;
   password: string;
   phone?: string | null;
-  identifier: IdentifierAttributes;
+  identifier?: IdentifierAttributes;
   token?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UserCreationAttributes

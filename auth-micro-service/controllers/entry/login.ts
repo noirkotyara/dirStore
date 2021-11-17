@@ -3,13 +3,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { RESPONSE_CODES } from "message-catcher";
 
-import { UserCredentials } from "@types-internal/user/user-credentials";
-
 import { findUserByEmail } from "@services/auth/find-user-by-email";
 
 import { errorCatcher } from "@helpers/error-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
 
+import { UserCredentials } from "@types-internal/user/user-credentials";
 import { UserAttributesWithToken } from "@types-internal/user/user-attributes";
 
 export const login = async (userCredentials: UserCredentials, next: NextFunction) => {

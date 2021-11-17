@@ -7,7 +7,7 @@ export interface CheckoutAttributes {
   id: string;
   userId: string;
   status?: CheckoutStatus;
-  invoice?: string;
+  invoice?: string | null;
   providers?: CheckoutItemAttributes[];
 }
 
