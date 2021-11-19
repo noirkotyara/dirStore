@@ -82,6 +82,7 @@ var checkAccessMiddleware = function (req, res, next) { return __awaiter(void 0,
                 userType = _a.sent();
                 if (userType) {
                     requesterType = userType.toString();
+                    // TODO: DRY
                     if (routerType !== requesterType) {
                         return [2 /*return*/, next({
                                 responseCode: message_catcher_1.RESPONSE_CODES.P_ERROR__FORBIDDEN,
@@ -102,6 +103,7 @@ var checkAccessMiddleware = function (req, res, next) { return __awaiter(void 0,
                     requesterType = userProfile.type;
                     connect_redis_1.redisClient.set("userType:" + req.user.userId, userProfile.type);
                 }
+                // TODO: DRY
                 if (routerType !== requesterType) {
                     return [2 /*return*/, next({
                             responseCode: message_catcher_1.RESPONSE_CODES.P_ERROR__FORBIDDEN,

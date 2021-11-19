@@ -6,7 +6,6 @@ import { responseCatcher } from "@helpers/response-catcher";
 import { ProviderAttributes } from "@types-internal/provider/provider-attributes";
 import { getProviderListInfoByIds } from "@services/provider/get-provider-list-info-by-ids";
 import { FilterOptionsReformated } from "@types-internal/filtration/filtration-options-reformated";
-import { getProviderList } from "@services/provider/get-provider-list";
 import { errorCatcher } from "@helpers/error-catcher";
 
 export const getProviderListInfo = async (
@@ -17,7 +16,8 @@ export const getProviderListInfo = async (
     let providersInfo: null | ProviderAttributes[] = [];
 
     if (!filters.id) {
-      providersInfo = await getProviderList();
+      providersInfo = [];
+      // providersInfo = await getProviderList();
     } else {
       providersInfo = await getProviderListInfoByIds(filters.id);
     }
