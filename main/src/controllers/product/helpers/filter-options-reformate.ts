@@ -1,5 +1,6 @@
 import { FilterOptions } from "@types-internal/filtration/filtration-options";
 import { FilterOptionsReformated } from "@types-internal/filtration/filtration-options-reformated";
+import { parseIntoArray } from "@helpers/filtration/parse-into-array";
 
 export const reformateFilterOptions = (options: FilterOptions): FilterOptionsReformated => {
   let filters = {
@@ -32,6 +33,14 @@ export const reformateFilterOptions = (options: FilterOptions): FilterOptionsRef
     const orderFilter = { order: { by: options.order_by, direction: options.order_direction ?? "DESC" } };
     filters = {
       ...filters, ...orderFilter
+    };
+  }
+
+  if (options.id) {
+    const idArray = { id: parseIntoArray(options.id) };
+    filters = {
+      ...filters,
+      ...idArray
     };
   }
 

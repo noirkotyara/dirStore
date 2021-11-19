@@ -2,7 +2,7 @@ var express = require("express");
 
 var productMiddleware = require("../../middlewares/product.middleware");
 var authMiddleware = require("../../middlewares/auth.middleware");
-var checkAccessMiddleware = require("../../middlewares/check-access.middleware");
+var checkAccessMiddleware = require("../../middlewares/check-access.middleware").checkAccessMiddleware;
 
 var productController = require("../../controllers/product");
 

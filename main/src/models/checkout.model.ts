@@ -2,12 +2,7 @@ import { DataTypes, ModelDefined, UUIDV4 } from "sequelize";
 
 import { seqConnection } from "@services/connectors/connect-db-sequelize";
 
-import { UserModel } from "./user.model";
-
-import {
-  CheckoutAttributes,
-  CheckoutCreationAttributes
-} from "@types-internal/checkout/checkout-attributes";
+import { CheckoutAttributes, CheckoutCreationAttributes } from "@types-internal/checkout/checkout-attributes";
 
 import { CheckoutStatus } from "@enums/checkout-status";
 
@@ -24,7 +19,6 @@ export const CheckoutModel: ModelDefined<CheckoutAttributes,
     },
     userId: {
       type: DataTypes.STRING(35),
-      references: { model: UserModel, key: "id" },
       allowNull: false,
       field: "user_id"
     },

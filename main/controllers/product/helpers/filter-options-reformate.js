@@ -12,6 +12,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reformateFilterOptions = void 0;
+var parse_into_array_1 = require("@helpers/filtration/parse-into-array");
 var reformateFilterOptions = function (options) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var filters = {
@@ -41,6 +42,10 @@ var reformateFilterOptions = function (options) {
     if (options.order_by) {
         var orderFilter = { order: { by: options.order_by, direction: (_o = options.order_direction) !== null && _o !== void 0 ? _o : "DESC" } };
         filters = __assign(__assign({}, filters), orderFilter);
+    }
+    if (options.id) {
+        var idArray = { id: (0, parse_into_array_1.parseIntoArray)(options.id) };
+        filters = __assign(__assign({}, filters), idArray);
     }
     return filters;
 };

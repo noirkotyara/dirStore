@@ -35,25 +35,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findUserById = void 0;
-var user_model_1 = require("@models/user.model");
-var identifier_model_1 = require("@models/identifier.model");
-var findUserById = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
-    var foundedUser;
+exports.getProviderList = void 0;
+var provider_model_1 = __importDefault(require("@models/provider.model"));
+var product_model_1 = __importDefault(require("@models/product.model"));
+var deliverer_model_1 = __importDefault(require("@models/deliverer.model"));
+var getProviderList = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var createdCheckout;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, user_model_1.UserModel.findOne({
-                    where: { id: userId },
-                    include: {
-                        model: identifier_model_1.IdentifierModel,
-                        as: "identifier",
+            case 0: return [4 /*yield*/, provider_model_1.default.findAll({
+                    attributes: {
+                        exclude: ["productId", "delivererId", "product_id", "deliverer_id"]
                     },
+                    include: [
+                        { model: product_model_1.default, as: "product" },
+                        { model: deliverer_model_1.default, as: "deliverer" }
+                    ]
                 })];
             case 1:
-                foundedUser = _a.sent();
-                return [2 /*return*/, foundedUser ? foundedUser.get() : null];
+                createdCheckout = _a.sent();
+                return [2 /*return*/, createdCheckout ? createdCheckout.map(function (item) { return item.get(); }) : null];
         }
     });
 }); };
-exports.findUserById = findUserById;
+exports.getProviderList = getProviderList;

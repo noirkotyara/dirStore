@@ -1,7 +1,7 @@
 var express = require("express");
 
 var authMiddleware = require("../../middlewares/auth.middleware");
-var checkAccessMiddleware = require("../../middlewares/check-access.middleware");
+var checkAccessMiddleware = require("../../middlewares/check-access.middleware").checkAccessMiddleware;
 
 var providerController = require("../../controllers/provider");
 
@@ -12,14 +12,6 @@ providerRouter.post(
   [authMiddleware.verifyToken, checkAccessMiddleware],
   function(req, res, next) {
     providerController.createProvider(req.body, next);
-  }
-);
-
-providerRouter.get(
-  "/item/:id",
-  [authMiddleware.verifyToken, checkAccessMiddleware],
-  function(req, res, next) {
-    providerController.getProviderInfo(req.params.id, next);
   }
 );
 
