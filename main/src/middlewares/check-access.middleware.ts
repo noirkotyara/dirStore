@@ -23,7 +23,7 @@ export const checkAccessMiddleware = async (req: { originalUrl: string, method: 
 
     if (userType) {
       requesterType = userType.toString();
-
+// TODO: DRY
       if (routerType !== requesterType) {
         return next({
           responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
@@ -44,7 +44,7 @@ export const checkAccessMiddleware = async (req: { originalUrl: string, method: 
       requesterType = userProfile.type;
       redisClient.set("userType:" + req.user.userId, userProfile.type);
     }
-
+// TODO: DRY
     if (routerType !== requesterType) {
       return next({
         responseCode: RESPONSE_CODES.P_ERROR__FORBIDDEN,
