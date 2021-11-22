@@ -21,6 +21,7 @@ export class IdentifierModel extends Model<IdentifierAttributes, IdentifierCreat
   public code!: number;
   public publisher!: string;
   public userId!: string;
+  public deliveryAddress!: string;
 
 
   // Since TS cannot determine model association at compile time
@@ -62,6 +63,9 @@ IdentifierModel.init(
     },
     code: {
       type: DataTypes.STRING(15)
+    },
+    deliveryAddress: {
+      type: DataTypes.STRING(100)
     },
     userId: {
       type: DataTypes.STRING(35),
