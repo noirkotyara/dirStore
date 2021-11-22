@@ -24,6 +24,10 @@ exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", 
     invoice: {
         type: sequelize_1.DataTypes.STRING(35)
     },
+    deliveryAddress: {
+        type: sequelize_1.DataTypes.STRING(100),
+        field: "delivery_address"
+    },
     createdAt: {
         field: "created_date",
         type: sequelize_1.DataTypes.DATE
