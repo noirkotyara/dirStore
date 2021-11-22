@@ -65,7 +65,8 @@ IdentifierModel.init(
       type: DataTypes.STRING(15)
     },
     deliveryAddress: {
-      type: DataTypes.STRING(100)
+      type: DataTypes.STRING(100),
+      field: "delivery_address"
     },
     userId: {
       type: DataTypes.STRING(35),
