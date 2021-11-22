@@ -17,6 +17,7 @@ export interface DelivererFilterOptions {
 }
 
 export interface FilterOptions extends DelivererFilterOptions, ProductFilterOptions {
+  id?: string;
   order_by?: string;
   order_direction?: "DESC" | "ASC";
 }

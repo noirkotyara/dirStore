@@ -7,8 +7,9 @@ export interface CheckoutAttributes {
   id: string;
   userId: string;
   status?: CheckoutStatus;
-  invoice?: string;
+  invoice?: string | null;
   providers?: CheckoutItemAttributes[];
+  deliveryAddress: string | null;
 }
 
 export interface CheckoutCreationAttributes

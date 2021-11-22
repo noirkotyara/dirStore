@@ -36,24 +36,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findUserByEmail = void 0;
-var user_model_1 = require("@models/user.model");
-var identifier_model_1 = require("@models/identifier.model");
-var findUserByEmail = function (email) { return __awaiter(void 0, void 0, void 0, function () {
-    var foundedUser;
+exports.getProviderListInfo = void 0;
+var message_catcher_1 = require("message-catcher");
+var response_catcher_1 = require("@helpers/response-catcher");
+var get_provider_list_info_by_ids_1 = require("@services/provider/get-provider-list-info-by-ids");
+var error_catcher_1 = require("@helpers/error-catcher");
+var getProviderListInfo = function (filters, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var providersInfo, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, user_model_1.UserModel.findOne({
-                    where: { email: email },
-                    include: {
-                        model: identifier_model_1.IdentifierModel,
-                        as: "identifier",
-                    },
-                })];
-            case 1:
-                foundedUser = _a.sent();
-                return [2 /*return*/, foundedUser ? foundedUser.get() : null];
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                providersInfo = [];
+                if (!!filters.id) return [3 /*break*/, 1];
+                providersInfo = [];
+                return [3 /*break*/, 3];
+            case 1: return [4 /*yield*/, (0, get_provider_list_info_by_ids_1.getProviderListInfoByIds)(filters.id)];
+            case 2:
+                providersInfo = _a.sent();
+                _a.label = 3;
+            case 3:
+                if (!providersInfo) {
+                    (0, error_catcher_1.errorCatcher)({
+                        message: "Provider are cannot be founded"
+                    });
+                    return [2 /*return*/];
+                }
+                next((0, response_catcher_1.responseCatcher)({
+                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
+                    data: {
+                        data: providersInfo,
+                        message: "Provider is here"
+                    }
+                }));
+                return [3 /*break*/, 5];
+            case 4:
+                error_1 = _a.sent();
+                next(error_1);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); };
-exports.findUserByEmail = findUserByEmail;
+exports.getProviderListInfo = getProviderListInfo;

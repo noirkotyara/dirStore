@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckoutModel = void 0;
 var sequelize_1 = require("sequelize");
 var connect_db_sequelize_1 = require("@services/connectors/connect-db-sequelize");
-var user_model_1 = require("./user.model");
 var checkout_status_1 = require("@enums/checkout-status");
 exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", {
     id: {
@@ -15,7 +14,6 @@ exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", 
     },
     userId: {
         type: sequelize_1.DataTypes.STRING(35),
-        references: { model: user_model_1.UserModel, key: "id" },
         allowNull: false,
         field: "user_id"
     },
@@ -25,6 +23,10 @@ exports.CheckoutModel = connect_db_sequelize_1.seqConnection.define("Checkout", 
     },
     invoice: {
         type: sequelize_1.DataTypes.STRING(35)
+    },
+    deliveryAddress: {
+        type: sequelize_1.DataTypes.STRING(100),
+        field: "delivery_address"
     },
     createdAt: {
         field: "created_date",

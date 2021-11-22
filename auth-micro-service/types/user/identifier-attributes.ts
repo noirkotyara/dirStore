@@ -6,7 +6,10 @@ export interface IdentifierAttributes {
   lastName?: string;
   code?: number;
   publisher?: string;
+  userId: string;
+  deliveryAddress: string | null;
 }
 
 export interface IdentifierCreationAttributes
-  extends Optional<IdentifierAttributes, "id"> {}
+  extends Optional<IdentifierAttributes, "id"> {
+}

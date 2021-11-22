@@ -17,6 +17,7 @@ export interface DelivererFilterOptionsReformated extends GeneralFilterType {
 }
 
 export interface FilterOptionsReformated {
+  id?: string[];
   product: ProductFilterOptionsReformated;
   deliverer: DelivererFilterOptionsReformated;
   order?: OrderFilterOptionReformated;

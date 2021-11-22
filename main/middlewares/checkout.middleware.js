@@ -21,9 +21,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var express_validation_1 = __importStar(require("express-validation"));
 var createCheckoutValidation = {
     body: express_validation_1.Joi.object({
-        providersIds: express_validation_1.Joi.array().items(express_validation_1.Joi.string()).required().min(1),
-    }),
+        deliveryAddress: express_validation_1.Joi.string(),
+        providersIds: express_validation_1.Joi.array().items(express_validation_1.Joi.string()).required().min(1)
+    })
 };
 module.exports = {
-    createCheckoutValidation: express_validation_1.default.validate(createCheckoutValidation, {}, {}),
+    createCheckoutValidation: express_validation_1.default.validate(createCheckoutValidation, {}, {})
 };
