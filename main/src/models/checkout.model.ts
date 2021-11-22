@@ -39,6 +39,10 @@ export const CheckoutModel: ModelDefined<CheckoutAttributes,
     invoice: {
       type: DataTypes.STRING(35)
     },
+    deliveryAddress: {
+      type: DataTypes.STRING(100),
+      field: "delivery_address"
+    },
     createdAt: {
       field: "created_date",
       type: DataTypes.DATE
