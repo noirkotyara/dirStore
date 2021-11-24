@@ -27,7 +27,13 @@ pool.mysqlConnection.connect(function(error) {
   console.log("MYSQL2 adapter: Connection Established Successfully ");
 });
 
-app.use(cors());
+var corsOptions = {
+  origin: ["http://localhost:3000", "http://localhost:4200"],
+  credentials: true,
+  optionSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(loggerMiddleware);
 
