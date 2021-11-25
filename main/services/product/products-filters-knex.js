@@ -12,13 +12,12 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productFilters = void 0;
-var parse_into_array_1 = require("@helpers/filtration/parse-into-array");
 var min_max_query_1 = require("@helpers/filtration/knex/min-max-query");
 var like_query_1 = require("@helpers/filtration/knex/like-query");
 var productFilters = function (queryBuilder, product) {
     var createdDate = product.createdDate, price = product.price, amount = product.amount, category = product.category, otherProductFilters = __rest(product, ["createdDate", "price", "amount", "category"]);
     if (category) {
-        queryBuilder.whereIn("Product.category", (0, parse_into_array_1.parseIntoArray)(category));
+        queryBuilder.whereIn("Product.category", category);
     }
     if (amount) {
         queryBuilder.where("Product.amount", ">=", amount);

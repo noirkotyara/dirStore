@@ -6,7 +6,7 @@ export interface ProductFilterOptions {
   p_priceMax?: number;
   p_priceMin?: number;
   p_amount?: number;
-  p_category?: string;
+  p_category?: string[];
 }
 
 export interface DelivererFilterOptions {

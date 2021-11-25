@@ -2,8 +2,6 @@ import { Knex } from "knex";
 
 import { ProductFilterOptionsReformated } from "@types-internal/filtration/filtration-options-reformated";
 import { ProductAttributesKnex } from "@types-internal/product/product-attributes-knex";
-
-import { parseIntoArray } from "@helpers/filtration/parse-into-array";
 import { minMaxQuery } from "@helpers/filtration/knex/min-max-query";
 import { likeQuery } from "@helpers/filtration/knex/like-query";
 
@@ -11,7 +9,7 @@ export const productFilters = (queryBuilder: Knex.QueryBuilder<ProductAttributes
   const { createdDate, price, amount, category, ...otherProductFilters } = product;
 
   if (category) {
-    queryBuilder.whereIn("Product.category", parseIntoArray(category));
+    queryBuilder.whereIn("Product.category", category);
   }
 
   if (amount) {

@@ -7,7 +7,7 @@ export interface ProductFilterOptionsReformated extends GeneralFilterType {
   createdDate: MinMaxFormat<string>;
   price: MinMaxFormat<number>;
   amount?: number;
-  category?: string;
+  category?: string[];
 }
 
 export interface DelivererFilterOptionsReformated extends GeneralFilterType {
