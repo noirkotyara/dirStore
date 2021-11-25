@@ -11,7 +11,6 @@ import { Model } from "sequelize";
 
 export const getDelivererList = async (filterOptions: FilterOptionsReformated, next: NextFunction) => {
   try {
-    console.log("filters", filterOptions);
     const deliverersList = await getDeliverers(filterOptions);
 
     next(
