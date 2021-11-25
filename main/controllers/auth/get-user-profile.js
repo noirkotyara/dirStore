@@ -57,7 +57,7 @@ var getUserProfile = function (userId, token, next) { return __awaiter(void 0, v
             case 1:
                 userProfile = _a.sent();
                 next((0, response_catcher_1.responseCatcher)({
-                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS__CREATED,
+                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
                     data: {
                         data: userProfile,
                         message: userProfile.type + " profile"

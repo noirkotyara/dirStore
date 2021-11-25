@@ -23,7 +23,7 @@ export const getUserProfile = async (
 
     next(
       responseCatcher<UserAttributes>({
-        responseCode: RESPONSE_CODES.SUCCESS__CREATED,
+        responseCode: RESPONSE_CODES.SUCCESS,
         data: {
           data: userProfile,
           message:

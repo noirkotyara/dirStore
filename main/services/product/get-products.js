@@ -38,9 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProducts = void 0;
 var connect_db_knex_1 = require("@services/connectors/connect-db-knex");
-var products_filters_knex_1 = require("@services/product/products-filters-knex");
 var product_case_reformator_1 = require("@controllers/product/helpers/product-case-reformator");
-var deliverers_filters_knex_1 = require("@services/deliverer/deliverers-filters-knex");
 var getProducts = function (filters) { return __awaiter(void 0, void 0, void 0, function () {
     var product, deliverer, order, products;
     return __generator(this, function (_a) {
@@ -48,19 +46,20 @@ var getProducts = function (filters) { return __awaiter(void 0, void 0, void 0, 
             case 0:
                 product = filters.product, deliverer = filters.deliverer, order = filters.order;
                 return [4 /*yield*/, connect_db_knex_1.knexConnection
-                        .select("Product.*")
+                        .distinct("Product.*")
                         .from("Product")
-                        .join("Provider", "Provider.product_id", "Product.id")
-                        .join("Deliverer", "Deliverer.id", "Provider.deliverer_id")
-                        .modify(function (queryBuilder) { return (0, products_filters_knex_1.productFilters)(queryBuilder, product); })
-                        .modify(function (queryBuilder) { return (0, deliverers_filters_knex_1.deliverersFiltersKnex)(queryBuilder, deliverer); })
-                        .modify(function (queryBuilder) {
-                        if (order) {
-                            queryBuilder.orderBy(order.by, order.direction);
-                        }
-                    })];
+                        .leftJoin("Provider", "Provider.product_id", "Product.id")
+                        .leftJoin("Deliverer", "Provider.deliverer_id", "Deliverer.id")];
             case 1:
                 products = _a.sent();
+                // .modify((queryBuilder: Knex.QueryBuilder<ProductAttributesKnex, ProductAttributesKnex[]>) => productFilters(queryBuilder, product));
+                // .modify((queryBuilder: Knex.QueryBuilder<DelivererAttributesKnex, DelivererAttributesKnex[]>) => deliverersFiltersKnex(queryBuilder, deliverer));
+                // .modify((queryBuilder) => {
+                //   console.log("ORDERRRRR", order);
+                //   if (order) {
+                //     queryBuilder.orderBy(order.by, order.direction);
+                //   }
+                // });
                 return [2 /*return*/, products.map(function (item) { return (0, product_case_reformator_1.inCamel)(item); })];
         }
     });
