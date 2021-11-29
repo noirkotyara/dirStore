@@ -18,7 +18,9 @@ var createProduct = function(productInfo, next) {
       this,
       productService.createTable,
       saveProduct,
+      saveProductImages,
       getSavedProduct,
+      getSavedProductImages,
       checkProductSave
     ).onComplete(onCompleteHandler);
 
@@ -26,9 +28,17 @@ var createProduct = function(productInfo, next) {
       productService.saveProduct(newProduct, f.wait());
     }
 
-    function getSavedProduct() {
+    function saveProductImages() {
+      productService.saveImages(newProduct.id, newProduct.images, f.wait());
+    }
 
+    function getSavedProduct() {
       productService.getProductById(newProduct.id, f.slotPlain(2));
+    }
+
+    function getSavedProductImages(error, result) {
+      newProduct = result[0];
+      productService.getProductImages(newProduct.id, f.slotPlain(2));
     }
 
     function checkProductSave(error, results) {
@@ -45,23 +55,21 @@ var createProduct = function(productInfo, next) {
           message: "Created product is not founded"
         });
       }
-
-      // get photos from directory
-      if (results[0].photoDirectory) {
-        results[0].photos = fs.readdirSync(path.join(__dirname, "../../uploads", results[0].photoDirectory));
-      }
-
-      f.pass(results[0]);
+      f.pass(results.map(function(result) {
+        return result.name;
+      }));
     }
 
-    function onCompleteHandler(error, savedProduct) {
+    function onCompleteHandler(error, productImages) {
       if (error) {
         return next(next);
       }
+      newProduct.images = productImages;
+
       next({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
-          data: savedProduct,
+          data: newProduct,
           message: "Product is created successfully"
         }
       });

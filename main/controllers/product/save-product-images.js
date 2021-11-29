@@ -41,16 +41,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveProductImages = void 0;
 var message_catcher_1 = require("message-catcher");
-var uuid_1 = require("uuid");
 var multer_1 = __importDefault(require("multer"));
+var path_1 = __importDefault(require("path"));
+var uuid_1 = require("uuid");
 var response_catcher_1 = require("@helpers/response-catcher");
-var multer_storage_1 = require("@controllers/product/helpers/multer-storage");
+var error_catcher_1 = require("@helpers/error-catcher");
+var create_image_1 = require("@services/image/create-image");
 var saveProductImages = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var directoryId, upload, cdUpload;
+    var createdImagesId, multerStorage, upload, cdUpload;
     return __generator(this, function (_a) {
-        directoryId = (0, uuid_1.v4)();
+        createdImagesId = [];
+        multerStorage = function () { return multer_1.default.diskStorage({
+            destination: function (req, file, cb) {
+                var directoryName = path_1.default.join(__dirname, "../../uploads");
+                cb(null, directoryName);
+            },
+            filename: function (req, file, cb) {
+                var fileId = (0, uuid_1.v4)();
+                var ending = file.originalname.split(".").pop();
+                var fullyImageName = fileId + "." + ending;
+                createdImagesId.push(fullyImageName);
+                cb(null, fullyImageName);
+            }
+        }); };
         upload = (0, multer_1.default)({
-            storage: (0, multer_storage_1.multerStorage)(directoryId),
+            storage: multerStorage(),
             fileFilter: function (req, file, callback) {
                 if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
                     return callback(new Error("Only image files are allowed!"));
@@ -59,22 +74,38 @@ var saveProductImages = function (req, res, next) { return __awaiter(void 0, voi
             }
         });
         cdUpload = upload.fields([{ name: "gallery", maxCount: 8 }]);
-        cdUpload(req, res, function (err) {
-            if (err) {
-                next({
-                    responseCode: message_catcher_1.RESPONSE_CODES.S_ERROR_INTERNAL,
-                    message: err.toString()
-                });
-                return;
-            }
-            next((0, response_catcher_1.responseCatcher)({
-                responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
-                data: {
-                    data: directoryId,
-                    message: "Product images store with directory id"
+        cdUpload(req, res, function (err) { return __awaiter(void 0, void 0, void 0, function () {
+            var createdImages;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (err) {
+                            next({
+                                responseCode: message_catcher_1.RESPONSE_CODES.S_ERROR_INTERNAL,
+                                message: err.toString()
+                            });
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, (0, create_image_1.createImages)(createdImagesId)];
+                    case 1:
+                        createdImages = _a.sent();
+                        if (!createdImages) {
+                            (0, error_catcher_1.errorCatcher)({
+                                message: "Images are not saved"
+                            });
+                            return [2 /*return*/];
+                        }
+                        next((0, response_catcher_1.responseCatcher)({
+                            responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
+                            data: {
+                                data: createdImages,
+                                message: "Product images store with directory id"
+                            }
+                        }));
+                        return [2 /*return*/];
                 }
-            }));
-        });
+            });
+        }); });
         return [2 /*return*/];
     });
 }); };

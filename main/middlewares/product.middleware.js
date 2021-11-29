@@ -6,7 +6,7 @@ var createProductValidation = {
     price: expressValidation.Joi.number(),
     amount: expressValidation.Joi.number().required(),
     description: expressValidation.Joi.string().max(150).required(),
-    photoDirectory: expressValidation.Joi.string()
+    images: expressValidation.Joi.array().items(expressValidation.Joi.string())
   })
 };
 

@@ -1,4 +1,6 @@
 var ff = require("ff");
+var uuid = require("uuid");
+
 var pool = require("../connectors/connect-db-mysql2");
 var knexConnection = require("../connectors/connect-db-knex").knexConnection;
 
@@ -23,22 +25,35 @@ function createTable() {
 
 function saveProduct(product, callback) {
   var productClone = myLodash.deepClone(product);
-  var photoDirectory = productClone.photoDirectory;
 
-  delete productClone.photoDirectory
-
-  productClone["photo_directory"] = photoDirectory
+  delete productClone.images;
 
   var insertQuery = "INSERT INTO Product SET ?";
   var queryFormat = pool.mysqlConnection.format(insertQuery, productClone);
   pool.mysqlConnection.query(queryFormat, callback);
 }
 
+function saveImages(productId, imagesIds, callback) {
+  var productImageValues = imagesIds.map(function(imageId) {
+      return [uuid.v4(), imageId, productId];
+    }
+  );
+  var insertQuery = "INSERT INTO Product_Image (id, image_id, product_id) VALUES ?";
+  pool.mysqlConnection.query(insertQuery, [productImageValues], callback);
+}
+
 function getProductById(id, callback) {
   var selectQuery =
-    "SELECT id, name, description, price, amount, photo_directory as photoDirectory, created_date as createdDate, updated_date as updatedDate FROM Product WHERE id = ?";
+    "SELECT id, name, description, price, amount, created_date as createdDate, updated_date as updatedDate FROM Product WHERE id = ?";
   var queryFormat = pool.mysqlConnection.format(selectQuery, [id]);
 
+  pool.mysqlConnection.query(queryFormat, callback);
+}
+
+function getProductImages(id, callback) {
+  var selectQuery =
+    "SELECT name FROM Image JOIN Product_Image ON Image.id = Product_Image.image_id AND product_id = ?";
+  var queryFormat = pool.mysqlConnection.format(selectQuery, [id]);
   pool.mysqlConnection.query(queryFormat, callback);
 }
 
@@ -117,9 +132,11 @@ module.exports = {
   createTable: createTable,
   saveProduct: saveProduct,
   getProductById: getProductById,
+  saveImages: saveImages,
   getProductsList: getProductsList,
   updateProductById: updateProductById,
   deleteProductById: deleteProductById,
   isProductExist: isProductExist,
-  getProductDeliverers: getProductDeliverers
+  getProductDeliverers: getProductDeliverers,
+  getProductImages: getProductImages
 };
