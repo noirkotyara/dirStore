@@ -20,6 +20,15 @@ productRouter.post(
   }
 );
 
+productRouter.post(
+  "/item/images",
+  [
+    authMiddleware.verifyToken,
+    checkAccessMiddleware
+  ],
+  productController.saveProductImages
+);
+
 productRouter.put(
   "/item/:id",
   [

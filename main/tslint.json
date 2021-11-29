@@ -5,6 +5,7 @@
   ],
   "jsRules": {},
   "rules": {
+    "no-shadowed-variable": false,
     "no-console": false,
     "no-any": true
   },

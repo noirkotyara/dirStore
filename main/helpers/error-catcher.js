@@ -12,9 +12,15 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorCatcher = void 0;
+var message_catcher_1 = require("message-catcher");
 var errorCatcher = function (formedError) {
     var _a;
-    var responseCode = (_a = formedError.responseCode) !== null && _a !== void 0 ? _a : RESPONSE_CODES.S_ERROR_INTERNAL;
-    throw __assign({ responseCode: responseCode }, formedError);
+    try {
+        var responseCode = (_a = formedError.responseCode) !== null && _a !== void 0 ? _a : message_catcher_1.RESPONSE_CODES.S_ERROR_INTERNAL;
+        throw __assign({ responseCode: responseCode }, formedError);
+    }
+    catch (e) {
+        console.log(e);
+    }
 };
 exports.errorCatcher = errorCatcher;

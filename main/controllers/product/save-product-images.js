@@ -35,34 +35,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDelivererList = void 0;
+exports.saveProductImages = void 0;
 var message_catcher_1 = require("message-catcher");
+var uuid_1 = require("uuid");
+var multer_1 = __importDefault(require("multer"));
 var response_catcher_1 = require("@helpers/response-catcher");
-var get_deliverers_1 = require("@services/deliverer/get-deliverers");
-var getDelivererList = function (filterOptions, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var deliverersList, error_1;
+var multer_storage_1 = require("@controllers/product/helpers/multer-storage");
+var saveProductImages = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var directoryId, upload, cdUpload;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, get_deliverers_1.getDeliverers)(filterOptions)];
-            case 1:
-                deliverersList = _a.sent();
-                next((0, response_catcher_1.responseCatcher)({
-                    responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
-                    data: {
-                        data: deliverersList,
-                        message: "Deliverers"
-                    }
-                }));
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
+        directoryId = (0, uuid_1.v4)();
+        upload = (0, multer_1.default)({
+            storage: (0, multer_storage_1.multerStorage)(directoryId),
+            fileFilter: function (req, file, callback) {
+                if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+                    return callback(new Error("Only image files are allowed!"));
+                }
+                callback(null, true);
+            }
+        });
+        cdUpload = upload.fields([{ name: "gallery", maxCount: 8 }]);
+        cdUpload(req, res, function (err) {
+            if (err) {
+                next({
+                    responseCode: message_catcher_1.RESPONSE_CODES.S_ERROR_INTERNAL,
+                    message: err.toString()
+                });
+                return;
+            }
+            next((0, response_catcher_1.responseCatcher)({
+                responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
+                data: {
+                    data: directoryId,
+                    message: "Product images store with directory id"
+                }
+            }));
+        });
+        return [2 /*return*/];
     });
 }); };
-exports.getDelivererList = getDelivererList;
+exports.saveProductImages = saveProductImages;

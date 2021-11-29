@@ -6,6 +6,7 @@
     "prettier"
   ],
   "rules": {
+    "no-shadow": "off",
     "sort-imports": [
       "error",
       {

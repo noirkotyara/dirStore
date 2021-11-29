@@ -6,7 +6,8 @@ var createProductValidation = {
     price: expressValidation.Joi.number(),
     amount: expressValidation.Joi.number().required(),
     description: expressValidation.Joi.string().max(150).required(),
-  }),
+    photoDirectory: expressValidation.Joi.string()
+  })
 };
 
 var updateProductValidation = {
@@ -14,8 +15,8 @@ var updateProductValidation = {
     name: expressValidation.Joi.string().max(25),
     price: expressValidation.Joi.number(),
     amount: expressValidation.Joi.number(),
-    description: expressValidation.Joi.string().max(150),
-  }),
+    description: expressValidation.Joi.string().max(150)
+  })
 };
 
 module.exports = {
@@ -28,5 +29,5 @@ module.exports = {
     updateProductValidation,
     {},
     {}
-  ),
+  )
 };

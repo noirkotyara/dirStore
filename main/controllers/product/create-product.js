@@ -1,5 +1,7 @@
 var ff = require("ff");
 var uuid = require("uuid");
+var fs = require("fs");
+var path = require("path");
 
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
@@ -25,6 +27,7 @@ var createProduct = function(productInfo, next) {
     }
 
     function getSavedProduct() {
+
       productService.getProductById(newProduct.id, f.slotPlain(2));
     }
 
@@ -41,6 +44,11 @@ var createProduct = function(productInfo, next) {
           responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
           message: "Created product is not founded"
         });
+      }
+
+      // get photos from directory
+      if (results[0].photoDirectory) {
+        results[0].photos = fs.readdirSync(path.join(__dirname, "../../uploads", results[0].photoDirectory));
       }
 
       f.pass(results[0]);

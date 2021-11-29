@@ -23,6 +23,11 @@ function createTable() {
 
 function saveProduct(product, callback) {
   var productClone = myLodash.deepClone(product);
+  var photoDirectory = productClone.photoDirectory;
+
+  delete productClone.photoDirectory
+
+  productClone["photo_directory"] = photoDirectory
 
   var insertQuery = "INSERT INTO Product SET ?";
   var queryFormat = pool.mysqlConnection.format(insertQuery, productClone);
@@ -31,7 +36,7 @@ function saveProduct(product, callback) {
 
 function getProductById(id, callback) {
   var selectQuery =
-    "SELECT id, name, description, price, amount, created_date as createdDate, updated_date as updatedDate FROM Product WHERE id = ?";
+    "SELECT id, name, description, price, amount, photo_directory as photoDirectory, created_date as createdDate, updated_date as updatedDate FROM Product WHERE id = ?";
   var queryFormat = pool.mysqlConnection.format(selectQuery, [id]);
 
   pool.mysqlConnection.query(queryFormat, callback);
@@ -50,7 +55,7 @@ function updateProductById(id, fields, callback) {
   var fieldsToSet = "";
   var valuesToSet = [];
 
-  Object.entries(reformatedFields).forEach(function (entries) {
+  Object.entries(reformatedFields).forEach(function(entries) {
     var key = entries[0];
     var value = entries[1];
     if (!value) {
@@ -116,5 +121,5 @@ module.exports = {
   updateProductById: updateProductById,
   deleteProductById: deleteProductById,
   isProductExist: isProductExist,
-  getProductDeliverers: getProductDeliverers,
+  getProductDeliverers: getProductDeliverers
 };
