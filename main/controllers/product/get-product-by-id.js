@@ -1,10 +1,13 @@
 var ff = require("ff");
+var fs = require("fs");
+var path = require("path");
 
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
 
 var productService = require("../../services/product/product.service");
+
 
 var getProductById = function(productId, next) {
   var productInfo = {};
@@ -13,7 +16,9 @@ var getProductById = function(productId, next) {
     this,
     getProductInfo,
     getDeliverersByProductId,
-    checkDeliverersList
+    checkDeliverersList,
+    getProductImages,
+    checkImages
   ).onComplete(onCompleteHandler);
 
   function getProductInfo() {
@@ -53,6 +58,26 @@ var getProductById = function(productId, next) {
       preparedItem.provider = { id: providerId };
       return preparedItem;
     });
+  }
+
+  function getProductImages() {
+    console.log("productInfo.id", productInfo.id);
+    productService.getProductImages(productInfo.id, f.slotPlain(2));
+  }
+
+  function checkImages(error, results) {
+    if (error) {
+      return f.fail({
+        responseCode: RESPONSE_CODES.DB_ERROR_SEQUELIZE,
+        message: error
+      });
+    }
+
+    if (results) {
+      productInfo.images = results.map(function(result) {
+        return result.path;
+      });
+    }
   }
 
   function onCompleteHandler(error) {

@@ -52,8 +52,9 @@ function getProductById(id, callback) {
 
 function getProductImages(id, callback) {
   var selectQuery =
-    "SELECT name FROM Image JOIN Product_Image ON Image.id = Product_Image.image_id AND product_id = ?";
+    "SELECT CONCAT(Image.endpoint, Image.name) as path FROM Image JOIN Product_Image ON Image.id = Product_Image.image_id AND product_id = ?";
   var queryFormat = pool.mysqlConnection.format(selectQuery, [id]);
+  console.log(queryFormat);
   pool.mysqlConnection.query(queryFormat, callback);
 }
 

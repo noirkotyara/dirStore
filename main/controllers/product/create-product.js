@@ -3,6 +3,7 @@ var uuid = require("uuid");
 var fs = require("fs");
 var path = require("path");
 
+
 var RESPONSE_CODES = require("message-catcher").RESPONSE_CODES;
 
 var myLodash = require("../../helpers/lodash");
@@ -37,6 +38,14 @@ var createProduct = function(productInfo, next) {
     }
 
     function getSavedProductImages(error, result) {
+
+      if (myLodash.isEmpty(result[0])) {
+        return f.fail({
+          responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
+          message: "Created product is not founded"
+        });
+      }
+
       newProduct = result[0];
       productService.getProductImages(newProduct.id, f.slotPlain(2));
     }
@@ -48,23 +57,17 @@ var createProduct = function(productInfo, next) {
           dbData: error
         });
       }
-
-      if (myLodash.isEmpty(results)) {
-        return f.fail({
-          responseCode: RESPONSE_CODES.P_ERROR__NOT_FOUND,
-          message: "Created product is not founded"
+      if (results) {
+        newProduct.images = results.map(function(result) {
+          return result.path;
         });
       }
-      f.pass(results.map(function(result) {
-        return result.name;
-      }));
     }
 
-    function onCompleteHandler(error, productImages) {
+    function onCompleteHandler(error) {
       if (error) {
         return next(next);
       }
-      newProduct.images = productImages;
 
       next({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,

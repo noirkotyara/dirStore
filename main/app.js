@@ -4,6 +4,7 @@ var responseMiddleware = require("message-catcher");
 // TODO: sort imports by eslint rules
 var express = require("express");
 var cors = require("cors");
+var path = require("path");
 
 var testConnectionToDB = require("./helpers/connect-db");
 
@@ -32,7 +33,9 @@ var corsOptions = {
   credentials: true,
   optionSuccessStatus: 200
 };
-app.use(express.static("uploads"));
+// app.use(express.static("uploads"));
+app.use("/uploads", express.static(path
+  .join(__dirname, "uploads")));
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
