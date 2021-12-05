@@ -55,17 +55,17 @@ var getCheckoutById = function (checkoutId) { return __awaiter(void 0, void 0, v
                             model: provider_model_1.default,
                             as: "providers",
                             attributes: {
-                                exclude: ["productId", "delivererId", "product_id", "deliverer_id"],
+                                exclude: ["productId", "delivererId", "product_id", "deliverer_id"]
                             },
                             through: {
-                                attributes: [],
+                                attributes: []
                             },
                             include: [
                                 { model: product_model_1.default, as: "product" },
-                                { model: deliverer_model_1.default, as: "deliverer" },
-                            ],
-                        },
-                    ],
+                                { model: deliverer_model_1.default, as: "deliverer" }
+                            ]
+                        }
+                    ]
                 })];
             case 1:
                 createdCheckout = _a.sent();

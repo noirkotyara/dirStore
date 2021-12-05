@@ -52,7 +52,7 @@ var getCheckoutInfo = function (checkoutId, next) { return __awaiter(void 0, voi
                 checkoutInfo = _a.sent();
                 if (!checkoutInfo) {
                     (0, error_catcher_1.errorCatcher)({
-                        message: "Checkout info is not founded",
+                        message: "Checkout info is not founded"
                     });
                     return [2 /*return*/];
                 }
@@ -60,8 +60,8 @@ var getCheckoutInfo = function (checkoutId, next) { return __awaiter(void 0, voi
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
                     data: {
                         data: checkoutInfo,
-                        message: "Checkout is here",
-                    },
+                        message: "Checkout is here"
+                    }
                 }));
                 return [3 /*break*/, 3];
             case 2:

@@ -1,10 +1,11 @@
 import { NextFunction } from "express";
-
 import { RESPONSE_CODES } from "message-catcher";
+
 import { responseCatcher } from "@helpers/response-catcher";
 import { errorCatcher } from "@helpers/error-catcher";
-import { BillingAttributes } from "@types-internal/checkout/billing-attributes";
+
 import { getCheckoutsByUserId } from "@services/checkout/get-checkouts-by-user-id";
+import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
 
 export const getUserCheckouts = async (userId: string, next: NextFunction) => {
   try {
@@ -18,7 +19,7 @@ export const getUserCheckouts = async (userId: string, next: NextFunction) => {
     }
 
     next(
-      responseCatcher<BillingAttributes[]>({
+      responseCatcher<CheckoutAttributes[]>({
         responseCode: RESPONSE_CODES.SUCCESS,
         data: {
           data: checkoutList,

@@ -52,7 +52,7 @@ var getUserCheckouts = function (userId, next) { return __awaiter(void 0, void 0
                 checkoutList = _a.sent();
                 if (!checkoutList) {
                     (0, error_catcher_1.errorCatcher)({
-                        message: "Checkout list is not founded",
+                        message: "Checkout list is not founded"
                     });
                     return [2 /*return*/];
                 }
@@ -60,8 +60,8 @@ var getUserCheckouts = function (userId, next) { return __awaiter(void 0, void 0
                     responseCode: message_catcher_1.RESPONSE_CODES.SUCCESS,
                     data: {
                         data: checkoutList,
-                        message: "Checkout is here",
-                    },
+                        message: "Checkout is here"
+                    }
                 }));
                 return [3 /*break*/, 3];
             case 2:

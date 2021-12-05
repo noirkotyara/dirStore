@@ -1,14 +1,14 @@
 import { CheckoutModel } from "@models/checkout.model";
 
-import { BillingAttributes } from "@types-internal/checkout/billing-attributes";
-import { BillingInfo } from "@types-internal/checkout/billing-info";
 
 import { CheckoutStatus } from "@enums/checkout-status";
+import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
+import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
 
 export const createCheckoutByUserId = async (
   userId: string,
-  checkoutInfo: BillingInfo
-): Promise<BillingAttributes | null> => {
+  checkoutInfo: CheckoutInfo
+): Promise<CheckoutAttributes | null> => {
   const createdCheckout = await CheckoutModel.create({
     userId,
     status: CheckoutStatus.ACTIVE,

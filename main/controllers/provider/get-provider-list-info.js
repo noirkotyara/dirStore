@@ -41,21 +41,25 @@ var message_catcher_1 = require("message-catcher");
 var response_catcher_1 = require("@helpers/response-catcher");
 var get_provider_list_info_by_ids_1 = require("@services/provider/get-provider-list-info-by-ids");
 var error_catcher_1 = require("@helpers/error-catcher");
+var get_provider_list_1 = require("@services/provider/get-provider-list");
 var getProviderListInfo = function (filters, next) { return __awaiter(void 0, void 0, void 0, function () {
     var providersInfo, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
+                _a.trys.push([0, 5, , 6]);
                 providersInfo = [];
-                if (!!filters.id) return [3 /*break*/, 1];
+                if (!!filters.id) return [3 /*break*/, 2];
                 providersInfo = [];
-                return [3 /*break*/, 3];
-            case 1: return [4 /*yield*/, (0, get_provider_list_info_by_ids_1.getProviderListInfoByIds)(filters.id)];
-            case 2:
+                return [4 /*yield*/, (0, get_provider_list_1.getProviderList)()];
+            case 1:
                 providersInfo = _a.sent();
-                _a.label = 3;
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, (0, get_provider_list_info_by_ids_1.getProviderListInfoByIds)(filters.id)];
             case 3:
+                providersInfo = _a.sent();
+                _a.label = 4;
+            case 4:
                 if (!providersInfo) {
                     (0, error_catcher_1.errorCatcher)({
                         message: "Provider are cannot be founded"
@@ -69,12 +73,12 @@ var getProviderListInfo = function (filters, next) { return __awaiter(void 0, vo
                         message: "Provider is here"
                     }
                 }));
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 6];
+            case 5:
                 error_1 = _a.sent();
                 next(error_1);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
