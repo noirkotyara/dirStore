@@ -9,12 +9,12 @@ import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
 import { errorCatcher } from "@helpers/error-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
 
-import { CheckoutInfo } from "@types-internal/checkout/checkout-info";
-import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
+import { BillingInfo } from "@types-internal/checkout/billing-info";
+import { BillingAttributes } from "@types-internal/checkout/billing-attributes";
 
 export const createCheckout = async (
   userId: string,
-  checkoutInfo: CheckoutInfo,
+  checkoutInfo: BillingInfo,
   next: NextFunction
 ) => {
   try {
@@ -49,7 +49,7 @@ export const createCheckout = async (
     }
 
     next(
-      responseCatcher<CheckoutAttributes>({
+      responseCatcher<BillingAttributes>({
         responseCode: RESPONSE_CODES.SUCCESS__CREATED,
         data: {
           data: createdCheckoutInfo,

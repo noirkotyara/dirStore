@@ -4,7 +4,7 @@ import { RESPONSE_CODES } from "message-catcher";
 import { responseCatcher } from "@helpers/response-catcher";
 import { errorCatcher } from "@helpers/error-catcher";
 import { getCheckoutById } from "@services/checkout/get-checkout-by-id";
-import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
+import { BillingAttributes } from "@types-internal/checkout/billing-attributes";
 
 export const getCheckoutInfo = async (
   checkoutId: string,
@@ -15,18 +15,18 @@ export const getCheckoutInfo = async (
 
     if (!checkoutInfo) {
       errorCatcher({
-        message: "Checkout info is not founded",
+        message: "Checkout info is not founded"
       });
       return;
     }
 
     next(
-      responseCatcher<CheckoutAttributes>({
+      responseCatcher<BillingAttributes>({
         responseCode: RESPONSE_CODES.SUCCESS,
         data: {
           data: checkoutInfo,
-          message: "Checkout is here",
-        },
+          message: "Checkout is here"
+        }
       })
     );
   } catch (error) {

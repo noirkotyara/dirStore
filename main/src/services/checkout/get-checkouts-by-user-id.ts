@@ -1,12 +1,12 @@
 import { CheckoutModel } from "@models/checkout.model";
 
-import { CheckoutAttributes } from "@types-internal/checkout/checkout-attributes";
+import { BillingAttributes } from "@types-internal/checkout/billing-attributes";
 
 export const getCheckoutsByUserId = async (
   userId: string
-): Promise<CheckoutAttributes[] | null> => {
+): Promise<BillingAttributes[] | null> => {
   const createdCheckout = await CheckoutModel.findAll({
-    where: { userId },
+    where: { userId }
   });
   return createdCheckout
     ? createdCheckout.map((checkout) => checkout.get())
