@@ -10,23 +10,37 @@ import { DelivererAttributesKnex } from "@types-internal/deliverer/deliverer-att
 import { productFilters } from "@services/product/products-filters-knex";
 import { deliverersFiltersKnex } from "@services/deliverer/deliverers-filters-knex";
 
-export const getProducts = async (filters: FilterOptionsReformated): Promise<ProductAttributes[]> => {
+export const getProducts = async (
+  filters: FilterOptionsReformated
+): Promise<ProductAttributes[]> => {
   const { product, deliverer, order } = filters;
 
   const products: ProductAttributesKnex[] = await knexConnection
     .distinct("Product.*")
     .from<ProductAttributesKnex>("Product")
-    .leftJoin(
-      "Provider", "Provider.product_id", "Product.id"
+    .leftJoin("Provider", "Provider.product_id", "Product.id")
+    .leftJoin("Deliverer", "Provider.deliverer_id", "Deliverer.id")
+    .leftJoin("Product_Image", "Product.id", "Product_Image.product_id")
+    .modify(
+      (
+        queryBuilder: Knex.QueryBuilder<
+          ProductAttributesKnex,
+          ProductAttributesKnex[]
+        >
+      ) => productFilters(queryBuilder, product)
     )
-    .leftJoin(
-      "Deliverer", "Provider.deliverer_id", "Deliverer.id"
-    ).modify((queryBuilder: Knex.QueryBuilder<ProductAttributesKnex, ProductAttributesKnex[]>) => productFilters(queryBuilder, product))
-    .modify((queryBuilder: Knex.QueryBuilder<DelivererAttributesKnex, DelivererAttributesKnex[]>) => deliverersFiltersKnex(queryBuilder, deliverer))
+    .modify(
+      (
+        queryBuilder: Knex.QueryBuilder<
+          DelivererAttributesKnex,
+          DelivererAttributesKnex[]
+        >
+      ) => deliverersFiltersKnex(queryBuilder, deliverer)
+    )
     .modify((queryBuilder) => {
       if (order) {
         queryBuilder.orderBy(order.by, order.direction);
       }
     });
-  return products.map(item => inCamel(item));
+  return products.map((item) => inCamel(item));
 };
